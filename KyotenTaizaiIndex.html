@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="initial-scale=1.0, user-scalable=yes">
+<title>GoogleMapAPIテスト</title>
+</head>
+<body>
+<div class="adbox1">
+</div>
+<div class="box1">
+GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1">
+<button type="button" name="SetGoogleApiKey" value="SetGoogleApiKey" onclick="SetGoogleApiKey()" style="margin-left:10px; margin-top:10px;">GoogleAPIキーセット</button>
+</div>
+
+
+<div class="box5" id="map" style="margin-top:10px; width:400px; height:350px;">
+</div>
+
+<div class="js-tabs">
+*自動セーブは行いません<br>
+  <ul id="tab_menu1" class="tab_menu">
+    <li><a class="Tablink" href="#page1-1">タブ1</a></li>
+    <br>
+    <li><a class="Tablink" href="#page1-2">タブ2</a></li>
+	<br>
+    <li><a class="Tablink" href="#pageStatusList">ステータス一覧</a></li>
+    <br>
+  </ul>
+  <div id="tab_content1" class="tab_content">
+    <!-- tab1 -->
+    <div id="page1-1" class="TabPage">
+	---tab1<br>
+    </div>
+    <!-- tab2タブ -->
+    <div id="page1-2" class="TabPage">
+    ---tab2<br>
+    </div>
+
+	<div id="pageStatusList" class="TabPage">
+	ステータス一覧<br>
+	<hr>
+	赤の力:<span id="StsListRedSts"></span><br>
+	青の力:<span id="StsListBlueSts"></span><br>
+	黄の力:<span id="StsListYellowSts"></span><br>
+	緑の力:<span id="StsListGreenSts"></span><br>
+	紫の力:<span id="StsListPurpleSts"></span><br>
+	白の力:<span id="StsListWhiteSts"></span><br>
+	白金の力:<span id="StsListWhiteGoldSts"></span><br>
+	白銀の力:<span id="StsListWhiteSilverSts"></span><br>
+	白銅の力:<span id="StsListWhiteCoupperSts"></span><br>
+	黒の力:<span id="StsListBlackSts"></span><br>
+	黒金の力:<span id="StsListBlackGoldSts"></span><br>
+	黒銀の力:<span id="StsListBlackSilverSts"></span><br>
+	黒銅の力:<span id="StsListBlackCoupperSts"></span><br>
+	
+	<br>
+	<br>
+	
+	赤の経験値:<span id = "StsListRedStsExp"></span><br>
+	青の経験値:<span id = "StsListBlueStsExp"></span><br>
+	黄の経験値:<span id = "StsListYellowStsExp"></span><br>
+	緑の経験値:<span id = "StsListGreenStsExp"></span><br>
+	紫の経験値:<span id = "StsListPurpleStsExp"></span><br>
+	白の経験値:<span id = "StsListWhiteStsExp"></span><br>
+	白金の経験値:<span id = "StsListWhiteGoldStsExp"></span><br>
+	白銀の経験値:<span id = "StsListWhiteSilverStsExp"></span><br>
+	白銅の経験値:<span id = "StsListWhiteCoupperStsExp"></span><br>
+	黒の経験値:<span id = "StsListBlackStsExp"></span><br>
+	黒金の経験値:<span id = "StsListBlackGoldStsExp"></span><br>
+	黒銀の経験値:<span id = "StsListBlackSilverStsExp"></span><br>
+	黒銅の経験値:<span id = "StsListBlackCoupperStsExp"></span><br>
+	
+	<hr>
+	<br>
+	<br>
+    
+    </div>
+  </div>
+</div>
+
+
+<div id="InitScriptTag"></div>
+<script type="text/javascript" src="KyotenTaizaiJS.js" async defer>
+</script>
+
+</body>
+</html>
