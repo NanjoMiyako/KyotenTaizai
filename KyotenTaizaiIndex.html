@@ -26,6 +26,9 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 	<br>
     <li><a class="Tablink" href="#pageStatusList">ステータス一覧</a></li>
     <br>
+    <li><a class="Tablink" href="#pageAddKyoten">拠点追加</a></li>
+    <br>
+    
   </ul>
   <div id="tab_content1" class="tab_content">
     <!-- tab1 -->
@@ -37,6 +40,7 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
     ---tab2<br>
     </div>
 
+	<!-- ステータス一覧タブ -->
 	<div id="pageStatusList" class="TabPage">
 	ステータス一覧<br>
 	<hr>
@@ -71,11 +75,45 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 	黒銀の経験値:<span id = "StsListBlackSilverStsExp"></span><br>
 	黒銅の経験値:<span id = "StsListBlackCoupperStsExp"></span><br>
 	
+	<br>
+	<br>
+	コイン:<span id="StsListCoin"></span><br>
+	時の砂:<span id="StsListTimeSand"></span><br>
+	
 	<hr>
 	<br>
 	<br>
     
     </div>
+    
+    <!-- 拠点追加タブ -->
+    <div id="pageAddKyoten" class="TabPage">
+    拠点追加<br>
+    追加する拠点タイプ:
+    <select id="AddKyotenTab_KyotenType">
+		<option value="0">赤</option>
+		<option value="1">青</option>
+		<option value="2">黄</option>
+		<option value="3">緑</option>
+		<option value="4">紫</option>
+		<option value="5">白</option>
+		<option value="6">白金</option>
+		<option value="7">白銀</option>
+		<option value="8">白銅</option>
+		<option value="9">黒</option>
+		<option value="10">黒金</option>
+		<option value="11">黒銀</option>
+		<option value="12">黒銅</option>
+		<option value="13">虹</option>
+		<option value="14">時戻りの砂漠</option>
+		<option value="15">再生の森</option>
+	</select>
+    <br>
+    <button type="button" id="pageAddKyoten_AddKyotenButton" onclick="AddKyoten()">
+		現在のクリック位置に拠点を追加
+	</button>
+    </div>
+    
   </div>
 </div>
 
