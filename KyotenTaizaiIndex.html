@@ -28,6 +28,8 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
     <br>
     <li><a class="Tablink" href="#pageAddKyoten">拠点追加</a></li>
     <br>
+    <li><a class="Tablink" href="#pageDeleteKyoten">拠点削除</a></li>
+    <br>
     
   </ul>
   <div id="tab_content1" class="tab_content">
@@ -82,8 +84,7 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 	
 	<hr>
 	<br>
-	<br>
-    
+	<br>    
     </div>
     
     <!-- 拠点追加タブ -->
@@ -107,10 +108,22 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 		<option value="13">虹</option>
 		<option value="14">時戻りの砂漠</option>
 		<option value="15">再生の森</option>
+		<option value="16">黄金の泉</option>
 	</select>
     <br>
     <button type="button" id="pageAddKyoten_AddKyotenButton" onclick="AddKyoten()">
 		現在のクリック位置に拠点を追加
+	</button>
+    <button type="button" id="pageAddKyoten_AddKyotenMyLatLngButton" onclick="AddKyoten_MyLatLng()">
+		現在地に拠点を追加
+	</button>
+    </div>
+    
+    <!-- 拠点削除タブ -->
+    <div id="pageDeleteKyoten" class="TabPage">
+    拠点削除<br>
+    <button type="button" id="pageDeleteKyoten_DeleteKyotenButton" onclick="DeleteKyoten()">
+		現在選択中の拠点を削除
 	</button>
     </div>
     

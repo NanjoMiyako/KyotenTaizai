@@ -14,8 +14,12 @@ const KYOTEN_BLACKCOPPER = 12;
 const KYOTEN_NIJI = 13;
 const KYOTEN_TOKIMODORI = 14;
 const KYOTEN_SAISEI = 15;
+const KYOTEN_OUGON = 16;
 
-g_KyotenColorNames = ["赤","青","黄","緑","紫","白","白金","白銀","白銅","黒","黒金","黒銀","黒銅","虹","時戻りの砂漠","再生の森"]
+const KYOTEN_MIN_INTERVAL = 200;
+
+g_KyotenColorNames = ["赤","青","黄","緑","紫","白","白金","白銀","白銅","黒","黒金","黒銀","黒銅","虹",
+"時戻りの砂漠","再生の森","黄金の泉"]
 
 
 
@@ -25,7 +29,10 @@ var g_Map;
 var deviceType;
 var g_MakerList = []
 var g_KyotenTuikaFlg = false;
+var g_KyotenSakujoFlg = false;
 var g_CurrentMarker = null;
+var g_CurrentPositionMarker = null;
+var g_InfoWindowList = [];
 
 //グーグルマップのMarkerオブジェクトのマップ
 var MarkerMap = new Array();
@@ -109,6 +116,13 @@ class User {
   
 }
 
+function ClearAllInfoWindow(){
+	for(i=0; i<g_InfoWindowList.length; i++){
+		g_InfoWindowList[i].close(); // 吹き出しの表示
+	}
+	infoWindowList = [];
+}
+
 function TestInitUser(User){
 
     //攻撃力
@@ -169,9 +183,9 @@ function TestInitUser(User){
     User.TimeSandDownStsType = KYOTEN_BLACKGOLD
     User.TimeSandUpStsType = KYOTEN_BLUE
 
-	name1 = "DebugUser";
-	lat1 = 34.66986407528885;
-	lng1 = 138.01743997470177;
+	User.name1 = "DebugUser";
+	User.lat1 = 34.66986407528885;
+	User.lng1 = 138.01743997470177;
 
 }
 
@@ -255,6 +269,9 @@ function initMap() {
   g_Map = new google.maps.Map(document.getElementById("map"), g_MapOpts);
   
 	
+  //現在位置マーカをセット
+  SetCurrentLatLngMarker(MyUser);
+	
   //拠点マーカをセット
   SetKyotenMaker(MyUser);
   
@@ -264,7 +281,7 @@ function initMap() {
 		 	let mopts = {
 				position: e.latLng,
 				map: g_Map,
-				title: title1,
+				title: "click_pos",
 				icon: {
 				fillColor: "#0000FF",                //塗り潰し色
 				fillOpacity: 0.8,                    //塗り潰し透過率
@@ -282,6 +299,8 @@ function initMap() {
 			
 			let marker1 = new google.maps.Marker(mopts);
 			g_CurrentMarker = marker1;
+			
+		}else if(g_KyotenSakujoFlg == true){
 		}
 	});
 	
@@ -352,6 +371,14 @@ function tab_init(link, index){
   		
   		return false;
   	  };
+  }else if(id == 'pageDeleteKyoten'){
+	  link.onclick = function(){
+		  	changeTab(link);
+		  	
+		  	g_KyotenSakujoFlg = true;
+			  	
+			return false;
+		};
   }
 }
 })();
@@ -495,9 +522,53 @@ function validateMarker(User){
 
 
 }
+
+function SetCurrentLatLngMarker(User){
+	
+
+	latlng = new google.maps.LatLng(User.lat1, User.lng1);
+	
+	if(g_CurrentPositionMarker != null){
+		g_CurrentPositionMarker.setMap(null)
+		g_CurrentPositionMarker = null;
+	}
+	
+ 	let mopts = {
+		position: latlng,
+		map: g_Map,
+		title: "現在地",
+		icon: {
+		fillColor: "#888888",                //塗り潰し色
+		fillOpacity: 0.8,                    //塗り潰し透過率
+		path: google.maps.SymbolPath.CIRCLE, //円を指定
+		scale: 8,                           //円のサイズ
+		strokeColor: "#888888",              //枠の色
+		}
+	
+		};
+	
+	let marker1 = new google.maps.Marker(mopts);
+	g_CurrentPositionMarker = marker1;
+
+	    
+
+}
+
+//GoogleMap中のUserの拠点マーカをすべてクリアする
+function ClearAllKyotenMarkerInMap(User){
+
+	len1 = User.KyotenMarkerList.length;
+	for(i=0; i<len1; i++){
+		User.KyotenMarkerList[i].setMap(null);
+	}
+}
+
 function SetKyotenMaker(User){
 
 	let message1 = "";
+	
+	ClearAllInfoWindow();
+	ClearAllKyotenMarkerInMap(User);
 	
 	for(i=0; i<User.KyotenNames.length; i++){
 		latlng = new google.maps.LatLng(User.KyotenLats[i], User.KyotenLngs[i]);
@@ -532,9 +603,33 @@ function SetKyotenMaker(User){
 		User.KyotenMarkerList.push(marker1);
   	
 	 	marker1.addListener('click', function(){ // マーカーをクリックしたとき
+	 			SetKyotenMaker(MyUser);
+	 	
+	 			g_CurrentMarker = marker1;
 	 			for(i=0; i<User.KyotenNames.length; i++){
 	 				if(marker1.title == User.KyotenNames[i]){
 	 					msg2 = User.KyotenMarkerMassages[i]
+	 					
+	 					//前のマーカを削除して色を変えたマーカをセットする
+	 					prevMarker = g_CurrentMarker;
+	 					let mopts2 = {
+							position: prevMarker.position,
+							map: g_Map,
+							title: prevMarker.title,
+							icon: {
+							fillColor: "#3cb371",                //塗り潰し色
+							fillOpacity: 0.8,                    //塗り潰し透過率
+							path: google.maps.SymbolPath.CIRCLE, //円を指定
+							scale: 8,                           //円のサイズ
+							strokeColor: "#3cb371",              //枠の色
+							}
+						
+						};
+						
+						let marker2 = new google.maps.Marker(mopts2);
+						User.KyotenMarkerList[i] = marker2
+						prevMarker.setMap(null);
+	 					
 	 				}
 	 			}
 	 	
@@ -543,6 +638,7 @@ function SetKyotenMaker(User){
 			  	});
 			  	
 	     	    infoWindow.open(g_Map, this); // 吹き出しの表示
+	     	    g_InfoWindowList.push(infoWindow);
 	    });
 	    
 	}
@@ -562,13 +658,58 @@ function changeTab(link){
     current.menu = link;
     
   g_KyotenTuikaFlg = false;
+  g_KyotenSakujoFlg = false;
   
 }
 
-function CanAddKyoten(){
+function AddKyoten_MyLatLng(){
+	let selectbox1 = document.getElementById("AddKyotenTab_KyotenType");
+	
+	//値(value値)を取得
+	let str1 = selectbox1.options[selectbox1.selectedIndex].value;
+	let kyotenType1 = Number(str1);
+	
+	if(CanAddKyotenMyLatLng(MyUser) == true){
+		MyUser.KyotenCount++;
+		let name1 = "k"+MyUser.KyotenCount;
+	    MyUser.KyotenNames.push(name1);
+	    
+	    MyUser.KyotenTypes.push(kyotenType1);
+	    MyUser.KyotenLats.push(MyUser.lat1)
+	    MyUser.KyotenLngs.push(MyUser.lng1)
+	    
+	    validateMarker(MyUser)
+	    
+	    alert("拠点を追加しました")
+	}
+}
+function CanAddKyotenMyLatLng(User){
+	
+	for(i=0; i<User.KyotenNames.length; i++){
+		dist1 = distance(User.lat1, User.lng1, User.KyotenLats[i], User.KyotenLngs[i]);
+		if(dist1 < KYOTEN_MIN_INTERVAL){
+			msg1 = "拠点同士の間隔は" + KYOTEN_MIN_INTERVAL + "メートル以上取ってください";
+			alert(msg1);
+			return false;
+		}
+	}
+	return true;
+}
+
+
+function CanAddKyotenCurrentMarker(User){
 	if(g_CurrentMarker == null){
 		alert("クリックで拠点位置を指定してください")
 		return false;
+	}
+	
+	for(i=0; i<User.KyotenNames.length; i++){
+		dist1 = distance(g_CurrentMarker.position.lat(), g_CurrentMarker.position.lng(), User.KyotenLats[i], User.KyotenLngs[i]);
+		if(dist1 < KYOTEN_MIN_INTERVAL){
+			msg1 = "拠点同士の間隔は" + KYOTEN_MIN_INTERVAL + "メートル以上取ってください";
+			alert(msg1);
+			return false;
+		}
 	}
 	return true;
 }
@@ -580,7 +721,7 @@ function AddKyoten(){
 	let str1 = selectbox1.options[selectbox1.selectedIndex].value;
 	let kyotenType1 = Number(str1);
 	
-	if(CanAddKyoten() == true){
+	if(CanAddKyotenCurrentMarker(MyUser) == true){
 		MyUser.KyotenCount++;
 		let name1 = "k"+MyUser.KyotenCount;
 	    MyUser.KyotenNames.push(name1);
@@ -599,8 +740,98 @@ function AddKyoten(){
 	
 }
 
+function CanDeleteKyoten(){
+	if(g_CurrentMarker == null){
+		alert("クリックで削除する拠点位置を選択してください")
+		return false;
+	}
+	return true;
+}
 
+function DeleteKyoten(){
+	if(CanDeleteKyoten(MyUser) == true){
+		let delKyotenName = g_CurrentMarker.title;
+		let delIndex;
+		let delMarker;
+		
+	    for(i=0; i<MyUser.KyotenNames.length; i++){
+	    	if(MyUser.KyotenNames[i] == delKyotenName){
+	    		delIndex = i
+	    		delMarker = MyUser.KyotenMarkerList[i];
+	    		break
+	    	}
+	    }
 
+    	MyUser.KyotenNames.splice(delIndex, 1)
+    	MyUser.KyotenTypes.splice(delIndex, 1)
+    	MyUser.KyotenLats.splice(delIndex, 1)
+    	MyUser.KyotenLngs.splice(delIndex, 1)
+    	MyUser.KyotenMarkerList.splice(delIndex, 1)
+    	MyUser.KyotenMarkerMassages.splice(delIndex, 1)
+	    
+	    delMarker.setMap(null)
+	    g_CurrentMarker=null
+	    
+	    SetKyotenMaker(MyUser)
+	    alert("拠点を削除しました")
+	}
+}
+
+/**
+ * ２地点間の距離(m)を求める
+ * ヒュベニの公式から求めるバージョン
+ *
+ * @param float lat1 緯度１
+ * @param float lon1 経度１
+ * @param float lat2 緯度２
+ * @param float lon2 経度２
+ * @param boolean mode 測地系 true:世界(default) false:日本
+ * @return float 距離(m)
+ */
+function distance(lat1, lon1, lat2, lon2, mode=true)
+{
+    // 緯度経度をラジアンに変換
+    radLat1 = deg2rad(lat1); // 緯度１
+    radLon1 = deg2rad(lon1); // 経度１
+    radLat2 = deg2rad(lat2); // 緯度２
+    radLon2 = deg2rad(lon2); // 経度２
+
+    // 緯度差
+    radLatDiff = radLat1 - radLat2;
+
+    // 経度差算
+    radLonDiff = radLon1 - radLon2;
+
+    // 平均緯度
+    radLatAve = (radLat1 + radLat2) / 2.0;
+
+    // 測地系による値の違い
+    a = mode ? 6378137.0 : 6377397.155; // 赤道半径
+    b = mode ? 6356752.314140356 : 6356078.963; // 極半径
+    //e2 = (a*a - b*b) / (a*a);
+    e2 = mode ? 0.00669438002301188 : 0.00667436061028297; // 第一離心率^2
+    //a1e2 = a * (1 - e2);
+    a1e2 = mode ? 6335439.32708317 : 6334832.10663254; // 赤道上の子午線曲率半径
+
+    sinLat = Math.sin(radLatAve);
+    W2 = 1.0 - e2 * (sinLat*sinLat);
+    M = a1e2 / (Math.sqrt(W2)*W2); // 子午線曲率半径M
+    N = a / Math.sqrt(W2); // 卯酉線曲率半径
+
+    t1 = M * radLatDiff;
+    t2 = N * Math.cos(radLatAve) * radLonDiff;
+    dist = Math.sqrt((t1*t1) + (t2*t2));
+
+    return dist;
+}
+
+function deg2rad(degrees) {
+  return degrees * Math.PI / 180;
+};
+
+function rad2deg(radian){
+        return radian * 360/(2*Math.PI);
+}
 
 
 
