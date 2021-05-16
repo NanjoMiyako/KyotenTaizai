@@ -18,6 +18,7 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 </div>
 
 <div class="js-tabs">
+<hr>
 *自動セーブは行いません<br>
   <ul id="tab_menu1" class="tab_menu">
     <li><a class="Tablink" href="#page1-1">タブ1</a></li>
@@ -30,8 +31,13 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
     <br>
     <li><a class="Tablink" href="#pageDeleteKyoten">拠点削除</a></li>
     <br>
-    
+    <li><a class="Tablink" href="#pageUpgradeStatus">ステータス強化</a></li>
+    <br>
+    <li><a class="Tablink" href="#pageYobiSuzuSetting">呼び鈴設定</a></li>
+    <br>
+        
   </ul>
+<hr>
   <div id="tab_content1" class="tab_content">
     <!-- tab1 -->
     <div id="page1-1" class="TabPage">
@@ -127,6 +133,42 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 	</button>
     </div>
     
+    
+    <!-- ステータス強化タブ -->
+    <div id="pageUpgradeStatus" class="TabPage">
+    ステータス強化<br>
+    <button type="button" id="pageUpgradeStatus_UpgradeStatusButton" onclick="UpgradeStatus()">
+		現在の経験値からステータス強化
+	</button>
+    </div>
+    
+    <!-- 呼び鈴設定 -->
+    <div id="pageYobiSuzuSetting" class="TabPage">
+    持ち込み呼び鈴<br>
+    <br>
+	赤鈴:<input type="text" size="1" id=SettingYobiSuzuCount0>個<br>
+	青鈴:<input type="text" size="1" id=SettingYobiSuzuCount1>個<br>
+	黄鈴:<input type="text" size="1" id=SettingYobiSuzuCount2>個<br>
+	緑鈴:<input type="text" size="1" id=SettingYobiSuzuCount3>個<br>
+	紫鈴:<input type="text" size="1" id=SettingYobiSuzuCount4>個<br>
+	白鈴:<input type="text" size="1" id=SettingYobiSuzuCount5>個<br>
+	白金鈴:<input type="text" size="1" id=SettingYobiSuzuCount6>個<br>
+	白銀鈴:<input type="text" size="1" id=SettingYobiSuzuCount7>個<br>
+	白銅鈴:<input type="text" size="1" id=SettingYobiSuzuCount8>個<br>
+	黒鈴:<input type="text" size="1" id=SettingYobiSuzuCount9>個<br>
+	黒金鈴:<input type="text" size="1" id=SettingYobiSuzuCount10>個<br>
+	黒銀鈴:<input type="text" size="1" id=SettingYobiSuzuCount11>個<br>
+	黒銅鈴:<input type="text" size="1" id=SettingYobiSuzuCount12>個<br>
+	
+	<br>
+	<button type="button" id="pageYobiSuzuSetting_TekiyouButton" onclick="SetHavingYobiSuzuCount()">
+		適用
+	</button>
+	
+	<br>
+	<br>
+
+    </div>    
   </div>
 </div>
 

@@ -86,10 +86,10 @@ class User {
     KyotenLngs = []
     KyotenCount = 0
     
-    HavingYobiSuzuColor = []
-    HavingYobiSuzuPower = []
-    HavingOiSuzuColor = []
-    HavineOiSuzuPower = []
+    HavingYobiSuzuColor = [0,0,0,0,0,0,0,0,0,0,0,0,0]
+    HavingYobiSuzuPower = [0,0,0,0,0,0,0,0,0,0,0,0,0]
+    HavingOiSuzuColor = [0,0,0,0,0,0,0,0,0,0,0,0,0]
+    HavineOiSuzuPower = [0,0,0,0,0,0,0,0,0,0,0,0,0]
     
     HavingCoin = 0
     
@@ -111,7 +111,6 @@ class User {
 
     
   }
-  
   
   
 }
@@ -172,10 +171,10 @@ function TestInitUser(User){
     User.KyotenLngs = [138.02233232405075, 137.99314988933753]
     User.KyotenCount = 2;
     
-    User.HavingYobiSuzuColor = []
-    User.HavingYobiSuzuPower = []
-    User.HavingOiSuzuColor = []
-    User.HavineOiSuzuPower = []
+    User.HavingYobiSuzuColor = [2,1,2,0,0,0,0,0,0,0,0,0,0]
+    User.HavingYobiSuzuPower = [10,20,30,0,0,0,0,0,0,0,0,0,0]
+    User.HavingOiSuzuColor = [0,0,0,0,0,0,0,0,0,0,0,0,0]
+    User.HavineOiSuzuPower = [0,0,0,0,0,0,0,0,0,0,0,0,0]
     
     User.HavingCoin = 270
     
@@ -379,10 +378,32 @@ function tab_init(link, index){
 			  	
 			return false;
 		};
+  }else if(id == 'pageUpgradeStatus'){
+	  link.onclick = function(){
+		  	changeTab(link);
+			  	
+			return false;
+		};
+  }else if(id == 'pageYobiSuzuSetting'){
+	  link.onclick = function(){
+		  	changeTab(link);
+			
+			ShowYobisuzuSettingTab()
+			
+			return false;
+		};
   }
 }
 })();
+function ShowYobisuzuSettingTab(){
 
+	let elemId;
+	for(i=0; i<KYOTEN_NIJI; i++){
+		elemId = "SettingYobiSuzuCount"+i
+		textbox = document.getElementById(elemId);
+		textbox.value = MyUser.HavingYobiSuzuColor[i];
+	}
+}
 function ShowStsListTab(){
 
 	span1 = document.getElementById("StsListRedSts")
@@ -661,7 +682,8 @@ function changeTab(link){
   g_KyotenSakujoFlg = false;
   
 }
-
+function SetHavingYobiSuzuCount(){
+}
 function AddKyoten_MyLatLng(){
 	let selectbox1 = document.getElementById("AddKyotenTab_KyotenType");
 	
@@ -775,6 +797,76 @@ function DeleteKyoten(){
 	    SetKyotenMaker(MyUser)
 	    alert("拠点を削除しました")
 	}
+}
+
+function UpgradeStatus(){
+
+	UpPt = parseInt(MyUser.RedStsExp / 10)
+	ConsumeExp = 10 * UpPt
+	MyUser.RedSts += UpPt
+	MyUser.RedStsExp -= ConsumeExp
+	
+	UpPt = parseInt(MyUser.BlueStsExp / 10)
+	ConsumeExp = 10 * UpPt
+	MyUser.BlueSts += UpPt
+	MyUser.BlueStsExp -= ConsumeExp
+
+	UpPt = parseInt(MyUser.YellowStsExp / 10)
+	ConsumeExp = 10 * UpPt
+	MyUser.YellowSts += UpPt
+	MyUser.YellowStsExp -= ConsumeExp
+
+	UpPt = parseInt(MyUser.GreenStsExp / 10)
+	ConsumeExp = 10 * UpPt
+	MyUser.GreenSts += UpPt
+	MyUser.GreenStsExp -= ConsumeExp
+
+	UpPt = parseInt(MyUser.PurpleStsExp / 10)
+	ConsumeExp = 10 * UpPt
+	MyUser.PurpleSts += UpPt
+	MyUser.PurpleStsExp -= ConsumeExp
+
+	UpPt = parseInt(MyUser.WhiteStsExp / 10)
+	ConsumeExp = 10 * UpPt
+	MyUser.WhiteSts += UpPt
+	MyUser.WhiteStsExp -= ConsumeExp
+
+	UpPt = parseInt(MyUser.WhiteGoldStsExp / 10)
+	ConsumeExp = 10 * UpPt
+	MyUser.WhiteGoldSts += UpPt
+	MyUser.WhiteGoldStsExp -= ConsumeExp
+
+	UpPt = parseInt(MyUser.WhiteSilverStsExp / 10)
+	ConsumeExp = 10 * UpPt
+	MyUser.WhiteSilverSts += UpPt
+	MyUser.WhiteSilverStsExp -= ConsumeExp
+
+	UpPt = parseInt(MyUser.WhiteCoupperStsExp / 10)
+	ConsumeExp = 10 * UpPt
+	MyUser.WhiteCoupperSts += UpPt
+	MyUser.WhiteCoupperStsExp -= ConsumeExp
+
+	UpPt = parseInt(MyUser.BlackStsExp / 10)
+	ConsumeExp = 10 * UpPt
+	MyUser.BlackSts += UpPt
+	MyUser.BlackStsExp -= ConsumeExp
+
+	UpPt = parseInt(MyUser.BlackGoldStsExp / 10)
+	ConsumeExp = 10 * UpPt
+	MyUser.BlackGoldSts += UpPt
+	MyUser.BlackGoldStsExp -= ConsumeExp
+
+	UpPt = parseInt(MyUser.BlackSilverStsExp / 10)
+	ConsumeExp = 10 * UpPt
+	MyUser.BlackSilverSts += UpPt
+	MyUser.BlackSilverStsExp -= ConsumeExp
+
+	UpPt = parseInt(MyUser.BlackCoupperStsExp / 10)
+	ConsumeExp = 10 * UpPt
+	MyUser.BlackCoupperSts += UpPt
+	MyUser.BlackCoupperStsExp -= ConsumeExp
+
+    alert("ステータスを強化しました")
 }
 
 /**
