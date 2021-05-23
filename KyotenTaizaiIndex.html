@@ -60,11 +60,11 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 	白の力:<span id="StsListWhiteSts"></span><br>
 	白金の力:<span id="StsListWhiteGoldSts"></span><br>
 	白銀の力:<span id="StsListWhiteSilverSts"></span><br>
-	白銅の力:<span id="StsListWhiteCoupperSts"></span><br>
+	白銅の力:<span id="StsListWhiteCopperSts"></span><br>
 	黒の力:<span id="StsListBlackSts"></span><br>
 	黒金の力:<span id="StsListBlackGoldSts"></span><br>
 	黒銀の力:<span id="StsListBlackSilverSts"></span><br>
-	黒銅の力:<span id="StsListBlackCoupperSts"></span><br>
+	黒銅の力:<span id="StsListBlackCopperSts"></span><br>
 	
 	<br>
 	<br>
@@ -77,11 +77,11 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 	白の経験値:<span id = "StsListWhiteStsExp"></span><br>
 	白金の経験値:<span id = "StsListWhiteGoldStsExp"></span><br>
 	白銀の経験値:<span id = "StsListWhiteSilverStsExp"></span><br>
-	白銅の経験値:<span id = "StsListWhiteCoupperStsExp"></span><br>
+	白銅の経験値:<span id = "StsListWhiteCopperStsExp"></span><br>
 	黒の経験値:<span id = "StsListBlackStsExp"></span><br>
 	黒金の経験値:<span id = "StsListBlackGoldStsExp"></span><br>
 	黒銀の経験値:<span id = "StsListBlackSilverStsExp"></span><br>
-	黒銅の経験値:<span id = "StsListBlackCoupperStsExp"></span><br>
+	黒銅の経験値:<span id = "StsListBlackCopperStsExp"></span><br>
 	
 	<br>
 	<br>
@@ -146,19 +146,108 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
     <div id="pageYobiSuzuSetting" class="TabPage">
     持ち込み呼び鈴<br>
     <br>
-	赤鈴:<input type="text" size="1" id=SettingYobiSuzuCount0>個<br>
-	青鈴:<input type="text" size="1" id=SettingYobiSuzuCount1>個<br>
-	黄鈴:<input type="text" size="1" id=SettingYobiSuzuCount2>個<br>
-	緑鈴:<input type="text" size="1" id=SettingYobiSuzuCount3>個<br>
-	紫鈴:<input type="text" size="1" id=SettingYobiSuzuCount4>個<br>
-	白鈴:<input type="text" size="1" id=SettingYobiSuzuCount5>個<br>
-	白金鈴:<input type="text" size="1" id=SettingYobiSuzuCount6>個<br>
-	白銀鈴:<input type="text" size="1" id=SettingYobiSuzuCount7>個<br>
-	白銅鈴:<input type="text" size="1" id=SettingYobiSuzuCount8>個<br>
-	黒鈴:<input type="text" size="1" id=SettingYobiSuzuCount9>個<br>
-	黒金鈴:<input type="text" size="1" id=SettingYobiSuzuCount10>個<br>
-	黒銀鈴:<input type="text" size="1" id=SettingYobiSuzuCount11>個<br>
-	黒銅鈴:<input type="text" size="1" id=SettingYobiSuzuCount12>個<br>
+
+	赤鈴
+    <select id="YobiSuzuSetting_RedSuzu">
+		<option value="0">持ち込む</option>
+		<option value="1">持ち込まない</option>
+	</select>
+
+<br>
+
+	青鈴:
+	<select id="YobiSuzuSetting_BlueSuzu">
+		<option value="0">持ち込む</option>
+		<option value="1">持ち込まない</option>
+	</select>
+
+<br>
+
+	黄鈴:
+	<select id="YobiSuzuSetting_YellowSuzu">
+		<option value="0">持ち込む</option>
+		<option value="1">持ち込まない</option>
+	</select>
+	
+<br>
+
+	緑鈴:
+	<select id="YobiSuzuSetting_GreenSuzu">
+		<option value="0">持ち込む</option>
+		<option value="1">持ち込まない</option>
+	</select>
+
+<br>
+
+	紫鈴:
+	<select id="YobiSuzuSetting_PurpleSuzu">
+		<option value="0">持ち込む</option>
+		<option value="1">持ち込まない</option>
+	</select>
+	
+<br>
+
+	白鈴:
+	<select id="YobiSuzuSetting_WhiteSuzu">
+		<option value="0">持ち込む</option>
+		<option value="1">持ち込まない</option>
+	</select>
+	
+<br>
+
+	白金鈴:
+	<select id="YobiSuzuSetting_WhiteGoldSuzu">
+		<option value="0">持ち込む</option>
+		<option value="1">持ち込まない</option>
+	</select>
+	
+<br>
+
+	白銀鈴:
+	<select id="YobiSuzuSetting_WhiteSilverSuzu">
+		<option value="0">持ち込む</option>
+		<option value="1">持ち込まない</option>
+	</select>
+
+<br>
+	
+	白銅鈴:
+	<select id="YobiSuzuSetting_WhiteCopperSuzu">
+		<option value="0">持ち込む</option>
+		<option value="1">持ち込まない</option>
+	</select>
+	
+<br>
+
+	黒鈴:
+	<select id="YobiSuzuSetting_BlackSuzu">
+		<option value="0">持ち込む</option>
+		<option value="1">持ち込まない</option>
+	</select>
+	
+<br>
+
+	黒金鈴:
+	<select id="YobiSuzuSetting_BlackGoldSuzu">
+		<option value="0">持ち込む</option>
+		<option value="1">持ち込まない</option>
+	</select>
+	
+<br>
+
+	黒銀鈴:
+	<select id="YobiSuzuSetting_BlackSilverSuzu">
+		<option value="0">持ち込む</option>
+		<option value="1">持ち込まない</option>
+	</select>
+	
+<br>
+
+	黒銅鈴:
+	<select id="YobiSuzuSetting_BlackCopperSuzu">
+		<option value="0">持ち込む</option>
+		<option value="1">持ち込まない</option>
+	</select>
 	
 	<br>
 	<button type="button" id="pageYobiSuzuSetting_TekiyouButton" onclick="SetHavingYobiSuzuCount()">

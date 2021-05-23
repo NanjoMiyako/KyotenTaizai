@@ -21,6 +21,21 @@ const KYOTEN_MIN_INTERVAL = 200;
 g_KyotenColorNames = ["赤","青","黄","緑","紫","白","白金","白銀","白銅","黒","黒金","黒銀","黒銅","虹",
 "時戻りの砂漠","再生の森","黄金の泉"]
 
+g_YobiSuzuSettingElemIdList = 
+["YobiSuzuSetting_RedSuzu",
+"YobiSuzuSetting_BlueSuzu",
+"YobiSuzuSetting_YellowSuzu",
+"YobiSuzuSetting_GreenSuzu",
+"YobiSuzuSetting_PurpleSuzu",
+"YobiSuzuSetting_WhiteSuzu",
+"YobiSuzuSetting_WhiteGoldSuzu",
+"YobiSuzuSetting_WhiteSilverSuzu",
+"YobiSuzuSetting_WhiteCopperSuzu",
+"YobiSuzuSetting_BlackSuzu",
+"YobiSuzuSetting_BlackGoldSuzu",
+"YobiSuzuSetting_BlackSilverSuzu",
+"YobiSuzuSetting_BlackCopperSuzu"]
+
 
 
 //GoogleAPIキー
@@ -56,7 +71,7 @@ class User {
     //相手がステータス低下を発生したときの防御数値
     WhiteSilverSts = 0
     //相手の起こすステータス低下発生に対する抵抗率
-    WhiteCoupperSts = 0
+    WhiteCopperSts = 0
     //相手のステータス低下発生率
     BlackSts = 0
     //相手のステータス低下発生時の低下数値
@@ -64,7 +79,7 @@ class User {
     //相手がステータス上昇を発生させたときの防御数値
     BlackSilverSts = 0
     //相手の起こすステータス上昇に対する抵抗率
-    BlackCoupperSts = 0
+    BlackCopperSts = 0
     
     RedStsExp = 0
     BlueStsExp = 0
@@ -74,11 +89,11 @@ class User {
     WhiteStsExp = 0
     WhiteGoldStsExp = 0
     WhiteSilverStsExp = 0
-    WhiteCoupperStsExp = 0
+    WhiteCopperStsExp = 0
     BlackStsExp = 0
     BlackGoldStsExp = 0
     BlackSilverStsExp = 0
-    BlackCoupperStsExp = 0
+    BlackCopperStsExp = 0
     
     KyotenNames = []
     KyotenTypes = []
@@ -141,7 +156,7 @@ function TestInitUser(User){
     //相手がステータス低下を発生したときの防御数値
     User.WhiteSilverSts = 80
     //相手の起こすステータス低下発生に対する抵抗率
-    User.WhiteCoupperSts = 90
+    User.WhiteCopperSts = 90
     //相手のステータス低下発生率
     User.BlackSts = 100
     //相手のステータス低下発生時の低下数値
@@ -149,7 +164,7 @@ function TestInitUser(User){
     //相手がステータス上昇を発生させたときの防御数値
     User.BlackSilverSts = 120
     //相手の起こすステータス上昇に対する抵抗率
-    User.BlackCoupperSts = 130
+    User.BlackCopperSts = 130
     
     User.RedStsExp = 140
     User.BlueStsExp = 150
@@ -159,11 +174,11 @@ function TestInitUser(User){
     User.WhiteStsExp = 190
     User.WhiteGoldStsExp = 200
     User.WhiteSilverStsExp = 210
-    User.WhiteCoupperStsExp = 220
+    User.WhiteCopperStsExp = 220
     User.BlackStsExp = 230
     User.BlackGoldStsExp = 240
     User.BlackSilverStsExp = 250
-    User.BlackCoupperStsExp = 260
+    User.BlackCopperStsExp = 260
     
     User.KyotenNames = ["k1", "k2"]
     User.KyotenTypes = [KYOTEN_RED, KYOTEN_GREEN]
@@ -171,10 +186,10 @@ function TestInitUser(User){
     User.KyotenLngs = [138.02233232405075, 137.99314988933753]
     User.KyotenCount = 2;
     
-    User.HavingYobiSuzuColor = [2,1,2,0,0,0,0,0,0,0,0,0,0]
-    User.HavingYobiSuzuPower = [10,20,30,0,0,0,0,0,0,0,0,0,0]
-    User.HavingOiSuzuColor = [0,0,0,0,0,0,0,0,0,0,0,0,0]
-    User.HavineOiSuzuPower = [0,0,0,0,0,0,0,0,0,0,0,0,0]
+    User.HavingYobiSuzuColor = [1, 0,1, 0,1,0,0,0,0,0,0,0,0]
+    User.HavingYobiSuzuPower = [10,0,30,0,90,0,0,0,0,0,0,0,0]
+    User.HavingOiSuzuColor = [0,0,0,1, 0,1, 0,1,0,0,0,0,0]
+    User.HavineOiSuzuPower = [0,0,0,20,0,10,0,90,0,0,0,0,0]
     
     User.HavingCoin = 270
     
@@ -399,9 +414,19 @@ function ShowYobisuzuSettingTab(){
 
 	let elemId;
 	for(i=0; i<KYOTEN_NIJI; i++){
-		elemId = "SettingYobiSuzuCount"+i
-		textbox = document.getElementById(elemId);
-		textbox.value = MyUser.HavingYobiSuzuColor[i];
+		flg = Number(MyUser.HavingYobiSuzuColor[i]);
+		elemId = g_YobiSuzuSettingElemIdList[i]
+		elem = document.getElementById(elemId)
+		
+		if(elem == null){
+			alert(elemId)
+			alert(i)
+		}
+		if(flg == 1){
+			elem.selectedIndex = 0
+		}else{
+			elem.selectedIndex = 1
+		}
 	}
 }
 function ShowStsListTab(){
@@ -430,8 +455,8 @@ function ShowStsListTab(){
 	span1 = document.getElementById("StsListWhiteSilverSts")
 	span1.innerHTML = MyUser.WhiteSilverSts
 
-	span1 = document.getElementById("StsListWhiteCoupperSts")
-	span1.innerHTML = MyUser.WhiteCoupperSts
+	span1 = document.getElementById("StsListWhiteCopperSts")
+	span1.innerHTML = MyUser.WhiteCopperSts
 
 	span1 = document.getElementById("StsListBlackSts")
 	span1.innerHTML = MyUser.BlackSts
@@ -442,8 +467,8 @@ function ShowStsListTab(){
 	span1 = document.getElementById("StsListBlackSilverSts")
 	span1.innerHTML = MyUser.BlackSilverSts
 
-	span1 = document.getElementById("StsListBlackCoupperSts")
-	span1.innerHTML = MyUser.BlackCoupperSts
+	span1 = document.getElementById("StsListBlackCopperSts")
+	span1.innerHTML = MyUser.BlackCopperSts
 	
 	span1 = document.getElementById("StsListRedStsExp")
 	span1.innerHTML = MyUser.RedStsExp
@@ -469,8 +494,8 @@ function ShowStsListTab(){
 	span1 = document.getElementById("StsListWhiteSilverStsExp")
 	span1.innerHTML = MyUser.WhiteSilverStsExp
 
-	span1 = document.getElementById("StsListWhiteCoupperStsExp")
-	span1.innerHTML = MyUser.WhiteCoupperStsExp
+	span1 = document.getElementById("StsListWhiteCopperStsExp")
+	span1.innerHTML = MyUser.WhiteCopperStsExp
 
 	span1 = document.getElementById("StsListBlackStsExp")
 	span1.innerHTML = MyUser.BlackStsExp
@@ -481,8 +506,8 @@ function ShowStsListTab(){
 	span1 = document.getElementById("StsListBlackSilverStsExp")
 	span1.innerHTML = MyUser.BlackSilverStsExp
 	
-	span1 = document.getElementById("StsListBlackCoupperStsExp")
-	span1.innerHTML = MyUser.BlackCoupperStsExp
+	span1 = document.getElementById("StsListBlackCopperStsExp")
+	span1.innerHTML = MyUser.BlackCopperStsExp
 
 	span1 = document.getElementById("StsListCoin")
 	span1.innerHTML = MyUser.HavingCoin
@@ -683,6 +708,36 @@ function changeTab(link){
   
 }
 function SetHavingYobiSuzuCount(){
+
+	let totalCount = 0;
+	
+	for(var i=0; i<KYOTEN_NIJI; i++){
+		elem = document.getElementById(g_YobiSuzuSettingElemIdList[i])
+		if(elem.selectedIndex == 0){
+			totalCount++;
+		}
+	}
+	
+	if(totalCount > 5){
+	
+		alert("持ち込む鈴の種類は5種類までです")
+		
+	}else{
+	
+		for(var i=0; i<KYOTEN_NIJI; i++){
+			elem = document.getElementById(g_YobiSuzuSettingElemIdList[i])
+			if(elem.selectedIndex == 0){
+				MyUser.HavingYobiSuzuColor[i] = 1
+			}else{
+				MyUser.HavingYobiSuzuColor[i] = 0
+			}
+		}
+		
+		alert("持ち込む鈴の種類を変更しました")
+		ShowYobisuzuSettingTab()
+		
+		
+	}
 }
 function AddKyoten_MyLatLng(){
 	let selectbox1 = document.getElementById("AddKyotenTab_KyotenType");
@@ -841,10 +896,10 @@ function UpgradeStatus(){
 	MyUser.WhiteSilverSts += UpPt
 	MyUser.WhiteSilverStsExp -= ConsumeExp
 
-	UpPt = parseInt(MyUser.WhiteCoupperStsExp / 10)
+	UpPt = parseInt(MyUser.WhiteCopperStsExp / 10)
 	ConsumeExp = 10 * UpPt
-	MyUser.WhiteCoupperSts += UpPt
-	MyUser.WhiteCoupperStsExp -= ConsumeExp
+	MyUser.WhiteCopperSts += UpPt
+	MyUser.WhiteCopperStsExp -= ConsumeExp
 
 	UpPt = parseInt(MyUser.BlackStsExp / 10)
 	ConsumeExp = 10 * UpPt
@@ -861,10 +916,10 @@ function UpgradeStatus(){
 	MyUser.BlackSilverSts += UpPt
 	MyUser.BlackSilverStsExp -= ConsumeExp
 
-	UpPt = parseInt(MyUser.BlackCoupperStsExp / 10)
+	UpPt = parseInt(MyUser.BlackCopperStsExp / 10)
 	ConsumeExp = 10 * UpPt
-	MyUser.BlackCoupperSts += UpPt
-	MyUser.BlackCoupperStsExp -= ConsumeExp
+	MyUser.BlackCopperSts += UpPt
+	MyUser.BlackCopperStsExp -= ConsumeExp
 
     alert("ステータスを強化しました")
 }

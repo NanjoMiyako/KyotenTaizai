@@ -6,8 +6,8 @@ PurpleSts
 WhiteSts
 WhiteGoldSts
 WhiteSilverSts
-WhiteCoupperSts
+WhiteCopperSts
 BlackSts
 BlackGoldSts
 BlackSilverSts
-BlackCoupperSts
+BlackCopperSts
