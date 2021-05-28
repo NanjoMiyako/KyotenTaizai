@@ -17,6 +17,7 @@ const KYOTEN_SAISEI = 15;
 const KYOTEN_OUGON = 16;
 
 const KYOTEN_MIN_INTERVAL = 200;
+const KYOKA_COIN_UNIT = 10;
 
 g_KyotenColorNames = ["赤","青","黄","緑","紫","白","白金","白銀","白銅","黒","黒金","黒銀","黒銅","虹",
 "時戻りの砂漠","再生の森","黄金の泉"]
@@ -35,6 +36,38 @@ g_YobiSuzuSettingElemIdList =
 "YobiSuzuSetting_BlackGoldSuzu",
 "YobiSuzuSetting_BlackSilverSuzu",
 "YobiSuzuSetting_BlackCopperSuzu"]
+
+g_YobiSuzuPowerStsElemIdList =
+["RedYobiSuzuColorPowerSts",
+"BlueYobiSuzuColorPowerSts",
+"YellowYobiSuzuColorPowerSts",
+"GreenYobiSuzuColorPowerSts",
+"PurpleYobiSuzuColorPowerSts",
+"WhiteYobiSuzuColorPowerSts",
+"WhiteGoldYobiSuzuColorPowerSts",
+"WhiteSilverYobiSuzuColorPowerSts",
+"WhiteCopperYobiSuzuColorPowerSts",
+"BlackYobiSuzuColorPowerSts",
+"BlackGoldYobiSuzuColorPowerSts",
+"BlackSilverYobiSuzuColorPowerSts",
+"BlackCopperYobiSuzuColorPowerSts"
+]
+
+g_OiSuzuPowerStsElemIdList =
+["RedOiSuzuColorPowerSts",
+"BlueOiSuzuColorPowerSts",
+"YellowOiSuzuColorPowerSts",
+"GreenOiSuzuColorPowerSts",
+"PurpleOiSuzuColorPowerSts",
+"WhiteOiSuzuColorPowerSts",
+"WhiteGoldOiSuzuColorPowerSts",
+"WhiteSilverOiSuzuColorPowerSts",
+"WhiteCopperOiSuzuColorPowerSts",
+"BlackOiSuzuColorPowerSts",
+"BlackGoldOiSuzuColorPowerSts",
+"BlackSilverOiSuzuColorPowerSts",
+"BlackCopperOiSuzuColorPowerSts"
+]
 
 
 
@@ -104,7 +137,7 @@ class User {
     HavingYobiSuzuColor = [0,0,0,0,0,0,0,0,0,0,0,0,0]
     HavingYobiSuzuPower = [0,0,0,0,0,0,0,0,0,0,0,0,0]
     HavingOiSuzuColor = [0,0,0,0,0,0,0,0,0,0,0,0,0]
-    HavineOiSuzuPower = [0,0,0,0,0,0,0,0,0,0,0,0,0]
+    HavingOiSuzuPower = [0,0,0,0,0,0,0,0,0,0,0,0,0]
     
     HavingCoin = 0
     
@@ -189,7 +222,7 @@ function TestInitUser(User){
     User.HavingYobiSuzuColor = [1, 0,1, 0,1,0,0,0,0,0,0,0,0]
     User.HavingYobiSuzuPower = [10,0,30,0,90,0,0,0,0,0,0,0,0]
     User.HavingOiSuzuColor = [0,0,0,1, 0,1, 0,1,0,0,0,0,0]
-    User.HavineOiSuzuPower = [0,0,0,20,0,10,0,90,0,0,0,0,0]
+    User.HavingOiSuzuPower = [0,0,0,20,0,10,0,90,0,0,0,0,0]
     
     User.HavingCoin = 270
     
@@ -407,6 +440,13 @@ function tab_init(link, index){
 			
 			return false;
 		};
+  }else if(id == 'pageYobiSuzuKyoka'){
+	  link.onclick = function(){
+		  	changeTab(link);
+			
+			
+			return false;
+		};
   }
 }
 })();
@@ -513,7 +553,86 @@ function ShowStsListTab(){
 	span1.innerHTML = MyUser.HavingCoin
 
 	span1 = document.getElementById("StsListTimeSand")
-	span1.innerHTML = MyUser.HavingTimeSand	
+	span1.innerHTML = MyUser.HavingTimeSand
+	
+	span1 = document.getElementById("RedYobiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingYobiSuzuPower[0];
+
+	span1 = document.getElementById("BlueYobiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingYobiSuzuPower[1];
+
+	span1 = document.getElementById("YellowYobiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingYobiSuzuPower[2];
+
+	span1 = document.getElementById("GreenYobiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingYobiSuzuPower[3];
+
+	span1 = document.getElementById("PurpleYobiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingYobiSuzuPower[4];
+
+	span1 = document.getElementById("WhiteYobiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingYobiSuzuPower[5];
+
+	span1 = document.getElementById("WhiteGoldYobiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingYobiSuzuPower[6];
+
+	span1 = document.getElementById("WhiteSilverYobiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingYobiSuzuPower[7];
+
+	span1 = document.getElementById("WhiteCopperYobiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingYobiSuzuPower[8];
+
+	span1 = document.getElementById("BlackYobiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingYobiSuzuPower[9];
+
+	span1 = document.getElementById("BlackGoldYobiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingYobiSuzuPower[10];
+
+	span1 = document.getElementById("BlackSilverYobiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingYobiSuzuPower[11];
+
+	span1 = document.getElementById("BlackCopperYobiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingYobiSuzuPower[12];
+	
+
+	span1 = document.getElementById("RedOiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingOiSuzuPower[0];
+
+	span1 = document.getElementById("BlueOiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingOiSuzuPower[1];
+
+	span1 = document.getElementById("YellowOiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingOiSuzuPower[2];
+
+	span1 = document.getElementById("GreenOiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingOiSuzuPower[3];
+
+	span1 = document.getElementById("PurpleOiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingOiSuzuPower[4];
+
+	span1 = document.getElementById("WhiteOiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingOiSuzuPower[5];
+
+	span1 = document.getElementById("WhiteGoldOiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingOiSuzuPower[6];
+
+	span1 = document.getElementById("WhiteSilverOiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingOiSuzuPower[7];
+
+	span1 = document.getElementById("WhiteCopperOiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingOiSuzuPower[8];
+
+	span1 = document.getElementById("BlackOiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingOiSuzuPower[9];
+
+	span1 = document.getElementById("BlackGoldOiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingOiSuzuPower[10];
+
+	span1 = document.getElementById("BlackSilverOiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingOiSuzuPower[11];
+
+	span1 = document.getElementById("BlackCopperOiSuzuColorPowerSts");
+	span1.innerHTML = MyUser.HavingOiSuzuPower[12];
 	
 }
 
@@ -922,6 +1041,29 @@ function UpgradeStatus(){
 	MyUser.BlackCopperStsExp -= ConsumeExp
 
     alert("ステータスを強化しました")
+}
+
+function YobiSuzuKyoka(){
+	elem1 = document.getElementById("YobiSuzuKyokaColor");
+	elem2 = document.getElementById("YobiSuzuKyokaConsumeCoin")
+	colorId = Number(elem1.options[elem1.selectedIndex].value);
+	coin1 = Number(elem2.options[elem2.selectedIndex].value);
+	
+	if(coin1 > MyUser.HavingCoin){
+		alert("強化用コインが足りません")
+		return
+	}else{
+		upPt = coin1 / KYOKA_COIN_UNIT;
+		MyUser.HavingCoin -= coin1;
+		MyUser.HavingYobiSuzuPower[colorId] += upPt
+		
+		str1 = g_KyotenColorNames[colorId]
+		str1 += "鈴を"
+		str1 += upPt
+		str1 += "だけ強化しました"
+		alert(str1);
+		
+	}
 }
 
 /**

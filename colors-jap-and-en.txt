@@ -1,0 +1,14 @@
+0-Ô-Red
+1-Â-Blue
+2-‰©-Yellow
+3-—Î-Green
+4-‡-Purple
+5-”’-White
+6-”’‹à-WhiteGold
+7-”’‹â-WhiteSilver
+8-”’“º-WhiteCopper
+9-•-Black
+10-•‹à-BlackGold
+11-•‹â-BlackSilver
+12-•“º-BlackCopper
+

@@ -35,6 +35,8 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
     <br>
     <li><a class="Tablink" href="#pageYobiSuzuSetting">呼び鈴設定</a></li>
     <br>
+    <li><a class="Tablink" href="#pageYobiSuzuKyoka">呼び鈴強化</a></li>
+    <br>    
         
   </ul>
 <hr>
@@ -88,6 +90,39 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 	コイン:<span id="StsListCoin"></span><br>
 	時の砂:<span id="StsListTimeSand"></span><br>
 	
+	
+	<br>
+	<br>
+	赤呼鈴の耐久力:<span id="RedYobiSuzuColorPowerSts"></span><br>
+	青呼鈴の耐久力:<span id="BlueYobiSuzuColorPowerSts"></span><br>
+	黄呼鈴の耐久力:<span id="YellowYobiSuzuColorPowerSts"></span><br>
+	緑呼鈴の耐久力:<span id="GreenYobiSuzuColorPowerSts"></span><br>
+	紫呼鈴の耐久力:<span id="PurpleYobiSuzuColorPowerSts"></span><br>
+	白呼鈴の耐久力:<span id="WhiteYobiSuzuColorPowerSts"></span><br>
+	白金呼鈴の耐久力:<span id="WhiteGoldYobiSuzuColorPowerSts"></span><br>
+	白銀呼鈴の耐久力:<span id="WhiteSilverYobiSuzuColorPowerSts"></span><br>
+	白銅呼鈴の耐久力:<span id="WhiteCopperYobiSuzuColorPowerSts"></span><br>
+	黒呼鈴の耐久力:<span id="BlackYobiSuzuColorPowerSts"></span><br>
+	黒金呼鈴の耐久力:<span id="BlackGoldYobiSuzuColorPowerSts"></span><br>
+	黒銀呼鈴の耐久力:<span id="BlackSilverYobiSuzuColorPowerSts"></span><br>
+	黒銅呼鈴の耐久力:<span id="BlackCopperYobiSuzuColorPowerSts"></span><br>
+		
+		
+	<br>
+	<br>
+	赤追鈴の耐久力:<span id="RedOiSuzuColorPowerSts"></span><br>
+	青追鈴の耐久力:<span id="BlueOiSuzuColorPowerSts"></span><br>
+	黄追鈴の耐久力:<span id="YellowOiSuzuColorPowerSts"></span><br>
+	緑追鈴の耐久力:<span id="GreenOiSuzuColorPowerSts"></span><br>
+	紫追鈴の耐久力:<span id="PurpleOiSuzuColorPowerSts"></span><br>
+	白追鈴の耐久力:<span id="WhiteOiSuzuColorPowerSts"></span><br>
+	白金追鈴の耐久力:<span id="WhiteGoldOiSuzuColorPowerSts"></span><br>
+	白銀追鈴の耐久力:<span id="WhiteSilverOiSuzuColorPowerSts"></span><br>
+	白銅追鈴の耐久力:<span id="WhiteCopperOiSuzuColorPowerSts"></span><br>
+	黒追鈴の耐久力:<span id="BlackOiSuzuColorPowerSts"></span><br>
+	黒金追鈴の耐久力:<span id="BlackGoldOiSuzuColorPowerSts"></span><br>
+	黒銀追鈴の耐久力:<span id="BlackSilverOiSuzuColorPowerSts"></span><br>
+	黒銅追鈴の耐久力:<span id="BlackCopperOiSuzuColorPowerSts"></span><br>
 	<hr>
 	<br>
 	<br>    
@@ -144,120 +179,167 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
     
     <!-- 呼び鈴設定 -->
     <div id="pageYobiSuzuSetting" class="TabPage">
-    持ち込み呼び鈴<br>
+	    持ち込み呼び鈴<br>
+	    <br>
+
+		赤鈴
+	    <select id="YobiSuzuSetting_RedSuzu">
+			<option value="0">持ち込む</option>
+			<option value="1">持ち込まない</option>
+		</select>
+
+	<br>
+
+		青鈴:
+		<select id="YobiSuzuSetting_BlueSuzu">
+			<option value="0">持ち込む</option>
+			<option value="1">持ち込まない</option>
+		</select>
+
+	<br>
+
+		黄鈴:
+		<select id="YobiSuzuSetting_YellowSuzu">
+			<option value="0">持ち込む</option>
+			<option value="1">持ち込まない</option>
+		</select>
+		
+	<br>
+
+		緑鈴:
+		<select id="YobiSuzuSetting_GreenSuzu">
+			<option value="0">持ち込む</option>
+			<option value="1">持ち込まない</option>
+		</select>
+
+	<br>
+
+		紫鈴:
+		<select id="YobiSuzuSetting_PurpleSuzu">
+			<option value="0">持ち込む</option>
+			<option value="1">持ち込まない</option>
+		</select>
+		
+	<br>
+
+		白鈴:
+		<select id="YobiSuzuSetting_WhiteSuzu">
+			<option value="0">持ち込む</option>
+			<option value="1">持ち込まない</option>
+		</select>
+		
+	<br>
+
+		白金鈴:
+		<select id="YobiSuzuSetting_WhiteGoldSuzu">
+			<option value="0">持ち込む</option>
+			<option value="1">持ち込まない</option>
+		</select>
+		
+	<br>
+
+		白銀鈴:
+		<select id="YobiSuzuSetting_WhiteSilverSuzu">
+			<option value="0">持ち込む</option>
+			<option value="1">持ち込まない</option>
+		</select>
+
+	<br>
+		
+		白銅鈴:
+		<select id="YobiSuzuSetting_WhiteCopperSuzu">
+			<option value="0">持ち込む</option>
+			<option value="1">持ち込まない</option>
+		</select>
+		
+	<br>
+
+		黒鈴:
+		<select id="YobiSuzuSetting_BlackSuzu">
+			<option value="0">持ち込む</option>
+			<option value="1">持ち込まない</option>
+		</select>
+		
+	<br>
+
+		黒金鈴:
+		<select id="YobiSuzuSetting_BlackGoldSuzu">
+			<option value="0">持ち込む</option>
+			<option value="1">持ち込まない</option>
+		</select>
+		
+	<br>
+
+		黒銀鈴:
+		<select id="YobiSuzuSetting_BlackSilverSuzu">
+			<option value="0">持ち込む</option>
+			<option value="1">持ち込まない</option>
+		</select>
+		
+	<br>
+
+		黒銅鈴:
+		<select id="YobiSuzuSetting_BlackCopperSuzu">
+			<option value="0">持ち込む</option>
+			<option value="1">持ち込まない</option>
+		</select>
+		
+		<br>
+		<button type="button" id="pageYobiSuzuSetting_TekiyouButton" onclick="SetHavingYobiSuzuCount()">
+			適用
+		</button>
+		
+		<br>
+		<br>
+
+    </div>
+    
+    <!-- 呼鈴強化タブ -->
+    <div id="pageYobiSuzuKyoka" class="TabPage">
+    呼鈴強化<br>
+    強化する呼び鈴
+    <select id="YobiSuzuKyokaColor">
+		<option value="0">赤</option>
+		<option value="1">青</option>
+		<option value="2">黄</option>
+		<option value="3">緑</option>
+		<option value="4">紫</option>
+		<option value="5">白</option>
+		<option value="6">白金</option>
+		<option value="7">白銀</option>
+		<option value="8">白銅</option>
+		<option value="9">黒</option>
+		<option value="10">黒金</option>
+		<option value="11">黒銀</option>
+		<option value="12">黒銅</option>
+    </select>
     <br>
-
-	赤鈴
-    <select id="YobiSuzuSetting_RedSuzu">
-		<option value="0">持ち込む</option>
-		<option value="1">持ち込まない</option>
-	</select>
-
-<br>
-
-	青鈴:
-	<select id="YobiSuzuSetting_BlueSuzu">
-		<option value="0">持ち込む</option>
-		<option value="1">持ち込まない</option>
-	</select>
-
-<br>
-
-	黄鈴:
-	<select id="YobiSuzuSetting_YellowSuzu">
-		<option value="0">持ち込む</option>
-		<option value="1">持ち込まない</option>
-	</select>
-	
-<br>
-
-	緑鈴:
-	<select id="YobiSuzuSetting_GreenSuzu">
-		<option value="0">持ち込む</option>
-		<option value="1">持ち込まない</option>
-	</select>
-
-<br>
-
-	紫鈴:
-	<select id="YobiSuzuSetting_PurpleSuzu">
-		<option value="0">持ち込む</option>
-		<option value="1">持ち込まない</option>
-	</select>
-	
-<br>
-
-	白鈴:
-	<select id="YobiSuzuSetting_WhiteSuzu">
-		<option value="0">持ち込む</option>
-		<option value="1">持ち込まない</option>
-	</select>
-	
-<br>
-
-	白金鈴:
-	<select id="YobiSuzuSetting_WhiteGoldSuzu">
-		<option value="0">持ち込む</option>
-		<option value="1">持ち込まない</option>
-	</select>
-	
-<br>
-
-	白銀鈴:
-	<select id="YobiSuzuSetting_WhiteSilverSuzu">
-		<option value="0">持ち込む</option>
-		<option value="1">持ち込まない</option>
-	</select>
-
-<br>
-	
-	白銅鈴:
-	<select id="YobiSuzuSetting_WhiteCopperSuzu">
-		<option value="0">持ち込む</option>
-		<option value="1">持ち込まない</option>
-	</select>
-	
-<br>
-
-	黒鈴:
-	<select id="YobiSuzuSetting_BlackSuzu">
-		<option value="0">持ち込む</option>
-		<option value="1">持ち込まない</option>
-	</select>
-	
-<br>
-
-	黒金鈴:
-	<select id="YobiSuzuSetting_BlackGoldSuzu">
-		<option value="0">持ち込む</option>
-		<option value="1">持ち込まない</option>
-	</select>
-	
-<br>
-
-	黒銀鈴:
-	<select id="YobiSuzuSetting_BlackSilverSuzu">
-		<option value="0">持ち込む</option>
-		<option value="1">持ち込まない</option>
-	</select>
-	
-<br>
-
-	黒銅鈴:
-	<select id="YobiSuzuSetting_BlackCopperSuzu">
-		<option value="0">持ち込む</option>
-		<option value="1">持ち込まない</option>
+    強化に使用するCoin
+    <select id="YobiSuzuKyokaConsumeCoin">
+			<option value="10">10</option>
+			<option value="20">20</option>
+			<option value="30">30</option>
+			<option value="40">40</option>
+			<option value="50">50</option>
+			<option value="100">100</option>
+			<option value="200">200</option>
+			<option value="300">300</option>
+			<option value="400">400</option>
+			<option value="500">500</option>
+			<option value="1000">1000</option>
+			<option value="2000">2000</option>
+			<option value="3000">3000</option>
+			<option value="4000">4000</option>
+			<option value="5000">5000</option>			
 	</select>
 	
 	<br>
-	<button type="button" id="pageYobiSuzuSetting_TekiyouButton" onclick="SetHavingYobiSuzuCount()">
-		適用
-	</button>
-	
-	<br>
-	<br>
+		<button type="button" id="pageYobiSuzuKyoka_KyokaButton" onclick="YobiSuzuKyoka()">
+			強化
+		</button>
 
-    </div>    
+    </div>
+        
   </div>
 </div>
 
