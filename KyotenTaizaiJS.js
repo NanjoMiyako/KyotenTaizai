@@ -16,8 +16,12 @@ const KYOTEN_TOKIMODORI = 14;
 const KYOTEN_SAISEI = 15;
 const KYOTEN_OUGON = 16;
 
+//拠点同士の最小間隔(メートル)
 const KYOTEN_MIN_INTERVAL = 200;
+//何コインで1単位の鈴アイテムの強化ができるか
 const KYOKA_COIN_UNIT = 10;
+//一ステップにかかる秒数
+const ONE_STEP_SECOND = 600;
 
 g_KyotenColorNames = ["赤","青","黄","緑","紫","白","白金","白銀","白銅","黒","黒金","黒銀","黒銅","虹",
 "時戻りの砂漠","再生の森","黄金の泉"]
@@ -69,6 +73,11 @@ g_OiSuzuPowerStsElemIdList =
 "BlackCopperOiSuzuColorPowerSts"
 ]
 
+//現在の状況（なし、経験値もしくはコインゲット、勝負、時戻しの砂漠、再生の森）
+const MODE_NOTHING = 0
+const MODE_GET_EXP_OR_COIN_OR_TIMESAND = 1
+const MODE_FIGHT = 2
+
 
 
 //GoogleAPIキー
@@ -81,6 +90,7 @@ var g_KyotenSakujoFlg = false;
 var g_CurrentMarker = null;
 var g_CurrentPositionMarker = null;
 var g_InfoWindowList = [];
+var g_CurrentMode = MODE_NOTHING;
 
 //グーグルマップのMarkerオブジェクトのマップ
 var MarkerMap = new Array();
@@ -128,6 +138,7 @@ class User {
     BlackSilverStsExp = 0
     BlackCopperStsExp = 0
     
+    //拠点ID
     KyotenNames = []
     KyotenTypes = []
     KyotenLats = []
@@ -447,9 +458,55 @@ function tab_init(link, index){
 			
 			return false;
 		};
+  }else if(id == 'pageTokimodoshiSetting'){
+	  link.onclick = function(){
+		  	changeTab(link);
+			
+			ShowTokimodoshiSettingTab();
+			
+			return false;
+		};
+  }else if(id == 'pageSaiseiSetting'){
+	  link.onclick = function(){
+		  	changeTab(link);
+			
+			ShowSaiseiSettingTab();
+			
+			return false;
+		};
   }
 }
 })();
+
+function ShowTokimodoshiSettingTab(){
+	span1 = document.getElementById("CurrenDownStsInTokimodoshiDessert");
+	span1.innerHTML = g_KyotenColorNames[MyUser.TimeSandDownStsType]
+	
+}
+
+function ChangeDownStsColorInTokimodoshiDessert(){
+	selectbox1 = document.getElementById("DownStsInTokimodoshiDessert")
+	colorId = Number(selectbox1.options[selectbox1.selectedIndex].value)
+	MyUser.TimeSandDownStsType = colorId
+	
+	alert("設定を更新しました");
+	ShowTokimodoshiSettingTab();
+}
+
+function ShowSaiseiSettingTab(){
+	span1 = document.getElementById("CurrenUpStsInSaiseiForest");
+	span1.innerHTML = g_KyotenColorNames[MyUser.TimeSandUpStsType]
+	
+}
+
+function ChangeUpStsColorInSaiseiForest(){
+	selectbox1 = document.getElementById("UpStsInSaiseiForest")
+	colorId = Number(selectbox1.options[selectbox1.selectedIndex].value)
+	MyUser.TimeSandUpStsType = colorId
+	
+	alert("設定を更新しました");
+	ShowSaiseiSettingTab();
+}
 function ShowYobisuzuSettingTab(){
 
 	let elemId;

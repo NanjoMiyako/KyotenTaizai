@@ -36,7 +36,11 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
     <li><a class="Tablink" href="#pageYobiSuzuSetting">呼び鈴設定</a></li>
     <br>
     <li><a class="Tablink" href="#pageYobiSuzuKyoka">呼び鈴強化</a></li>
-    <br>    
+    <br>
+    <li><a class="Tablink" href="#pageTokimodoshiSetting">時戻しの砂漠設定</a></li>
+    <br>
+    <li><a class="Tablink" href="#pageSaiseiSetting">再生の森設定</a></li>
+    <br>      
         
   </ul>
 <hr>
@@ -338,6 +342,64 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 			強化
 		</button>
 
+    </div>
+    
+    <!-- 時戻しの砂漠設定タブ -->
+    <div id="pageTokimodoshiSetting" class="TabPage">
+    時戻しの砂漠設定<br>
+    現在選択中の低下ステータス:
+    <span id="CurrenDownStsInTokimodoshiDessert"></span>
+    <br>
+	低下させるステータス
+	<select id="DownStsInTokimodoshiDessert">
+		<option value="0">赤</option>
+		<option value="1">青</option>
+		<option value="2">黄</option>
+		<option value="3">緑</option>
+		<option value="4">紫</option>
+		<option value="5">白</option>
+		<option value="6">白金</option>
+		<option value="7">白銀</option>
+		<option value="8">白銅</option>
+		<option value="9">黒</option>
+		<option value="10">黒金</option>
+		<option value="11">黒銀</option>
+		<option value="12">黒銅</option>
+    </select>
+    <br>
+	<button type="button" id="pageTokimodoshiSetting_TekiyouButton" onclick="ChangeDownStsColorInTokimodoshiDessert()">
+		適用
+	</button>
+	
+    </div>
+    
+    <!-- 再生の森設定タブ -->
+    <div id="pageSaiseiSetting" class="TabPage">
+    再生の森設定<br>
+    現在選択中の取得経験値:
+    <span id="CurrenUpStsInSaiseiForest"></span>
+    <br>
+	取得する経験値
+	<select id="UpStsInSaiseiForest">
+		<option value="0">赤</option>
+		<option value="1">青</option>
+		<option value="2">黄</option>
+		<option value="3">緑</option>
+		<option value="4">紫</option>
+		<option value="5">白</option>
+		<option value="6">白金</option>
+		<option value="7">白銀</option>
+		<option value="8">白銅</option>
+		<option value="9">黒</option>
+		<option value="10">黒金</option>
+		<option value="11">黒銀</option>
+		<option value="12">黒銅</option>
+    </select>
+    <br>
+	<button type="button" id="pageSaiseiSetting_TekiyouButton" onclick="ChangeUpStsColorInSaiseiForest()">
+		適用
+	</button>
+	
     </div>
         
   </div>
