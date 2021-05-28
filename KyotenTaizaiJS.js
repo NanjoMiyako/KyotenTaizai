@@ -155,6 +155,8 @@ class User {
     HavingTimeSand = 0    
     TimeSandDownStsType = 0
     TimeSandUpStsType = 0
+    
+    FightEnemyLevel = 1
 
 	name1;
 	lat1;
@@ -240,6 +242,8 @@ function TestInitUser(User){
     User.HavingTimeSand = 280    
     User.TimeSandDownStsType = KYOTEN_BLACKGOLD
     User.TimeSandUpStsType = KYOTEN_BLUE
+    
+    User.FightEnemyLevel = 2;
 
 	User.name1 = "DebugUser";
 	User.lat1 = 34.66986407528885;
