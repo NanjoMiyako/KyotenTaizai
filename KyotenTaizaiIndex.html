@@ -40,7 +40,9 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
     <li><a class="Tablink" href="#pageTokimodoshiSetting">時戻しの砂漠設定</a></li>
     <br>
     <li><a class="Tablink" href="#pageSaiseiSetting">再生の森設定</a></li>
-    <br>      
+    <br>
+    <li><a class="Tablink" href="#pageAdvanceOneStep">ステップ実行</a></li>
+    <br>    
         
   </ul>
 <hr>
@@ -400,6 +402,40 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 		適用
 	</button>
 	
+    </div>
+    
+    <!-- ステップ実行タブ -->
+    <div id="pageAdvanceOneStep" class="TabPage">
+    ステップ実行<br>
+	現在のモード:<span id="pageAdvanceOneStep_CurrentMode"></span>
+	<br>
+	モード変更:
+	<select id="CurrentStepMode">
+		<option value="0">何もしない</option>
+		<option value="1">拠点滞在</option>
+		<option value="2">勝負</option>
+    </select>
+    <br>
+	<button type="button" id="pageAdvanceOneStep_ModeTekiyouButton" onclick="ChangeModeInAdvanceOneStepTab()">
+		モード適用
+	</button>
+	<br>
+	ステップ実行モード:<span id="pageAdvanceOneStep_StepExecuteFlgSpan"></span>
+	<br>
+	<button type="button" id="pageAdvanceOneStep_StepExecuteButton" onclick="StartStepExecuteInAdvanceOneStepTab()">
+		ステップ実行開始
+	</button>
+	<button type="button" id="pageAdvanceOneStep_StepExecuteButton" onclick="EndStepExecuteInAdvanceOneStepTab()">
+		ステップ実行終了
+	</button>
+	<br>
+	ログ
+	<hr>
+	<span id="pageAdvanceOneStep_LogSpan"></span>
+	<hr>
+	<button type="button" id="pageAdvanceOneStep_ClearLogButton" onclick="ClearLogInAdvanceOneStepTab()">
+		ログクリア
+	</button>
     </div>
         
   </div>

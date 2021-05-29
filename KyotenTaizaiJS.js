@@ -21,7 +21,7 @@ const KYOTEN_MIN_INTERVAL = 200;
 //何コインで1単位の鈴アイテムの強化ができるか
 const KYOKA_COIN_UNIT = 10;
 //一ステップにかかる秒数
-const ONE_STEP_SECOND = 600;
+const ONE_STEP_SECOND = 6;
 
 g_KyotenColorNames = ["赤","青","黄","緑","紫","白","白金","白銀","白銅","黒","黒金","黒銀","黒銅","虹",
 "時戻りの砂漠","再生の森","黄金の泉"]
@@ -73,11 +73,13 @@ g_OiSuzuPowerStsElemIdList =
 "BlackCopperOiSuzuColorPowerSts"
 ]
 
-//現在の状況（なし、経験値もしくはコインゲット、勝負、時戻しの砂漠、再生の森）
+//現在の状況（なし、拠点滞在、勝負）
 const MODE_NOTHING = 0
-const MODE_GET_EXP_OR_COIN_OR_TIMESAND = 1
+const MODE_KYOTEN_TAIZAI = 1
 const MODE_FIGHT = 2
 
+g_ModeJPStr = ["何もしない","拠点滞在","勝負"]
+g_StepExecuteFlg = false;
 
 
 //GoogleAPIキー
@@ -90,7 +92,7 @@ var g_KyotenSakujoFlg = false;
 var g_CurrentMarker = null;
 var g_CurrentPositionMarker = null;
 var g_InfoWindowList = [];
-var g_CurrentMode = MODE_NOTHING;
+var g_AdvanceOneStepLog = "";
 
 //グーグルマップのMarkerオブジェクトのマップ
 var MarkerMap = new Array();
@@ -157,12 +159,19 @@ class User {
     TimeSandUpStsType = 0
     
     FightEnemyLevel = 1
-
+    WinEnemyCount1 = [0,0,0,0,0,0,0,0,0,0,0,0]
+    WinEnemyCount2 = [0,0,0,0,0,0,0,0,0,0,0,0]
+    WinEnemyCount3 = [0,0,0,0,0,0,0,0,0,0,0,0]
+    
+    CurrentMode = MODE_NOTHING
+	CurrentKyotenType = ""
+	
 	name1;
 	lat1;
 	lng1;
 	KyotenMarkerList=[];
 	KyotenMarkerMassages=[];
+	PrevStepTime = new Date();
     
   constructor(name1, lat1, lng1) {
     this.name1 = name1;
@@ -181,6 +190,24 @@ function ClearAllInfoWindow(){
 		g_InfoWindowList[i].close(); // 吹き出しの表示
 	}
 	infoWindowList = [];
+}
+
+function ChangeModeInAdvanceOneStepTab(){
+	selectbox1 = document.getElementById("CurrentStepMode");
+	mode1 = Number(selectbox1.options[selectbox1.selectedIndex].value);
+	
+	MyUser.CurrentMode = mode1;
+	alert("モード変更しました")
+	
+	
+	str1 = "モードを###"
+	str1 += g_ModeJPStr[mode1]
+	str1 += "###に変更しました<br>"
+	
+	g_AdvanceOneStepLog += str1
+	
+	ShowAdvanceOneStepTab();
+	
 }
 
 function TestInitUser(User){
@@ -244,6 +271,15 @@ function TestInitUser(User){
     User.TimeSandUpStsType = KYOTEN_BLUE
     
     User.FightEnemyLevel = 2;
+    User.WinEnemyCount1 = [1,2,3,0,0,0,0,0,0,0,0,0]
+    User.WinEnemyCount2 = [0,0,0,1,2,3,0,0,0,0,0,0]
+    User.WinEnemyCount3 = [0,0,0,0,0,0,1,0,2,3,0,0]
+    
+    User.CurrentMode = MODE_NOTHING
+    User.CurrentKyotenType = KYOTEN_PURPLE
+    
+    User.PrevStepTime = new Date();
+    
 
 	User.name1 = "DebugUser";
 	User.lat1 = 34.66986407528885;
@@ -478,16 +514,62 @@ function tab_init(link, index){
 			
 			return false;
 		};
+  }else if(id == 'pageAdvanceOneStep'){
+	  link.onclick = function(){
+		  	changeTab(link);
+			
+			ShowAdvanceOneStepTab();
+			
+			return false;
+		};
   }
 }
 })();
 
+function ShowAdvanceOneStepTab(){
+	span1 = document.getElementById("pageAdvanceOneStep_CurrentMode");
+	span1.innerHTML = g_ModeJPStr[MyUser.CurrentMode]
+	
+	span1 = document.getElementById("pageAdvanceOneStep_LogSpan");
+	span1.innerHTML = g_AdvanceOneStepLog
+	
+	span1 = document.getElementById("pageAdvanceOneStep_StepExecuteFlgSpan");
+	if(g_StepExecuteFlg == true){
+		span1.innerHTML = "true";
+	}else{
+		span1.innerHTML = "false";
+	}
+}
+
+function ClearLogInAdvanceOneStepTab(){
+	g_AdvanceOneStepLog = ""
+	ShowAdvanceOneStepTab();
+}
 function ShowTokimodoshiSettingTab(){
 	span1 = document.getElementById("CurrenDownStsInTokimodoshiDessert");
 	span1.innerHTML = g_KyotenColorNames[MyUser.TimeSandDownStsType]
 	
 }
+function GetNearestKyotenId(lat1, lng1){
+    User.KyotenNames = ["k1", "k2"]
+    User.KyotenTypes = [KYOTEN_RED, KYOTEN_GREEN]
+    User.KyotenLats = [34.66679331519424, 34.669087571994275]
+    User.KyotenLngs = [138.02233232405075, 137.99314988933753]
+    User.KyotenCount = 2;
+    
+    KyotenIdx = 0;
+    dist2 = 999;
+	for(i=0; i<MyUser.KyotenNames.length; i++){
+		dist1 = distance(lat1, lng1, MyUser.KyotenLats[i], MyUser.KyotenLngs[i]);
+		if(dist1 < dist2){
+			KyotenIdx = i;
+			dist2 = dist1
+		}
+	}
+	
+	return KyotenIdx;
 
+}
 function ChangeDownStsColorInTokimodoshiDessert(){
 	selectbox1 = document.getElementById("DownStsInTokimodoshiDessert")
 	colorId = Number(selectbox1.options[selectbox1.selectedIndex].value)
@@ -1125,6 +1207,25 @@ function YobiSuzuKyoka(){
 		alert(str1);
 		
 	}
+}
+
+function StartStepExecuteInAdvanceOneStepTab(){
+	g_StepExecuteFlg = true
+	
+	SEFunc1();
+}
+
+function EndStepExecuteInAdvanceOneStepTab(){
+	g_StepExecuteFlg = false
+}
+
+var SEFunc1 = function StepExecute(){
+	if(g_StepExecuteFlg == true){
+		setTimeout(SEFunc1, ONE_STEP_SECOND * 1000)
+	}
+	
+	alert("test")
+	ShowAdvanceOneStepTab()
 }
 
 /**
