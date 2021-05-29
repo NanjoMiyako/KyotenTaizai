@@ -22,6 +22,9 @@ const KYOTEN_MIN_INTERVAL = 200;
 const KYOKA_COIN_UNIT = 10;
 //一ステップにかかる秒数
 const ONE_STEP_SECOND = 6;
+const GET_POINT_STEP_COUNT = 3;
+
+g_PrevCountStart = 0;
 
 g_KyotenColorNames = ["赤","青","黄","緑","紫","白","白金","白銀","白銅","黒","黒金","黒銀","黒銅","虹",
 "時戻りの砂漠","再生の森","黄金の泉"]
@@ -185,6 +188,126 @@ class User {
   
 }
 
+function AddCurrentExpVol(colorIdx, vol){
+	if(colorIdx == KYOTEN_RED){
+		MyUser.RedStsExp += vol;
+	}else if(colorIdx == KYOTEN_BLUE){
+		MyUser.BlueStsExp += vol;
+	}else if(colorIdx == KYOTEN_YELLOW){
+		MyUser.YellowStsExp += vol;
+	}else if(colorIdx == KYOTEN_GREEN){
+		MyUser.GreenStsExp += vol;
+	}else if(colorIdx == KYOTEN_PURPLE){
+		MyUser.PurpleStsExp += vol;
+	}else if(colorIdx == KYOTEN_WHITE){
+		MyUser.WhiteStsExp += vol;
+	}else if(colorIdx == KYOTEN_WHITEGOLD){
+		MyUser.WhiteGoldStsExp += vol;
+	}else if(colorIdx == KYOTEN_WHITESILVER){
+		MyUser.WhiteSilverStsExp += vol;
+	}else if(colorIdx == KYOTEN_WHITECOPPER){
+		MyUser.WhiteCopperStsExp += vol;
+	}else if(colorIdx == KYOTEN_BLACK){
+		MyUser.BlackStsExp += vol;
+	}else if(colorIdx == KYOTEN_BLACKGOLD){
+		MyUser.BlackGoldStsExp += vol;
+	}else if(colorIdx == KYOTEN_BLACKSILVER){
+		MyUser.BlackSilverStsExp += vol;
+	}else if(colorIdx == KYOTEN_BLACKCOPPER){
+		MyUser.BlackCopperStsExp += vol;
+	}
+}
+function GetCurrentExpVol(colorIdx){
+	if(colorIdx == KYOTEN_RED){
+		return MyUser.RedStsExp;
+	}else if(colorIdx == KYOTEN_BLUE){
+		return MyUser.BlueStsExp;
+	}else if(colorIdx == KYOTEN_YELLOW){
+		return MyUser.YellowStsExp;
+	}else if(colorIdx == KYOTEN_GREEN){
+		return MyUser.GreenStsExp;
+	}else if(colorIdx == KYOTEN_PURPLE){
+		return MyUser.PurpleStsExp;
+	}else if(colorIdx == KYOTEN_WHITE){
+		return MyUser.WhiteStsExp;
+	}else if(colorIdx == KYOTEN_WHITEGOLD){
+		return MyUser.WhiteGoldStsExp;
+	}else if(colorIdx == KYOTEN_WHITESILVER){
+		return MyUser.WhiteSilverStsExp;
+	}else if(colorIdx == KYOTEN_WHITECOPPER){
+		return MyUser.WhiteCopperStsExp;
+	}else if(colorIdx == KYOTEN_BLACK){
+		return MyUser.BlackStsExp;
+	}else if(colorIdx == KYOTEN_BLACKGOLD){
+		return MyUser.BlackGoldStsExp;
+	}else if(colorIdx == KYOTEN_BLACKSILVER){
+		return MyUser.BlackSilverStsExp;
+	}else if(colorIdx == KYOTEN_BLACKCOPPER){
+		return MyUser.BlackCopperStsExp
+	}
+
+}
+
+function GetCurrentStsVol(colorIdx){
+	if(colorIdx == KYOTEN_RED){
+		return MyUser.RedSts;
+	}else if(colorIdx == KYOTEN_BLUE){
+		return MyUser.BlueSts;
+	}else if(colorIdx == KYOTEN_YELLOW){
+		return MyUser.YellowSts;
+	}else if(colorIdx == KYOTEN_GREEN){
+		return MyUser.GreenSts;
+	}else if(colorIdx == KYOTEN_PURPLE){
+		return MyUser.PurpleSts;
+	}else if(colorIdx == KYOTEN_WHITE){
+		return MyUser.WhiteSts;
+	}else if(colorIdx == KYOTEN_WHITEGOLD){
+		return MyUser.WhiteGoldSts;
+	}else if(colorIdx == KYOTEN_WHITESILVER){
+		return MyUser.WhiteSilverSts;
+	}else if(colorIdx == KYOTEN_WHITECOPPER){
+		return MyUser.WhiteCopperSts;
+	}else if(colorIdx == KYOTEN_BLACK){
+		return MyUser.BlackSts;
+	}else if(colorIdx == KYOTEN_BLACKGOLD){
+		return MyUser.BlackGoldSts;
+	}else if(colorIdx == KYOTEN_BLACKSILVER){
+		return MyUser.BlackSilverSts;
+	}else if(colorIdx == KYOTEN_BLACKCOPPER){
+		return MyUser.BlackCopperSts;
+	}
+}
+
+function AddCurrentStsVol(colorIdx, vol){
+	if(colorIdx == KYOTEN_RED){
+		MyUser.RedSts += vol;
+	}else if(colorIdx == KYOTEN_BLUE){
+		MyUser.BlueSts += vol;
+	}else if(colorIdx == KYOTEN_YELLOW){
+		MyUser.YellowSts += vol;
+	}else if(colorIdx == KYOTEN_GREEN){
+		MyUser.GreenSts += vol;
+	}else if(colorIdx == KYOTEN_PURPLE){
+		MyUser.PurpleSts += vol;
+	}else if(colorIdx == KYOTEN_WHITE){
+		MyUser.WhiteSts += vol;
+	}else if(colorIdx == KYOTEN_WHITEGOLD){
+		MyUser.WhiteGoldSts += vol;
+	}else if(colorIdx == KYOTEN_WHITESILVER){
+		MyUser.WhiteSilverSts += vol;
+	}else if(colorIdx == KYOTEN_WHITECOPPER){
+		MyUser.WhiteCopperSts += vol;
+	}else if(colorIdx == KYOTEN_BLACK){
+		MyUser.BlackSts += vol;
+	}else if(colorIdx == KYOTEN_BLACKGOLD){
+		MyUser.BlackGoldSts += vol;
+	}else if(colorIdx == KYOTEN_BLACKSILVER){
+		MyUser.BlackSilverSts += vol;
+	}else if(colorIdx == KYOTEN_BLACKCOPPER){
+		MyUser.BlackCopperSts += vol;
+	}
+
+}
 function ClearAllInfoWindow(){
 	for(i=0; i<g_InfoWindowList.length; i++){
 		g_InfoWindowList[i].close(); // 吹き出しの表示
@@ -196,7 +319,20 @@ function ChangeModeInAdvanceOneStepTab(){
 	selectbox1 = document.getElementById("CurrentStepMode");
 	mode1 = Number(selectbox1.options[selectbox1.selectedIndex].value);
 	
+	if(mode1 == MODE_KYOTEN_TAIZAI){
+		if(CanTaizai() == false){
+			alert("モード変更できませんでした")
+			return;
+		}
+	}else{
+
+	}
+	
 	MyUser.CurrentMode = mode1;
+	if(mode1 == MODE_KYOTEN_TAIZAI){
+		kyotenIdx1 = GetNearestKyotenId(MyUser.lat1, MyUser.lng1);
+		MyUser.CurrentKyotenType = MyUser.KyotenTypes[kyotenIdx1];
+	}
 	alert("モード変更しました")
 	
 	
@@ -276,14 +412,17 @@ function TestInitUser(User){
     User.WinEnemyCount3 = [0,0,0,0,0,0,1,0,2,3,0,0]
     
     User.CurrentMode = MODE_NOTHING
-    User.CurrentKyotenType = KYOTEN_PURPLE
+    User.CurrentKyotenType = KYOTEN_RED
     
     User.PrevStepTime = new Date();
     
 
 	User.name1 = "DebugUser";
-	User.lat1 = 34.66986407528885;
-	User.lng1 = 138.01743997470177;
+	//User.lat1 = 34.66986407528885;
+	//User.lng1 = 138.01743997470177;
+	
+	User.lat1 = 34.66699364761426;
+	User.lng1 = 138.02243468766275;
 
 }
 
@@ -539,6 +678,20 @@ function ShowAdvanceOneStepTab(){
 	}else{
 		span1.innerHTML = "false";
 	}
+	
+	if(MyUser.CurrentMode == MODE_KYOTEN_TAIZAI){
+		span1 = document.getElementById("pageAdvanceOneStep_KyotenTypeSpan");
+		
+		str1 = g_KyotenColorNames[MyUser.CurrentKyotenType];
+		if(MyUser.CurrentKyotenType <= KYOTEN_NIJI){
+			str1 += "の拠点"
+		}
+		span1.innerHTML = str1
+		
+	}else{
+		span1 = document.getElementById("pageAdvanceOneStep_KyotenTypeSpan");
+		span1.innerHTML = "-"
+	}
 }
 
 function ClearLogInAdvanceOneStepTab(){
@@ -551,11 +704,6 @@ function ShowTokimodoshiSettingTab(){
 	
 }
 function GetNearestKyotenId(lat1, lng1){
-    User.KyotenNames = ["k1", "k2"]
-    User.KyotenTypes = [KYOTEN_RED, KYOTEN_GREEN]
-    User.KyotenLats = [34.66679331519424, 34.669087571994275]
-    User.KyotenLngs = [138.02233232405075, 137.99314988933753]
-    User.KyotenCount = 2;
     
     KyotenIdx = 0;
     dist2 = 999;
@@ -1116,6 +1264,16 @@ function DeleteKyoten(){
 	}
 }
 
+function CanTaizai(){
+	kyotenIdx1 = GetNearestKyotenId(MyUser.lat1, MyUser.lng1);
+	dist1 = distance(MyUser.lat1, MyUser.lng1, MyUser.KyotenLats[kyotenIdx1], MyUser.KyotenLngs[kyotenIdx1]);
+	alert(dist1)
+	if(dist1 <= KYOTEN_MIN_INTERVAL){
+		return true;
+	}else{
+		return false;
+	}
+}
 function UpgradeStatus(){
 
 	UpPt = parseInt(MyUser.RedStsExp / 10)
@@ -1221,13 +1379,99 @@ function EndStepExecuteInAdvanceOneStepTab(){
 	ShowAdvanceOneStepTab()
 }
 
+function addExpOrCoinOrTimeSand(kyotenType, vol,decVol){
+	var str2 = "";
+
+	if(kyotenType >= KYOTEN_RED && kyotenType < KYOTEN_NIJI){
+		AddCurrentExpVol(kyotenType, vol);
+		
+		str2 = g_KyotenColorNames[kyotenType]
+		str2 += "の経験値を"
+		str2 += vol
+		str2 += "だけゲットした<br>"
+		g_AdvanceOneStepLog += str2
+		
+		
+	}else if(kyotenType == KYOTEN_NIJI){
+		//特に処理なし(前処理で経験値の加算処理を行う)
+		
+	}else if(kyotenType == KYOTEN_TOKIMODORI){
+		val1 = GetCurrentStsVol(MyUser.TimeSandDownStsType);
+		if(val1 < decVol){
+			return;
+		}else{
+			AddCurrentStsVol(-decVol)
+			MyUser.HavingTimeSand += vol;
+			
+			str2 = "時の砂を"
+			str2 += vol
+			str2 += "だけゲットした<br>"
+			str2 += g_KyotenColorNames[kyotenType]
+			str2 += "の力が"
+			str2 += decVol
+			str2 += "だけ下がった"
+			g_AdvanceOneStepLog += str2
+		}
+		
+	}else if(kyotenType == KYOTEN_SAISEI){
+		if(MyUser.HavingTimeSand < decVol){
+			return
+		}else{
+			MyUser.HavingTimeSand -= decVol;
+			AddCurrentExpVol(MyUser.TimeSandUpStsType);
+			
+			str2 = g_KyotenColorNames[MyUser.TimeSandUpStsType]
+			str2 += "の経験値を"
+			str2 += vol
+			str2 += "だけゲットした<br>"
+			str2 = "時の砂を"
+			str2 += decVol
+			str2 += "だけ消費した<br>"
+			g_AdvanceOneStepLog += str2
+		}
+	}else if(kyotenType == KYOTEN_OUGON){
+		MyUser.HavingCoin += vol
+	}
+
+}
 var SEFunc1 = function StepExecute(){
 	if(g_StepExecuteFlg == true){
 		setTimeout(SEFunc1, ONE_STEP_SECOND * 1000)
 	}
 	
+	if(MyUser.CurrentMode == MODE_KYOTEN_TAIZAI){
+		g_PrevCountStart++
+		if(g_PrevCountStart >= GET_POINT_STEP_COUNT){
+			if(MyUser.CurrentKyotenType < KYOTEN_NIJI){
+				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, 6,0)
+			}else if(MyUser.CurrentKyotenType == KYOTEN_NIJI){
+			
+				kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
+				addExpOrCoinOrTimeSand(kyotenIdx1, 3,0)
+				
+				kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
+				addExpOrCoinOrTimeSand(kyotenIdx1, 3,0)
+				
+			}else if(MyUser.CurrentKyotenType == KYOTEN_TOKIMODORI){
+				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, 10,1)
+			}else if(MyUser.CurrentKyotenType == KYOTEN_SAISEI){
+				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, 10,1)
+			}else if(MyUser.CurrentKyotenType == KYOTEN_OUGON){
+				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, 10, 0);
+			}
+			g_PrevCountStart = 0;
+			
+		}
+	}
+	
 	alert("test")
 	ShowAdvanceOneStepTab()
+}
+//最大値・最小値を引数に持つ関数
+function getRandom( min, max ) {
+    var random = Math.floor( Math.random() * (max + 1 - min) ) + min;
+  
+    return random;
 }
 
 /**
