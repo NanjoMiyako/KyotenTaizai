@@ -1217,6 +1217,8 @@ function StartStepExecuteInAdvanceOneStepTab(){
 
 function EndStepExecuteInAdvanceOneStepTab(){
 	g_StepExecuteFlg = false
+	
+	ShowAdvanceOneStepTab()
 }
 
 var SEFunc1 = function StepExecute(){
