@@ -22,7 +22,20 @@ const KYOTEN_MIN_INTERVAL = 200;
 const KYOKA_COIN_UNIT = 10;
 //一ステップにかかる秒数
 const ONE_STEP_SECOND = 6;
+//何ステップで経験値がもらえるか
 const GET_POINT_STEP_COUNT = 3;
+//敵レベルごとのステータス最小・最大値
+const MIN_STS_VOL_LEVEL1 = 1
+const MAX_STS_VOL_LEVEL1 = 100
+const MIN_STS_VOL_LEVEL2 = 100
+const MAX_STS_VOL_LEVEL2 = 1000
+const MIN_STS_VOL_LEVEL3 = 1000
+const MAX_STS_VOL_LEVEL3 = 10000
+
+//勝負の状態、継続中、勝ち、負け
+const FIGHT_RESULT_CONTINUE = 0
+const FIGHT_RESULT_WIN = 1
+const FIGHT_RESULT_LOSE = 2
 
 g_PrevCountStart = 0;
 
@@ -83,7 +96,11 @@ const MODE_FIGHT = 2
 
 g_ModeJPStr = ["何もしない","拠点滞在","勝負"]
 g_StepExecuteFlg = false;
+g_StartedFightFlg = false;
 
+//色別ステータス上昇・低下確率
+g_StsUpRate = [10,10,10,10,10,10,10,10,10,10,10,10]
+g_StsDnRate = [10,10,10,10,10,10,10,10,10,10,10,10]
 
 //GoogleAPIキー
 var GoogleAPIKey = ''
@@ -100,6 +117,45 @@ var g_AdvanceOneStepLog = "";
 //グーグルマップのMarkerオブジェクトのマップ
 var MarkerMap = new Array();
 
+
+class Enemy {
+
+	enemyImgName = ""
+    //攻撃力
+    RedSts = 0
+    //防御力
+    BlueSts = 0
+    //hp
+    YellowSts = 0
+    //回避率
+    GreenSts = 0
+    //命中率
+    PurpleSts = 0
+    //自分のステータス上昇発生率
+    WhiteSts = 0
+    //自分のステータス上昇時の上昇数値
+    WhiteGoldSts = 0
+    //相手がステータス低下を発生したときの防御数値
+    WhiteSilverSts = 0
+    //相手の起こすステータス低下発生に対する抵抗率
+    WhiteCopperSts = 0
+    //相手のステータス低下発生率
+    BlackSts = 0
+    //相手のステータス低下発生時の低下数値
+    BlackGoldSts = 0
+    //相手がステータス上昇を発生させたときの防御数値
+    BlackSilverSts = 0
+    //相手の起こすステータス上昇に対する抵抗率
+    BlackCopperSts = 0
+    
+    HavingCoin = 0
+    HavingExp = 0
+    
+  constructor() {
+    
+  }
+  
+}
 class User {
 
     //攻撃力
@@ -316,6 +372,8 @@ function ClearAllInfoWindow(){
 }
 
 function ChangeModeInAdvanceOneStepTab(){
+	g_StepExecuteFlg = false
+	
 	selectbox1 = document.getElementById("CurrentStepMode");
 	mode1 = Number(selectbox1.options[selectbox1.selectedIndex].value);
 	
@@ -325,7 +383,7 @@ function ChangeModeInAdvanceOneStepTab(){
 			return;
 		}
 	}else{
-
+	
 	}
 	
 	MyUser.CurrentMode = mode1;
@@ -428,6 +486,8 @@ function TestInitUser(User){
 
 let MyUser = new User();
 TestInitUser(MyUser)
+
+let MyEnemy = new Enemy();
 
 
 function SetGoogleApiKey(){
@@ -1400,16 +1460,16 @@ function addExpOrCoinOrTimeSand(kyotenType, vol,decVol){
 		if(val1 < decVol){
 			return;
 		}else{
-			AddCurrentStsVol(-decVol)
+			AddCurrentStsVol(MyUser.TimeSandDownStsType, -decVol)
 			MyUser.HavingTimeSand += vol;
 			
 			str2 = "時の砂を"
 			str2 += vol
 			str2 += "だけゲットした<br>"
-			str2 += g_KyotenColorNames[kyotenType]
+			str2 += g_KyotenColorNames[MyUser.TimeSandDownStsType]
 			str2 += "の力が"
 			str2 += decVol
-			str2 += "だけ下がった"
+			str2 += "だけ下がった<br>"
 			g_AdvanceOneStepLog += str2
 		}
 		
@@ -1418,27 +1478,34 @@ function addExpOrCoinOrTimeSand(kyotenType, vol,decVol){
 			return
 		}else{
 			MyUser.HavingTimeSand -= decVol;
-			AddCurrentExpVol(MyUser.TimeSandUpStsType);
+			AddCurrentExpVol(MyUser.TimeSandUpStsType, vol);
 			
 			str2 = g_KyotenColorNames[MyUser.TimeSandUpStsType]
 			str2 += "の経験値を"
 			str2 += vol
 			str2 += "だけゲットした<br>"
-			str2 = "時の砂を"
+			str2 += "時の砂を"
 			str2 += decVol
 			str2 += "だけ消費した<br>"
 			g_AdvanceOneStepLog += str2
 		}
 	}else if(kyotenType == KYOTEN_OUGON){
 		MyUser.HavingCoin += vol
+
+		str2 = "コインを"
+		str2 += vol
+		str2 += "だけゲットした<br>"
+		g_AdvanceOneStepLog += str2
 	}
 
 }
 var SEFunc1 = function StepExecute(){
+	let str2 = ""
 	if(g_StepExecuteFlg == true){
 		setTimeout(SEFunc1, ONE_STEP_SECOND * 1000)
 	}
 	
+	//経験値等の加算処理
 	if(MyUser.CurrentMode == MODE_KYOTEN_TAIZAI){
 		g_PrevCountStart++
 		if(g_PrevCountStart >= GET_POINT_STEP_COUNT){
@@ -1453,7 +1520,7 @@ var SEFunc1 = function StepExecute(){
 				addExpOrCoinOrTimeSand(kyotenIdx1, 3,0)
 				
 			}else if(MyUser.CurrentKyotenType == KYOTEN_TOKIMODORI){
-				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, 10,1)
+				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, 1,1)
 			}else if(MyUser.CurrentKyotenType == KYOTEN_SAISEI){
 				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, 10,1)
 			}else if(MyUser.CurrentKyotenType == KYOTEN_OUGON){
@@ -1462,11 +1529,101 @@ var SEFunc1 = function StepExecute(){
 			g_PrevCountStart = 0;
 			
 		}
+	}else if(MyUser.CurrentMode == MODE_FIGHT){
+		g_PrevCountStart++
+		if(g_PrevCountStart >= GET_POINT_STEP_COUNT){
+
+			g_PrevCountStart = 0;
+			if(g_StartedFightFlg == true){
+				StepMyUserAttackTurn();
+				StepEnemyAttackTurn();
+				
+				let fightResult = JudgeWinOrLose();
+				
+				if(fightResult == FIGHT_RESULT_CONTINUE){
+				
+				}else if(fightResult == FIGHT_RESULT_WIN){
+					g_StartedFightFlg = false;
+					str2 = "勝利した"
+					g_AdvanceOneStepLog += str2
+					
+
+					MyUser.HavingCoin += MyEnemy.HavingCoin;
+					str2 = "コインを"
+					str2 += Mynemy.HavingCoin
+					str2 += "だけゲットした<br>"
+					g_AdvanceOneStepLog += str2
+										
+					kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
+					addExpOrCoinOrTimeSand(kyotenIdx1, MyEnemy.HavingExp , 0)
+
+					
+				
+				}else if(fightResult == FIGHT_RESULT_LOSE){
+					g_StartedFightFlg = false;
+					str2 = "敗北してしまった"
+					g_AdvanceOneStepLog += str2
+				
+				}
+				
+			}else{
+				CreateEnemy(MyUser.FightEnemyLevel, MyEnemy)
+				g_StartedFightFlg = true;
+			}
+			
+		}
 	}
 	
 	alert("test")
 	ShowAdvanceOneStepTab()
 }
+
+function StepMyUserAttackTurn(){
+}
+function StepEnemyAttackTurn(){
+}
+function JudgeWinOrLose(){
+	if(MyUser.YellowSts <= 0){
+		return FIGHT_RESULT_LOSE;
+	}else if(MyEnemy.YellowSts <= 0){
+		return FIGHT_RESULT_WIN;
+	}else{
+		return FIGHT_RESULT_CONTINUE
+	}
+}
+
+function CreateEnemeny(enemyLevel, Enemy1){
+	let min1, max1
+
+	if(enemyLevel == 1){
+		min1 = MIN_STS_VOL_LEVEL1
+		max1 = MAX_STS_VOL_LEVEL1
+	}else if(enemyLevel == 2){
+		min1 = MIN_STS_VOL_LEVEL2
+		max1 = MAX_STS_VOL_LEVEL2
+	}else if(enemyLevel == 3){
+		min1 = MIN_STS_VOL_LEVEL3
+		max1 = MAX_STS_VOL_LEVEL3
+	}
+	
+	Enemy1.RedSts = getRandom(min1, max1)
+	Enemy1.BlueSts = getRandom(min1, max1)
+	Enemy1.YellowSts = getRandom(min1, max1)
+	Enemy1.GreenSts = getRandom(min1, max1)
+	Enemy1.PurpleSts = getRandom(min1, max1)
+	Enemy1.WhiteSts = getRandom(min1, max1)
+	Enemy1.WhiteGoldSts = getRandom(min1, max1)
+	Enemy1.WhiteSilverSts = getRandom(min1, max1)
+	Enemy1.WhiteCopperSts = getRandom(min1, max1)
+	Enemy1.BlackSts = getRandom(min1, max1)
+	Enemy1.BlackGoldSts = getRandom(min1, max1)
+	Enemy1.BlackSilverSts = getRandom(min1, max1)
+	Enemy1.BlackCopperSts = getRandom(min1, max1)
+	Enemy1.HavingCoin = getRandom(min1, max1)
+    Enemy1.HavingExp = getRandom(min1, max1)
+    
+}
+
 //最大値・最小値を引数に持つ関数
 function getRandom( min, max ) {
     var random = Math.floor( Math.random() * (max + 1 - min) ) + min;
