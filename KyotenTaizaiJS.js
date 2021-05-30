@@ -32,10 +32,28 @@ const MAX_STS_VOL_LEVEL2 = 1000
 const MIN_STS_VOL_LEVEL3 = 1000
 const MAX_STS_VOL_LEVEL3 = 10000
 
+const MIN_EXP_VOL_LEVEL1 = 1
+const MAX_EXP_VOL_LEVEL1 = 10
+const MIN_EXP_VOL_LEVEL2 = 10
+const MAX_EXP_VOL_LEVEL2 = 50
+const MIN_EXP_VOL_LEVEL3 = 50
+const MAX_EXP_VOL_LEVEL3 = 100
+
 //勝負の状態、継続中、勝ち、負け
 const FIGHT_RESULT_CONTINUE = 0
 const FIGHT_RESULT_WIN = 1
 const FIGHT_RESULT_LOSE = 2
+
+//ダメージの乱数範囲
+const DM_RND_VOL_MIN = 1
+const DM_RND_VOL_MAX = 10
+
+//鈴一種類につき何パーセント確率を変えるか
+const UP_PERCENTAGE_UNIT = 10
+const DOWN_PERCENTAGE_UNIT = 10
+
+const STS_UP = 0
+const STS_DOWN = 1
 
 g_PrevCountStart = 0;
 
@@ -98,9 +116,6 @@ g_ModeJPStr = ["何もしない","拠点滞在","勝負"]
 g_StepExecuteFlg = false;
 g_StartedFightFlg = false;
 
-//色別ステータス上昇・低下確率
-g_StsUpRate = [10,10,10,10,10,10,10,10,10,10,10,10]
-g_StsDnRate = [10,10,10,10,10,10,10,10,10,10,10,10]
 
 //GoogleAPIキー
 var GoogleAPIKey = ''
@@ -121,6 +136,8 @@ var MarkerMap = new Array();
 class Enemy {
 
 	enemyImgName = ""
+	CurrentHp = 0
+	
     //攻撃力
     RedSts = 0
     //防御力
@@ -150,6 +167,34 @@ class Enemy {
     
     HavingCoin = 0
     HavingExp = 0
+    
+    //戦闘用一時ステータス    
+    //攻撃力
+	Fight_RedSts;
+    //防御力
+	Fight_BlueSts;
+    //hp
+	Fight_YellowSts;
+    //回避率
+	Fight_GreenSts;
+    //命中率
+	Fight_PurpleSts;
+    //自分のステータス上昇発生率
+	Fight_WhiteSts;
+    //自分のステータス上昇時の上昇数値
+	Fight_WhiteGoldSts;
+    //相手がステータス低下を発生したときの防御数値
+	Fight_WhiteSilverSts;
+    //相手の起こすステータス低下発生に対する抵抗率
+	Fight_WhiteCopperSts;
+    //相手のステータス低下発生率
+	Fight_BlackSts;
+    //相手のステータス低下発生時の低下数値
+	Fight_BlackGoldSts;
+    //相手がステータス上昇を発生させたときの防御数値
+	Fight_BlackSilverSts;
+    //相手の起こすステータス上昇に対する抵抗率
+    Fight_BlackCopperSts;
     
   constructor() {
     
@@ -226,11 +271,40 @@ class User {
 	CurrentKyotenType = ""
 	
 	name1;
+	CurrentHp;
 	lat1;
 	lng1;
 	KyotenMarkerList=[];
 	KyotenMarkerMassages=[];
 	PrevStepTime = new Date();
+	
+    //戦闘用一時ステータス    
+    //攻撃力
+	Fight_RedSts;
+    //防御力
+	Fight_BlueSts;
+    //hp
+	Fight_YellowSts;
+    //回避率
+	Fight_GreenSts;
+    //命中率
+	Fight_PurpleSts;
+    //自分のステータス上昇発生率
+	Fight_WhiteSts;
+    //自分のステータス上昇時の上昇数値
+	Fight_WhiteGoldSts;
+    //相手がステータス低下を発生したときの防御数値
+	Fight_WhiteSilverSts;
+    //相手の起こすステータス低下発生に対する抵抗率
+	Fight_WhiteCopperSts;
+    //相手のステータス低下発生率
+	Fight_BlackSts;
+    //相手のステータス低下発生時の低下数値
+	Fight_BlackGoldSts;
+    //相手がステータス上昇を発生させたときの防御数値
+	Fight_BlackSilverSts;
+    //相手の起こすステータス上昇に対する抵抗率
+    Fight_BlackCopperSts;
     
   constructor(name1, lat1, lng1) {
     this.name1 = name1;
@@ -476,12 +550,87 @@ function TestInitUser(User){
     
 
 	User.name1 = "DebugUser";
+	User.CurrentHp = User.YellowSts; 
 	//User.lat1 = 34.66986407528885;
 	//User.lng1 = 138.01743997470177;
 	
 	User.lat1 = 34.66699364761426;
 	User.lng1 = 138.02243468766275;
+	
+}
 
+//ユーザーの戦闘用ステータスの初期化
+function InitUserFightSts(User){
+    //戦闘用一時ステータス    
+    //攻撃力
+	User.Fight_RedSts = User.RedSts
+    //防御力
+	User.Fight_BlueSts = User.BlueSts
+    //hp
+	User.Fight_YellowSts = User.YellowSts
+    //回避率
+	User.Fight_GreenSts = User.GreenSts
+    //命中率
+	User.Fight_PurpleSts = User.PurpleSts
+    //自分のステータス上昇発生率
+	User.Fight_WhiteSts = User.WhiteSts
+    //自分のステータス上昇時の上昇数値
+	User.Fight_WhiteGoldSts = User.WhiteGoldSts
+    //相手がステータス低下を発生したときの防御数値
+	User.Fight_WhiteSilverSts = User.WhiteSilverSts
+    //相手の起こすステータス低下発生に対する抵抗率
+	User.Fight_WhiteCopperSts = User.WhiteCopperSts
+    //相手のステータス低下発生率
+	User.Fight_BlackSts = User.BlackSts
+    //相手のステータス低下発生時の低下数値
+	User.Fight_BlackGoldSts = User.BlackGoldSts
+    //相手がステータス上昇を発生させたときの防御数値
+	User.Fight_BlackSilverSts = User.BlackSilverSts
+    //相手の起こすステータス上昇に対する抵抗率
+    User.Fight_BlackCopperSts = User.BlackCopperSts
+}
+
+//敵の戦闘用ステータスの初期化
+function InitEnemyFightSts(Enemy){
+    //戦闘用一時ステータス    
+    //攻撃力
+	Enemy.Fight_RedSts = Enemy.RedSts;
+;
+    //防御力
+	Enemy.Fight_BlueSts = Enemy.BlueSts;
+;
+    //hp
+	Enemy.Fight_YellowSts = Enemy.YellowSts;
+;
+    //回避率
+	Enemy.Fight_GreenSts = Enemy.GreenSts;
+;
+    //命中率
+	Enemy.Fight_PurpleSts = Enemy.PurpleSts;
+;
+    //自分のステータス上昇発生率
+	Enemy.Fight_WhiteSts = Enemy.WhiteSts;
+;
+    //自分のステータス上昇時の上昇数値
+	Enemy.Fight_WhiteGoldSts = Enemy.WhiteGoldSts;
+;
+    //相手がステータス低下を発生したときの防御数値
+	Enemy.Fight_WhiteSilverSts = Enemy.WhiteSilverSts;
+;
+    //相手の起こすステータス低下発生に対する抵抗率
+	Enemy.Fight_WhiteCopperSts = Enemy.WhiteCopperSts;
+;
+    //相手のステータス低下発生率
+	Enemy.Fight_BlackSts = Enemy.BlackSts;
+;
+    //相手のステータス低下発生時の低下数値
+	Enemy.Fight_BlackGoldSts = Enemy.BlackGoldSts;
+;
+    //相手がステータス上昇を発生させたときの防御数値
+	Enemy.Fight_BlackSilverSts = Enemy.BlackSilverSts;
+;
+    //相手の起こすステータス上昇に対する抵抗率
+    Enemy.Fight_BlackCopperSts = Enemy.BlackCopperSts;
 }
 
 let MyUser = new User();
@@ -1579,13 +1728,129 @@ var SEFunc1 = function StepExecute(){
 }
 
 function StepMyUserAttackTurn(){
+
+	rDm = getRandom(DM_RND_VOL_MIN, DM_RND_VOL_MAX);
+	Dm1 = Math.max(MyUser.Fight_RedSts-MyEnemy.Fight_BlueSts, 0)
+	
+	Dm = rDm + Dm1
+	if(HitJudge(MyEnemy.Fight_GreenSts, MyUser.Fight_PurpleSts) == true){
+		MyEnemy.CurrentHp -= Dm
+	}
+	
+	StsChange1 = DecideUpMyStsOrDnEmySts()
+	if(StsChange1 == STS_UP){
+		if(StsUpJudge(MyUser.Fight_WhiteSts, MyEnemy.Fight_BlackCopperSts) == true){
+			//ステータス上昇
+			v1 = calsStsUpVol(MyUser.Fight_WhiteGoldSts, MyEnemy.Fight_BlackSilverSts)
+		}
+	}else if(StsChange1 == STS_DOWN){
+		if(StsDownJudge(MyUser.Fight_BlackSts, MyEnemy.Fight_WhiteCopperSts) == true){
+			//ステータス低下
+			v1 = calcStsDownVol(MyUser.Fight_BlackGoldSts, MyEnemy.WhiteSilverSts)
+		}
+	}
+	
+
+}
+
+function calcStsUpVol(joushoRyo, bougyoJoushoRyo){
+	rVol = getRandom(DM_RND_VOL_MIN, DM_RND_VOL_MAX);
+	Vol1 = max(0, joushoRyo - bougyoJoushoRyo);
+	Vol = rVol + Vol1;
+	
+	return Vol;
+}
+
+function calcStsDownVol(teikaRyo, bougyoTeikaRyo){
+	rVol = getRandom(DM_RND_VOL_MIN, DM_RND_VOL_MAX);
+	Vol1 = max(0, teikaRyo - bougyoTeikaRyo);
+	Vol = rVol + Vol1;
+	
+	return Vol;
 }
 function StepEnemyAttackTurn(){
+	rDm = getRandom(DM_RND_VOL_MIN, DM_RND_VOL_MAX);
+	Dm1 = Math.max(MyEnemy.Fight_RedSts-MyUser.Fight_BlueSts, 0)
+	
+	Dm = rDm + Dm1
+	if(HitJudge(MyUser.Fight_GreenSts, MyEnemy.Fight_PurpleSts) == true){
+		MyUser.CurrentHp -= Dm
+	}
+	
+	StsChange1 = DecideDnMyStsOrUpEmySts()
+	if(StsChange1 == STS_UP){
+		if(StsUpJudge(MyEnemy.Fight_WhiteSts, MyUser.Fight_BlackCopperSts) == true){
+			//ステータス上昇
+			v1 = calsStsUpVol(MyEnemy.Fight_WhiteGoldSts, MyUser.Fight_BlackSilverSts)
+		}
+	}else if(StsChange1 == STS_DOWN){
+		if(StsDownJudge(MyEnemy.Fight_BlackSts, MyUser.Fight_WhiteCopperSts) == true){
+			//ステータス低下
+			v1 = calcStsDownVol(MyEnemy.Fight_BlackGoldSts, MyUser.WhiteSilverSts)
+		}
+	}
+
 }
+
+
+function StsUpJudge(joushouRitu, joushouTeikouRitu){
+	
+	percent = Math.min(90, max(joushouRitu-joushouTeikouRitu, 5))
+	rNum = getRandom(1, 100);
+	
+	if(rNum <= percent){
+		return true
+	}else{
+		return false
+	}
+}
+
+function StsDownJudge(teikaRitu, teikaTeikouRitu){
+	
+	percent = Math.min(90, max(teikaRitu-teikaTeikouRitu, 5))
+	rNum = getRandom(1, 100);
+	
+	if(rNum <= percent){
+		return true
+	}else{
+		return false
+	}
+}
+
+function DecideUpMyStsOrDnEmySts(){
+	rNum = getRandom(1, 100);
+	if(rNum < 50){
+		return STS_UP
+	}else{
+		return STS_DOWN
+	}
+}
+
+function DecideDnMyStsOrUpEmySts(){
+	rNum = getRandom(1, 100);
+	if(rNum < 50){
+		return STS_UP
+	}else{
+		return STS_DOWN
+	}
+}
+
+function HitJudge(kaihiRitu, meityuRitu){
+
+	percent = Math.min(90, max(meityuRitu - kaihiRitu, 10));
+	rNum = getRandom(1, 100);
+	
+	if(rNum <= percent){
+		return true
+	}else{
+		return false
+	}
+}
+
 function JudgeWinOrLose(){
-	if(MyUser.YellowSts <= 0){
+	if(MyUser.CurrentHp <= 0){
 		return FIGHT_RESULT_LOSE;
-	}else if(MyEnemy.YellowSts <= 0){
+	}else if(MyEnemy.CurrentHp <= 0){
 		return FIGHT_RESULT_WIN;
 	}else{
 		return FIGHT_RESULT_CONTINUE
@@ -1594,21 +1859,33 @@ function JudgeWinOrLose(){
 
 function CreateEnemeny(enemyLevel, Enemy1){
 	let min1, max1
-
+	let min2, max2
+	
 	if(enemyLevel == 1){
 		min1 = MIN_STS_VOL_LEVEL1
 		max1 = MAX_STS_VOL_LEVEL1
+		
+		min2 = MIN_EXP_VOL_LEVEL1
+		max2 = MAX_EXP_VOL_LEVEL1
 	}else if(enemyLevel == 2){
 		min1 = MIN_STS_VOL_LEVEL2
 		max1 = MAX_STS_VOL_LEVEL2
+		
+		min2 = MIN_EXP_VOL_LEVEL2
+		max2 = MAX_EXP_VOL_LEVEL2
+		
 	}else if(enemyLevel == 3){
 		min1 = MIN_STS_VOL_LEVEL3
 		max1 = MAX_STS_VOL_LEVEL3
+		
+		min2 = MIN_EXP_VOL_LEVEL3
+		max2 = MAX_EXP_VOL_LEVEL3
 	}
 	
 	Enemy1.RedSts = getRandom(min1, max1)
 	Enemy1.BlueSts = getRandom(min1, max1)
 	Enemy1.YellowSts = getRandom(min1, max1)
+	Enemy1.CurrentHp = Enemy1.YellowSts
 	Enemy1.GreenSts = getRandom(min1, max1)
 	Enemy1.PurpleSts = getRandom(min1, max1)
 	Enemy1.WhiteSts = getRandom(min1, max1)
@@ -1620,8 +1897,76 @@ function CreateEnemeny(enemyLevel, Enemy1){
 	Enemy1.BlackSilverSts = getRandom(min1, max1)
 	Enemy1.BlackCopperSts = getRandom(min1, max1)
 	Enemy1.HavingCoin = getRandom(min1, max1)
-    Enemy1.HavingExp = getRandom(min1, max1)
+    Enemy1.HavingExp = getRandom(min2, max2)
     
+}
+
+
+//色別ステータス上昇確率計算
+//g_StsDnRate = [60,60,60,60,60,60,60,60,60,60,60,60]
+function calcUpStsRate(){
+
+	let StsUpRate = [10,10,10,10,10,10,10,10,10,10,10,10]
+	let havingYobiSuzuCount = 0;
+	let SuzuIdAndPower = []
+	for(var i=0; i<MyUser.HavingYobiSuzuColor.length; i++){
+		SuzuIdAndPower[i][0] = i;
+		if(MyUser.HavingYobiSuzuColor == 1){
+			havingYobiSuzuCount++
+			SuzuIdAndPower[i][1] =  HavingYobiSuzuPower[i]
+		}else{
+
+			SuzuIdAndPower[i][1] = 10;
+		}
+	}
+	
+	//耐久力の降順でソート
+	SuzuIdAndPower.sort(function(a, b){
+		return b[i][1] - a[i][1];
+	});
+	
+	let j = havingYobiSuzuCount;
+	for(var i=0; i<havingYobiSuzuCount; i++){
+		g_StsUpRate[SuzuIdAndPower[i][0]] += UP_PERCENTAGE_UNIT * j
+		j--;
+	}
+	
+	return StsUpRate;
+
+}
+
+
+
+//色別ステータス低下確率計算
+function calcDownStsRate(){
+
+	let StsDnRate = [60,60,60,60,60,60,60,60,60,60,60,60]
+	let havingOiSuzuCount = 0;
+	let SuzuIdAndPower = []
+	for(var i=0; i<MyUser.HavingOiSuzuColor.length; i++){
+		SuzuIdAndPower[i][0] = i;
+		if(MyUser.HavingOiSuzuColor == 1){
+			havingYobiSuzuCount++
+			SuzuIdAndPower[i][1] =  HavingOiSuzuPower[i]
+		}else{
+
+			SuzuIdAndPower[i][1] = 10;
+		}
+	}
+	
+	//耐久力の降順でソート
+	SuzuIdAndPower.sort(function(a, b){
+		return b[i][1] - a[i][1];
+	});
+	
+	let j = havingOiSuzuCount;
+	for(var i=0; i<havingOiSuzuCount; i++){
+		g_StsUpRate[SuzuIdAndPower[i][0]] -= DOWN_PERCENTAGE_UNIT * j
+		j--;
+	}
+	
+	return StsUpRate;
+
 }
 
 //最大値・最小値を引数に持つ関数
