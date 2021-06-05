@@ -55,6 +55,12 @@ const DOWN_PERCENTAGE_UNIT = 10
 const STS_UP = 0
 const STS_DOWN = 1
 
+const SUZU_POINT_NOT_CONSUME = 0
+const SUZU_POINT_CONSUME = 1
+
+const YOBI_SUZU = 0
+const OI_SUZU = 1
+
 g_PrevCountStart = 0;
 
 g_KyotenColorNames = ["赤","青","黄","緑","紫","白","白金","白銀","白銅","黒","黒金","黒銀","黒銅","虹",
@@ -135,6 +141,10 @@ var MarkerMap = new Array();
 
 class Enemy {
 
+	EStsUpRate = [10,10,10,10,10,10,10,10,10,10,10,10]
+	EStsDnRate = [10,10,10,10,10,10,10,10,10,10,10,10]
+	EStsUpDivValList;
+	EStsDnDivValList;
 	enemyImgName = ""
 	CurrentHp = 0
 	
@@ -203,6 +213,11 @@ class Enemy {
 }
 class User {
 
+	UStsUpRate = [10,10,10,10,10,10,10,10,10,10,10,10]
+	UStsDnRate = [60,60,60,60,60,60,60,60,60,60,60,60]
+	UStsUpDivValList;
+	UStsDnDivValList;
+	
     //攻撃力
     RedSts = 0
     //防御力
@@ -456,14 +471,17 @@ function ChangeModeInAdvanceOneStepTab(){
 			alert("モード変更できませんでした")
 			return;
 		}
-	}else{
-	
 	}
 	
 	MyUser.CurrentMode = mode1;
 	if(mode1 == MODE_KYOTEN_TAIZAI){
 		kyotenIdx1 = GetNearestKyotenId(MyUser.lat1, MyUser.lng1);
 		MyUser.CurrentKyotenType = MyUser.KyotenTypes[kyotenIdx1];
+	}else if(mode1 == MODE_FIGHT){
+		MyUser.UStsUpRate = calcUpStsRate()
+		MyUser.UStsDnRate = calcDnStsRate()
+		MyUser.UStsUpDivValList = makeUpStsDivValList(UStsUpRate)
+		MyUser.UStsDnDivValList = makeDnStsDivValList(UStsDnRate)
 	}
 	alert("モード変更しました")
 	
@@ -1705,6 +1723,11 @@ var SEFunc1 = function StepExecute(){
 										
 					kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
 					addExpOrCoinOrTimeSand(kyotenIdx1, MyEnemy.HavingExp , 0)
+					
+					MyUser.UStsUpRate = calcUpStsRate()
+					MyUser.UStsDnRate = calcDnStsRate()
+					MyUser.UStsUpDivValList = makeUpStsDivValList(UStsUpRate)
+					MyUser.UStsDnDivValList = makeDnStsDivValList(UStsDnRate)
 
 					
 				
@@ -1712,6 +1735,12 @@ var SEFunc1 = function StepExecute(){
 					g_StartedFightFlg = false;
 					str2 = "敗北してしまった"
 					g_AdvanceOneStepLog += str2
+					
+					MyUser.UStsUpRate = calcUpStsRate()
+					MyUser.UStsDnRate = calcDnStsRate()
+					MyUser.UStsUpDivValList = makeUpStsDivValList(UStsUpRate)
+					MyUser.UStsDnDivValList = makeDnStsDivValList(UStsDnRate)
+					
 				
 				}
 				
@@ -1742,14 +1771,161 @@ function StepMyUserAttackTurn(){
 		if(StsUpJudge(MyUser.Fight_WhiteSts, MyEnemy.Fight_BlackCopperSts) == true){
 			//ステータス上昇
 			v1 = calsStsUpVol(MyUser.Fight_WhiteGoldSts, MyEnemy.Fight_BlackSilverSts)
+			colorIdx = decideUpSts(MyUser.UStsUpDivValList)
+			AddMyUserFightStsVal(colorIdx, v1)
 		}
 	}else if(StsChange1 == STS_DOWN){
 		if(StsDownJudge(MyUser.Fight_BlackSts, MyEnemy.Fight_WhiteCopperSts) == true){
 			//ステータス低下
 			v1 = calcStsDownVol(MyUser.Fight_BlackGoldSts, MyEnemy.WhiteSilverSts)
+			colorIdx = decideDnSts(MyUser.UStsDnDivValList)
+			AddMyEnemyFightStsVal(colorIdx, -v1)
+			
 		}
 	}
 	
+	//鈴耐久力変更
+	SuzuConsume1 = DecideWetherSuzuPtConsume()
+	if(SuzuConsume1 == SUZU_POINT_CONSUME){
+		colorIdx = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
+		ConsumeSuzuType = DecideYobiOrOiSuzu();
+		if(ConsumeSuzuType == YOBI_SUZU){
+			AddYobiSuzuColorPower(colorIdx, -1)
+		}else if(ConsumeSuzuType == OI_SUZU){
+			AddOiSuzuColorPower(colorIdx, -1)
+		}
+	}
+	
+
+}
+
+function AddYobiSuzuColorPower(colorIdx, val1){
+
+	if(MyUser.HavingYobiSuzuPower[colorIdx] + val1 >= 0){
+		MyUser.HavingYobiSuzuPower[colorIdx] += val1
+	}
+}
+
+function AddOiSuzuColorPower(colorIdx, val1){
+
+	if(MyUser.HavingOiSuzuPower[colorIdx] + val1 >= 0){
+		MyUser.HavingOiSuzuPower[colorIdx] += val1
+	}
+}
+
+
+function AddMyUserFightStsVal(colorIdx, val1){
+
+	if(colorIdx == KYOTEN_RED && MyUser.Fight_RedSts+val1 >= 1){
+		Fight_RedSts += val1
+	}
+
+	if(colorIdx == KYOTEN_BLUE && MyUser.Fight_BlueSts+val1 >= 1){
+		Fight_BlueSts += val1
+	}
+
+	if(colorIdx == KYOTEN_YELLOW && MyUser.Fight_YellowSts+val1 >= 1){
+		Fight_YellowSts += val1
+	}
+
+	if(colorIdx == KYOTEN_GREEN && MyUser.Fight_GreenSts+val1 >= 1){
+		Fight_GreenSts += val1
+	}
+
+	if(colorIdx == KYOTEN_PURPLE && MyUser.Fight_PurpleSts+val1 >= 1){
+		Fight_PurpleSts += val1
+	}
+
+	if(colorIdx == KYOTEN_WHITE && MyUser.Fight_WhiteSts+val1 >= 1){
+		Fight_WhiteSts += val1
+	}
+
+	if(colorIdx == KYOTEN_WHITEGOLD && MyUser.Fight_WhiteGoldSts+val1 >= 1){
+		Fight_WhiteGoldSts += val1
+	}
+
+	if(colorIdx == KYOTEN_WHITESILVER && MyUser.Fight_WhiteSilverSts+val1 >= 1){
+		Fight_WhiteSilverSts += val1
+	}
+
+	if(colorIdx == KYOTEN_WHITECOPPER && MyUser.Fight_WhiteCopperSts+val1 >= 1){
+		Fight_WhiteCopperSts += val1
+	}
+
+	if(colorIdx == KYOTEN_BLACK && MyUser.Fight_BlackSts+val1 >= 1){
+		Fight_BlackSts += val1
+	}
+
+	if(colorIdx == KYOTEN_BLACKGOLD && MyUser.Fight_BlackGoldSts+val1 >= 1){
+		Fight_BlackGoldSts += val1
+	}
+
+	if(colorIdx == KYOTEN_BLACKSILVER && MyUser.Fight_BlackSilverSts+val1 >= 1){
+		Fight_BlackSilverSts += val1
+	}
+
+	if(colorIdx == KYOTEN_BLACKCOPPER && MyUser.Fight_BlackCopperSts+val1 >= 1){
+		Fight_BlackCopperSts += val1
+	}
+
+
+
+}
+
+function AddMyEnemyFightStsVal(colorIdx, val1){
+
+	if(colorIdx == KYOTEN_RED && MyEnemy.Fight_RedSts+val1 >= 1){
+		Fight_RedSts += val1
+	}
+
+	if(colorIdx == KYOTEN_BLUE && MyEnemy.Fight_BlueSts+val1 >= 1){
+		Fight_BlueSts += val1
+	}
+
+	if(colorIdx == KYOTEN_YELLOW && MyEnemy.Fight_YellowSts+val1 >= 1){
+		Fight_YellowSts += val1
+	}
+
+	if(colorIdx == KYOTEN_GREEN && MyEnemy.Fight_GreenSts+val1 >= 1){
+		Fight_GreenSts += val1
+	}
+
+	if(colorIdx == KYOTEN_PURPLE && MyEnemy.Fight_PurpleSts+val1 >= 1){
+		Fight_PurpleSts += val1
+	}
+
+	if(colorIdx == KYOTEN_WHITE && MyEnemy.Fight_WhiteSts+val1 >= 1){
+		Fight_WhiteSts += val1
+	}
+
+	if(colorIdx == KYOTEN_WHITEGOLD && MyEnemy.Fight_WhiteGoldSts+val1 >= 1){
+		Fight_WhiteGoldSts += val1
+	}
+
+	if(colorIdx == KYOTEN_WHITESILVER && MyEnemy.Fight_WhiteSilverSts+val1 >= 1){
+		Fight_WhiteSilverSts += val1
+	}
+
+	if(colorIdx == KYOTEN_WHITECOPPER && MyEnemy.Fight_WhiteCopperSts+val1 >= 1){
+		Fight_WhiteCopperSts += val1
+	}
+
+	if(colorIdx == KYOTEN_BLACK && MyEnemy.Fight_BlackSts+val1 >= 1){
+		Fight_BlackSts += val1
+	}
+
+	if(colorIdx == KYOTEN_BLACKGOLD && MyEnemy.Fight_BlackGoldSts+val1 >= 1){
+		Fight_BlackGoldSts += val1
+	}
+
+	if(colorIdx == KYOTEN_BLACKSILVER && MyEnemy.Fight_BlackSilverSts+val1 >= 1){
+		Fight_BlackSilverSts += val1
+	}
+
+	if(colorIdx == KYOTEN_BLACKCOPPER && MyEnemy.Fight_BlackCopperSts+val1 >= 1){
+		Fight_BlackCopperSts += val1
+	}
+
 
 }
 
@@ -1782,11 +1958,15 @@ function StepEnemyAttackTurn(){
 		if(StsUpJudge(MyEnemy.Fight_WhiteSts, MyUser.Fight_BlackCopperSts) == true){
 			//ステータス上昇
 			v1 = calsStsUpVol(MyEnemy.Fight_WhiteGoldSts, MyUser.Fight_BlackSilverSts)
+			colorIdx = decideUpSts(MyEnemy.EStsUpDivValList)
+			AddMyEnemyFightStsVal(colorIdx, v1)			
 		}
 	}else if(StsChange1 == STS_DOWN){
 		if(StsDownJudge(MyEnemy.Fight_BlackSts, MyUser.Fight_WhiteCopperSts) == true){
 			//ステータス低下
 			v1 = calcStsDownVol(MyEnemy.Fight_BlackGoldSts, MyUser.WhiteSilverSts)
+			colorIdx = decideDnSts(MyEnemy.UStsUpDivValList)
+			AddMyUserFightStsVal(colorIdx, -v1)
 		}
 	}
 
@@ -1814,6 +1994,25 @@ function StsDownJudge(teikaRitu, teikaTeikouRitu){
 		return true
 	}else{
 		return false
+	}
+}
+
+
+function DecideYobiOrOiSuzu(){
+	rNum = getRandom(1, 100);
+	if(rNum < 50){
+		return YOBI_SUZU;
+	}else{
+		return OI_SUZU;
+	}
+}
+
+function DecideWetherSuzuPtConsume(){
+	rNum = getRandom(1, 100);
+	if(rNum < 50){
+		return SUZU_POINT_NOT_CONSUME
+	}else{
+		return SUZU_POINT_CONSUME
 	}
 }
 
@@ -1857,7 +2056,7 @@ function JudgeWinOrLose(){
 	}
 }
 
-function CreateEnemeny(enemyLevel, Enemy1){
+function CreateEnemy(enemyLevel, Enemy1){
 	let min1, max1
 	let min2, max2
 	
@@ -1899,6 +2098,82 @@ function CreateEnemeny(enemyLevel, Enemy1){
 	Enemy1.HavingCoin = getRandom(min1, max1)
     Enemy1.HavingExp = getRandom(min2, max2)
     
+	Enemy1.EStsUpDivValList = makeUpStsDivValList(Enemy1.EStsUpRate)
+	Enemy1.EStsDnDivValList = makeDnStsDivValList(Enemy1.EStsDnRate)
+    
+}
+
+//ルーレット値リストより、上昇ステータスカラーを決定する
+function decideUpSts(divValList){
+	let valTotal = 0;
+	let colorIdx = 0;
+	let CurrentVal = 0;
+	
+	for(var i=0; i<divValList.length; i++){
+		valTotal += divValList[i];
+	}
+	
+	rNum = getRandom(0, valTotal);
+	for(var i=0; i<divValList.length; i++){
+		if(divValList[i] >= rNum){
+			colorIdx = i;
+			break;
+		}
+	}
+	
+	return colorIdx;
+	
+}
+
+//ルーレット値リストより、低下ステータスカラーを決定する
+function decideDnSts(divValList){
+	let valTotal = 0;
+	let colorIdx = 0;
+	let CurrentVal = 0;
+	
+	for(var i=0; i<divValList.length; i++){
+		valTotal += divValList[i];
+	}
+	
+	rNum = getRandom(0, valTotal);
+	for(var i=0; i<divValList.length; i++){
+		if(divValList[i] >= rNum){
+			colorIdx = i;
+			break;
+		}
+	}
+	
+	return colorIdx;
+	
+}
+
+
+function makeDnStsDivValList(StsUpRate){
+
+	let divValList = [];
+	let valCurrent = 0;
+	
+	for(var i=0; i<StsUpRate.length; i++){
+		valCurrent += StsUpRate[i];
+		divValList[i] = valCurrent;
+	}
+	
+	return divValList;
+	
+}
+
+function makeDownStsDivValList(StsDnRate){
+
+	let divValList = [];
+	let valCurrent = 0;
+	
+	for(var i=0; i<StsDnRate.length; i++){
+		valCurrent += StsDnRate[i];
+		divValList[i] = valCurrent;
+	}
+	
+	return divValList;
+	
 }
 
 
@@ -1911,7 +2186,8 @@ function calcUpStsRate(){
 	let SuzuIdAndPower = []
 	for(var i=0; i<MyUser.HavingYobiSuzuColor.length; i++){
 		SuzuIdAndPower[i][0] = i;
-		if(MyUser.HavingYobiSuzuColor == 1){
+		if(MyUser.HavingYobiSuzuColor == 1 &&
+		   MyUser.HavingYobiSuzuPower[i] >= 1){
 			havingYobiSuzuCount++
 			SuzuIdAndPower[i][1] =  HavingYobiSuzuPower[i]
 		}else{
@@ -1927,7 +2203,7 @@ function calcUpStsRate(){
 	
 	let j = havingYobiSuzuCount;
 	for(var i=0; i<havingYobiSuzuCount; i++){
-		g_StsUpRate[SuzuIdAndPower[i][0]] += UP_PERCENTAGE_UNIT * j
+		StsUpRate[SuzuIdAndPower[i][0]] += UP_PERCENTAGE_UNIT * j
 		j--;
 	}
 	
@@ -1945,7 +2221,8 @@ function calcDownStsRate(){
 	let SuzuIdAndPower = []
 	for(var i=0; i<MyUser.HavingOiSuzuColor.length; i++){
 		SuzuIdAndPower[i][0] = i;
-		if(MyUser.HavingOiSuzuColor == 1){
+		if(MyUser.HavingOiSuzuColor == 1&&
+		   MyUser.HavingOiSuzuPower[i] >= 1){
 			havingYobiSuzuCount++
 			SuzuIdAndPower[i][1] =  HavingOiSuzuPower[i]
 		}else{
@@ -1961,11 +2238,11 @@ function calcDownStsRate(){
 	
 	let j = havingOiSuzuCount;
 	for(var i=0; i<havingOiSuzuCount; i++){
-		g_StsUpRate[SuzuIdAndPower[i][0]] -= DOWN_PERCENTAGE_UNIT * j
+		StsDnRate[SuzuIdAndPower[i][0]] -= DOWN_PERCENTAGE_UNIT * j
 		j--;
 	}
 	
-	return StsUpRate;
+	return StsDnRate;
 
 }
 
