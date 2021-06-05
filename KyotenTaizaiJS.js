@@ -206,6 +206,8 @@ class Enemy {
     //相手の起こすステータス上昇に対する抵抗率
     Fight_BlackCopperSts;
     
+    EnemyType;
+    
   constructor() {
     
   }
@@ -1764,6 +1766,12 @@ function StepMyUserAttackTurn(){
 	Dm = rDm + Dm1
 	if(HitJudge(MyEnemy.Fight_GreenSts, MyUser.Fight_PurpleSts) == true){
 		MyEnemy.CurrentHp -= Dm
+		
+		str2 = MyUser.name1
+		str2 += "は敵に"
+		str2 += Dm
+		str2 += "のダメージを与えた<br>"
+		g_AdvanceOneStepLog += str2
 	}
 	
 	StsChange1 = DecideUpMyStsOrDnEmySts()
@@ -1773,13 +1781,29 @@ function StepMyUserAttackTurn(){
 			v1 = calsStsUpVol(MyUser.Fight_WhiteGoldSts, MyEnemy.Fight_BlackSilverSts)
 			colorIdx = decideUpSts(MyUser.UStsUpDivValList)
 			AddMyUserFightStsVal(colorIdx, v1)
-		}
+			
+			str2 = MyUser.name1
+			str2 += "の"
+			str2 += g_KyotenColorNames[colorIdx]
+			str2 += "の力が"
+			str2 += v1
+			str2 += "だけ上昇した"
+			g_AdvanceOneStepLog += str2
+
 	}else if(StsChange1 == STS_DOWN){
 		if(StsDownJudge(MyUser.Fight_BlackSts, MyEnemy.Fight_WhiteCopperSts) == true){
 			//ステータス低下
 			v1 = calcStsDownVol(MyUser.Fight_BlackGoldSts, MyEnemy.WhiteSilverSts)
 			colorIdx = decideDnSts(MyUser.UStsDnDivValList)
 			AddMyEnemyFightStsVal(colorIdx, -v1)
+			
+			str2 = MyUser.name1
+			str2 += "は敵の"
+			str2 += g_KyotenColorNames[colorIdx]
+			str2 += "の力を"
+			str2 += v1
+			str2 += "だけ低下させた"
+			g_AdvanceOneStepLog += str2
 			
 		}
 	}
@@ -1959,7 +1983,14 @@ function StepEnemyAttackTurn(){
 			//ステータス上昇
 			v1 = calsStsUpVol(MyEnemy.Fight_WhiteGoldSts, MyUser.Fight_BlackSilverSts)
 			colorIdx = decideUpSts(MyEnemy.EStsUpDivValList)
-			AddMyEnemyFightStsVal(colorIdx, v1)			
+			AddMyEnemyFightStsVal(colorIdx, v1)
+			
+			str2 = "敵の"
+			str2 += g_KyotenColorNames[colorIdx]
+			str2 += "の力が"
+			str2 += v1
+			str2 += "だけ上昇した"
+			g_AdvanceOneStepLog += str2
 		}
 	}else if(StsChange1 == STS_DOWN){
 		if(StsDownJudge(MyEnemy.Fight_BlackSts, MyUser.Fight_WhiteCopperSts) == true){
@@ -1967,6 +1998,16 @@ function StepEnemyAttackTurn(){
 			v1 = calcStsDownVol(MyEnemy.Fight_BlackGoldSts, MyUser.WhiteSilverSts)
 			colorIdx = decideDnSts(MyEnemy.UStsUpDivValList)
 			AddMyUserFightStsVal(colorIdx, -v1)
+			
+			str2 = "敵は"
+			str2 += MyUser.name1
+			str2 += "の"
+			str2 += g_KyotenColorNames[colorIdx]
+			str2 += "の力を"
+			str2 += v1
+			str2 += "だけ低下させた"
+			g_AdvanceOneStepLog += str2
+			
 		}
 	}
 
