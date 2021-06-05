@@ -513,9 +513,9 @@ function ChangeModeInAdvanceOneStepTab(){
 	alert("モード変更しました")
 	
 	
-	str1 = "モードを###"
+	str1 = "モードを<span style='color:#ff0000;'>###"
 	str1 += g_ModeJPStr[mode1]
-	str1 += "###に変更しました<br>"
+	str1 += "###</span>に変更しました<br>"
 	
 	g_AdvanceOneStepLog += str1
 	
