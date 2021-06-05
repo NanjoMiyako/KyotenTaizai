@@ -24,7 +24,7 @@ const KYOTEN_MIN_INTERVAL = 200;
 //何コインで1単位の鈴アイテムの強化ができるか
 const KYOKA_COIN_UNIT = 10;
 //一ステップにかかる秒数
-const ONE_STEP_SECOND = 6;
+const ONE_STEP_SECOND = 3;
 //何ステップで経験値がもらえるか
 const GET_POINT_STEP_COUNT = 3;
 //敵レベルごとのステータス最小・最大値
@@ -144,8 +144,13 @@ var MarkerMap = new Array();
 
 class Enemy {
 
-	EStsUpRate = [10,10,10,10,10,10,10,10,10,10,10,10]
-	EStsDnRate = [10,10,10,10,10,10,10,10,10,10,10,10]
+	EStsUpRate = [10,10,10,10,
+				  10,10,10,10,
+				  10,10,10,10]
+				  
+	EStsDnRate = [10,10,10,10,
+				  10,10,10,10,
+				  10,10,10,10]
 	EStsUpDivValList;
 	EStsDnDivValList;
 	enemyImgName = ""
@@ -218,8 +223,13 @@ class Enemy {
 }
 class User {
 
-	UStsUpRate = [10,10,10,10,10,10,10,10,10,10,10,10]
-	UStsDnRate = [60,60,60,60,60,60,60,60,60,60,60,60]
+	UStsUpRate = [10,10,10,10,
+				  10,10,10,10,
+				  10,10,10,10]
+				  
+	UStsDnRate = [60,60,60,60,
+				  60,60,60,60,
+				  60,60,60,60]
 	UStsUpDivValList;
 	UStsDnDivValList;
 	
@@ -271,10 +281,21 @@ class User {
     KyotenLngs = []
     KyotenCount = 0
     
-    HavingYobiSuzuColor = [0,0,0,0,0,0,0,0,0,0,0,0,0]
-    HavingYobiSuzuPower = [0,0,0,0,0,0,0,0,0,0,0,0,0]
-    HavingOiSuzuColor = [0,0,0,0,0,0,0,0,0,0,0,0,0]
-    HavingOiSuzuPower = [0,0,0,0,0,0,0,0,0,0,0,0,0]
+    HavingYobiSuzuColor = [0,0,0,0,
+                           0,0,0,0,
+                           0,0,0,0]
+                           
+    HavingYobiSuzuPower = [0,0,0,0,
+    					   0,0,0,0,
+    					   0,0,0,0]
+    					   
+    HavingOiSuzuColor = [0,0,0,0,
+    					 0,0,0,0,
+    					 0,0,0,0]
+    					 
+    HavingOiSuzuPower = [0,0,0,0,
+    					 0,0,0,0,
+    					 0,0,0,0]
     
     HavingCoin = 0
     
@@ -483,10 +504,11 @@ function ChangeModeInAdvanceOneStepTab(){
 		kyotenIdx1 = GetNearestKyotenId(MyUser.lat1, MyUser.lng1);
 		MyUser.CurrentKyotenType = MyUser.KyotenTypes[kyotenIdx1];
 	}else if(mode1 == MODE_FIGHT){
+		InitUserFightSts(MyUser)
 		MyUser.UStsUpRate = calcUpStsRate()
 		MyUser.UStsDnRate = calcDnStsRate()
-		MyUser.UStsUpDivValList = makeUpStsDivValList(UStsUpRate)
-		MyUser.UStsDnDivValList = makeDnStsDivValList(UStsDnRate)
+		MyUser.UStsUpDivValList = makeUpStsDivValList(MyUser.UStsUpRate)
+		MyUser.UStsDnDivValList = makeDnStsDivValList(MyUser.UStsDnRate)
 	}
 	alert("モード変更しました")
 	
@@ -504,7 +526,7 @@ function ChangeModeInAdvanceOneStepTab(){
 function TestInitUser(User){
 
     //攻撃力
-    User.RedSts = 10
+    User.RedSts = 100
     //防御力
     User.BlueSts = 20
     //hp
@@ -512,7 +534,7 @@ function TestInitUser(User){
     //回避率
     User.GreenSts = 40
     //命中率
-    User.PurpleSts = 50
+    User.PurpleSts = 500
     //自分のステータス上昇発生率
     User.WhiteSts = 60
     //自分のステータス上昇時の上昇数値
@@ -550,10 +572,21 @@ function TestInitUser(User){
     User.KyotenLngs = [138.02233232405075, 137.99314988933753]
     User.KyotenCount = 2;
     
-    User.HavingYobiSuzuColor = [1, 0,1, 0,1,0,0,0,0,0,0,0,0]
-    User.HavingYobiSuzuPower = [10,0,30,0,90,0,0,0,0,0,0,0,0]
-    User.HavingOiSuzuColor = [0,0,0,1, 0,1, 0,1,0,0,0,0,0]
-    User.HavingOiSuzuPower = [0,0,0,20,0,10,0,90,0,0,0,0,0]
+    User.HavingYobiSuzuColor = [1, 0, 1, 0,
+    							1, 0, 0, 0,
+    							0, 0, 0, 0]
+
+    User.HavingYobiSuzuPower = [10, 0,30, 0,
+    							90, 0, 0, 0,
+    							0,  0, 0, 0]
+
+    User.HavingOiSuzuColor = [0, 0, 0, 1,
+						      0, 1, 0, 1,
+						      0, 0, 0, 0]
+						      
+    User.HavingOiSuzuPower = [0, 0, 0,20,
+    						  0,10, 0,90,
+    						  0, 0, 0, 0]
     
     User.HavingCoin = 270
     
@@ -561,7 +594,7 @@ function TestInitUser(User){
     User.TimeSandDownStsType = KYOTEN_BLACKGOLD
     User.TimeSandUpStsType = KYOTEN_BLUE
     
-    User.FightEnemyLevel = 2;
+    User.FightEnemyLevel = 1;
     User.WinEnemyCount1 = [1,2,3,0,0,0,0,0,0,0,0,0]
     User.WinEnemyCount2 = [0,0,0,1,2,3,0,0,0,0,0,0]
     User.WinEnemyCount3 = [0,0,0,0,0,0,1,0,2,3,0,0]
@@ -1708,7 +1741,9 @@ var SEFunc1 = function StepExecute(){
 			g_PrevCountStart = 0;
 			if(g_StartedFightFlg == true){
 				StepMyUserAttackTurn();
-				StepEnemyAttackTurn();
+				if(MyEnemy.CurrentHp >= 1){
+					StepEnemyAttackTurn();
+				}
 				
 				let fightResult = JudgeWinOrLose();
 				
@@ -1716,54 +1751,50 @@ var SEFunc1 = function StepExecute(){
 				
 				}else if(fightResult == FIGHT_RESULT_WIN){
 					g_StartedFightFlg = false;
-					str2 = "勝利した"
+					str2 = "勝利した<br>"
 					g_AdvanceOneStepLog += str2
 					
 
 					MyUser.HavingCoin += MyEnemy.HavingCoin;
 					str2 = "コインを"
-					str2 += Mynemy.HavingCoin
+					str2 += MyEnemy.HavingCoin
 					str2 += "だけゲットした<br>"
 					g_AdvanceOneStepLog += str2
 										
 					kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
 					addExpOrCoinOrTimeSand(kyotenIdx1, MyEnemy.HavingExp , 0)
 					
-					MyUser.UStsUpRate = calcUpStsRate()
-					MyUser.UStsDnRate = calcDnStsRate()
-					MyUser.UStsUpDivValList = makeUpStsDivValList(UStsUpRate)
-					MyUser.UStsDnDivValList = makeDnStsDivValList(UStsDnRate)
-
-					
 				
 				}else if(fightResult == FIGHT_RESULT_LOSE){
 					g_StartedFightFlg = false;
-					str2 = "敗北してしまった"
+					str2 = "敗北してしまった<br>"
 					g_AdvanceOneStepLog += str2
-					
-					MyUser.UStsUpRate = calcUpStsRate()
-					MyUser.UStsDnRate = calcDnStsRate()
-					MyUser.UStsUpDivValList = makeUpStsDivValList(UStsUpRate)
-					MyUser.UStsDnDivValList = makeDnStsDivValList(UStsDnRate)
 					
 				
 				}
 				
 			}else{
 				CreateEnemy(MyUser.FightEnemyLevel, MyEnemy)
+				InitEnemyFightSts(MyEnemy)
 				
 				str2 = "エネミータイプ:"
 				str2 += MyEnemy.EnemyType
-				str2 += "の敵と遭遇した"
+				str2 += "の敵と遭遇した<br>"
 				g_AdvanceOneStepLog += str2
 				
 				g_StartedFightFlg = true;
+
+				InitUserFightSts(MyUser)				
+				MyUser.UStsUpRate = calcUpStsRate()
+				MyUser.UStsDnRate = calcDnStsRate()
+				MyUser.UStsUpDivValList = makeUpStsDivValList(MyUser.UStsUpRate)
+				MyUser.UStsDnDivValList = makeDnStsDivValList(MyUser.UStsDnRate)
 			}
 			
 		}
 	}
 	
-	alert("test")
+	//alert("test")
 	ShowAdvanceOneStepTab()
 }
 
@@ -1773,21 +1804,39 @@ function StepMyUserAttackTurn(){
 	Dm1 = Math.max(MyUser.Fight_RedSts-MyEnemy.Fight_BlueSts, 0)
 	
 	Dm = rDm + Dm1
+	
+	str2 = MyUser.name1
+	str2 += "の攻撃<br>"
+	g_AdvanceOneStepLog += str2
+	
 	if(HitJudge(MyEnemy.Fight_GreenSts, MyUser.Fight_PurpleSts) == true){
 		MyEnemy.CurrentHp -= Dm
-		
+		if(MyEnemy.CurrentHp < 0){
+			MyEnemy.CurrentHp = 0;
+		}
+				
 		str2 = MyUser.name1
 		str2 += "は敵に"
 		str2 += Dm
-		str2 += "のダメージを与えた<br>"
+		str2 += "のダメージを与えた"
+		str2 += "(残りHp:"
+		str2 += MyEnemy.CurrentHp
+		str2 += ")<br>"
 		g_AdvanceOneStepLog += str2
+		
+	}else{
+	
+		str2 = "攻撃はかわされてしまった<br>"
+		g_AdvanceOneStepLog += str2
+		
 	}
+	
 	
 	StsChange1 = DecideUpMyStsOrDnEmySts()
 	if(StsChange1 == STS_UP){
 		if(StsUpJudge(MyUser.Fight_WhiteSts, MyEnemy.Fight_BlackCopperSts) == true){
 			//ステータス上昇
-			v1 = calsStsUpVol(MyUser.Fight_WhiteGoldSts, MyEnemy.Fight_BlackSilverSts)
+			v1 = calcStsUpVol(MyUser.Fight_WhiteGoldSts, MyEnemy.Fight_BlackSilverSts)
 			colorIdx = decideUpSts(MyUser.UStsUpDivValList)
 			AddMyUserFightStsVal(colorIdx, v1)
 			
@@ -1796,8 +1845,9 @@ function StepMyUserAttackTurn(){
 			str2 += g_KyotenColorNames[colorIdx]
 			str2 += "の力が"
 			str2 += v1
-			str2 += "だけ上昇した"
+			str2 += "だけ上昇した<br>"
 			g_AdvanceOneStepLog += str2
+		}
 
 	}else if(StsChange1 == STS_DOWN){
 		if(StsDownJudge(MyUser.Fight_BlackSts, MyEnemy.Fight_WhiteCopperSts) == true){
@@ -1811,7 +1861,7 @@ function StepMyUserAttackTurn(){
 			str2 += g_KyotenColorNames[colorIdx]
 			str2 += "の力を"
 			str2 += v1
-			str2 += "だけ低下させた"
+			str2 += "だけ低下させた<br>"
 			g_AdvanceOneStepLog += str2
 			
 		}
@@ -1824,8 +1874,17 @@ function StepMyUserAttackTurn(){
 		ConsumeSuzuType = DecideYobiOrOiSuzu();
 		if(ConsumeSuzuType == YOBI_SUZU){
 			AddYobiSuzuColorPower(colorIdx, -1)
+			
+			str2 = g_KyotenColorNames[colorIdx]
+			str2 += "呼鈴の耐久力が1下がった<br>"
+			g_AdvanceOneStepLog += str2
+			
 		}else if(ConsumeSuzuType == OI_SUZU){
 			AddOiSuzuColorPower(colorIdx, -1)
+			
+			str2 = g_KyotenColorNames[colorIdx]
+			str2 += "追鈴の耐久力が1下がった<br>"
+			g_AdvanceOneStepLog += str2
 		}
 	}
 	
@@ -1849,56 +1908,109 @@ function AddOiSuzuColorPower(colorIdx, val1){
 
 function AddMyUserFightStsVal(colorIdx, val1){
 
-	if(colorIdx == KYOTEN_RED && MyUser.Fight_RedSts+val1 >= 1){
-		Fight_RedSts += val1
+	if(colorIdx == KYOTEN_RED){
+		MyUser.Fight_RedSts += val1
+		
+		if(MyUser.Fight_RedSts+val1 <= 0){
+			MyUser.Fight_RedSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_BLUE && MyUser.Fight_BlueSts+val1 >= 1){
-		Fight_BlueSts += val1
+	if(colorIdx == KYOTEN_BLUE){
+		MyUser.Fight_BlueSts += val1
+
+		if(MyUser.Fight_BlueSts+val1 <= 0){
+			MyUser.Fight_BlueSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_YELLOW && MyUser.Fight_YellowSts+val1 >= 1){
-		Fight_YellowSts += val1
+	if(colorIdx == KYOTEN_YELLOW){
+		MyUser.Fight_YellowSts += val1
+		
+		if(MyUser.Fight_YellowSts+val1 <= 0){
+			MyUser.Fight_YellowSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_GREEN && MyUser.Fight_GreenSts+val1 >= 1){
-		Fight_GreenSts += val1
+	if(colorIdx == KYOTEN_GREEN){
+		MyUser.Fight_GreenSts += val1
+		
+		if(MyUser.Fight_GreenSts+val1 <= 0){
+			MyUser.Fight_GreenSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_PURPLE && MyUser.Fight_PurpleSts+val1 >= 1){
-		Fight_PurpleSts += val1
+	if(colorIdx == KYOTEN_PURPLE){
+		MyUser.Fight_PurpleSts += val1
+		
+		if(MyUser.Fight_PurpleSts+val1 <= 0){
+			MyUser.Fight_PurpleSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_WHITE && MyUser.Fight_WhiteSts+val1 >= 1){
-		Fight_WhiteSts += val1
+	if(colorIdx == KYOTEN_WHITE){
+		MyUser.Fight_WhiteSts += val1
+		
+		if(MyUser.Fight_WhiteSts+val1 <= 0){
+			MyUser.Fight_WhiteSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_WHITEGOLD && MyUser.Fight_WhiteGoldSts+val1 >= 1){
-		Fight_WhiteGoldSts += val1
+	if(colorIdx == KYOTEN_WHITEGOLD){
+		MyUser.Fight_WhiteGoldSts += val1
+		
+		if(MyUser.Fight_WhiteGoldSts+val1 <= 0){
+			MyUser.Fight_WhiteGoldSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_WHITESILVER && MyUser.Fight_WhiteSilverSts+val1 >= 1){
-		Fight_WhiteSilverSts += val1
+	if(colorIdx == KYOTEN_WHITESILVER){
+		MyUser.Fight_WhiteSilverSts += val1
+		
+		if(MyUser.Fight_WhiteSilverSts+val1 <= 0){
+			MyUser.Fight_WhiteSilverSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_WHITECOPPER && MyUser.Fight_WhiteCopperSts+val1 >= 1){
-		Fight_WhiteCopperSts += val1
+	if(colorIdx == KYOTEN_WHITECOPPER){
+		MyUser.Fight_WhiteCopperSts += val1
+		
+		if(MyUser.Fight_WhiteCopperSts+val1 <= 0){
+			MyUser.Fight_WhiteCopperSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_BLACK && MyUser.Fight_BlackSts+val1 >= 1){
-		Fight_BlackSts += val1
+	if(colorIdx == KYOTEN_BLACK){
+		MyUser.Fight_BlackSts += val1
+		
+		if(MyUser.Fight_BlackSts+val1 <= 0){
+			MyUser.Fight_BlackSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_BLACKGOLD && MyUser.Fight_BlackGoldSts+val1 >= 1){
-		Fight_BlackGoldSts += val1
+	if(colorIdx == KYOTEN_BLACKGOLD){
+		MyUser.Fight_BlackGoldSts += val1
+		
+		if(MyUser.Fight_BlackGoldSts+val1 <= 0){
+			MyUser.Fight_BlackGoldSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_BLACKSILVER && MyUser.Fight_BlackSilverSts+val1 >= 1){
-		Fight_BlackSilverSts += val1
+	if(colorIdx == KYOTEN_BLACKSILVER){
+		MyUser.Fight_BlackSilverSts += val1
+		
+		if(MyUser.Fight_BlackSilverSts+val1 <= 0){
+			MyUser.Fight_BlackSilverSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_BLACKCOPPER && MyUser.Fight_BlackCopperSts+val1 >= 1){
-		Fight_BlackCopperSts += val1
+	if(colorIdx == KYOTEN_BLACKCOPPER){
+		MyUser.Fight_BlackCopperSts += val1
+		
+		if(MyUser.Fight_BlackCopperSts+val1 <= 0){
+			MyUser.Fight_BlackCopperSts = 1
+		}
+
 	}
 
 
@@ -1907,56 +2019,109 @@ function AddMyUserFightStsVal(colorIdx, val1){
 
 function AddMyEnemyFightStsVal(colorIdx, val1){
 
-	if(colorIdx == KYOTEN_RED && MyEnemy.Fight_RedSts+val1 >= 1){
-		Fight_RedSts += val1
+	if(colorIdx == KYOTEN_RED){
+		MyEnemy.Fight_RedSts += val1
+		
+		if(MyEnemy.Fight_RedSts+val1 <= 0){
+			MyEnemy.Fight_RedSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_BLUE && MyEnemy.Fight_BlueSts+val1 >= 1){
-		Fight_BlueSts += val1
+	if(colorIdx == KYOTEN_BLUE){
+		MyEnemy.Fight_BlueSts += val1
+
+		if(MyEnemy.Fight_BlueSts+val1 <= 0){
+			MyEnemy.Fight_BlueSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_YELLOW && MyEnemy.Fight_YellowSts+val1 >= 1){
-		Fight_YellowSts += val1
+	if(colorIdx == KYOTEN_YELLOW){
+		MyEnemy.Fight_YellowSts += val1
+		
+		if(MyEnemy.Fight_YellowSts+val1 <= 0){
+			MyEnemy.Fight_YellowSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_GREEN && MyEnemy.Fight_GreenSts+val1 >= 1){
-		Fight_GreenSts += val1
+	if(colorIdx == KYOTEN_GREEN){
+		MyEnemy.Fight_GreenSts += val1
+		
+		if(MyEnemy.Fight_GreenSts+val1 <= 0){
+			MyEnemy.Fight_GreenSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_PURPLE && MyEnemy.Fight_PurpleSts+val1 >= 1){
-		Fight_PurpleSts += val1
+	if(colorIdx == KYOTEN_PURPLE){
+		MyEnemy.Fight_PurpleSts += val1
+		
+		if(MyEnemy.Fight_PurpleSts+val1 <= 0){
+			MyEnemy.Fight_PurpleSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_WHITE && MyEnemy.Fight_WhiteSts+val1 >= 1){
-		Fight_WhiteSts += val1
+	if(colorIdx == KYOTEN_WHITE){
+		MyEnemy.Fight_WhiteSts += val1
+		
+		if(MyEnemy.Fight_WhiteSts+val1 <= 0){
+			MyEnemy.Fight_WhiteSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_WHITEGOLD && MyEnemy.Fight_WhiteGoldSts+val1 >= 1){
-		Fight_WhiteGoldSts += val1
+	if(colorIdx == KYOTEN_WHITEGOLD){
+		MyEnemy.Fight_WhiteGoldSts += val1
+		
+		if(MyEnemy.Fight_WhiteGoldSts+val1 <= 0){
+			MyEnemy.Fight_WhiteGoldSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_WHITESILVER && MyEnemy.Fight_WhiteSilverSts+val1 >= 1){
-		Fight_WhiteSilverSts += val1
+	if(colorIdx == KYOTEN_WHITESILVER){
+		MyEnemy.Fight_WhiteSilverSts += val1
+		
+		if(MyEnemy.Fight_WhiteSilverSts+val1 <= 0){
+			MyEnemy.Fight_WhiteSilverSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_WHITECOPPER && MyEnemy.Fight_WhiteCopperSts+val1 >= 1){
-		Fight_WhiteCopperSts += val1
+	if(colorIdx == KYOTEN_WHITECOPPER){
+		MyEnemy.Fight_WhiteCopperSts += val1
+		
+		if(MyEnemy.Fight_WhiteCopperSts+val1 <= 0){
+			MyEnemy.Fight_WhiteCopperSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_BLACK && MyEnemy.Fight_BlackSts+val1 >= 1){
-		Fight_BlackSts += val1
+	if(colorIdx == KYOTEN_BLACK){
+		MyEnemy.Fight_BlackSts += val1
+		
+		if(MyEnemy.Fight_BlackSts+val1 <= 0){
+			MyEnemy.Fight_BlackSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_BLACKGOLD && MyEnemy.Fight_BlackGoldSts+val1 >= 1){
-		Fight_BlackGoldSts += val1
+	if(colorIdx == KYOTEN_BLACKGOLD){
+		MyEnemy.Fight_BlackGoldSts += val1
+		
+		if(MyEnemy.Fight_BlackGoldSts+val1 <= 0){
+			MyEnemy.Fight_BlackGoldSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_BLACKSILVER && MyEnemy.Fight_BlackSilverSts+val1 >= 1){
-		Fight_BlackSilverSts += val1
+	if(colorIdx == KYOTEN_BLACKSILVER){
+		MyEnemy.Fight_BlackSilverSts += val1
+		
+		if(MyEnemy.Fight_BlackSilverSts+val1 <= 0){
+			MyEnemy.Fight_BlackSilverSts = 1
+		}
 	}
 
-	if(colorIdx == KYOTEN_BLACKCOPPER && MyEnemy.Fight_BlackCopperSts+val1 >= 1){
-		Fight_BlackCopperSts += val1
+	if(colorIdx == KYOTEN_BLACKCOPPER){
+		MyEnemy.Fight_BlackCopperSts += val1
+		
+		if(MyEnemy.Fight_BlackCopperSts+val1 <= 0){
+			MyEnemy.Fight_BlackCopperSts = 1
+		}
+
 	}
 
 
@@ -1964,7 +2129,7 @@ function AddMyEnemyFightStsVal(colorIdx, val1){
 
 function calcStsUpVol(joushoRyo, bougyoJoushoRyo){
 	rVol = getRandom(DM_RND_VOL_MIN, DM_RND_VOL_MAX);
-	Vol1 = max(0, joushoRyo - bougyoJoushoRyo);
+	Vol1 = Math.max(0, joushoRyo - bougyoJoushoRyo);
 	Vol = rVol + Vol1;
 	
 	return Vol;
@@ -1972,7 +2137,7 @@ function calcStsUpVol(joushoRyo, bougyoJoushoRyo){
 
 function calcStsDownVol(teikaRyo, bougyoTeikaRyo){
 	rVol = getRandom(DM_RND_VOL_MIN, DM_RND_VOL_MAX);
-	Vol1 = max(0, teikaRyo - bougyoTeikaRyo);
+	Vol1 = Math.max(0, teikaRyo - bougyoTeikaRyo);
 	Vol = rVol + Vol1;
 	
 	return Vol;
@@ -1980,17 +2145,36 @@ function calcStsDownVol(teikaRyo, bougyoTeikaRyo){
 function StepEnemyAttackTurn(){
 	rDm = getRandom(DM_RND_VOL_MIN, DM_RND_VOL_MAX);
 	Dm1 = Math.max(MyEnemy.Fight_RedSts-MyUser.Fight_BlueSts, 0)
+
+	str2 = "敵の攻撃<br>"
+	g_AdvanceOneStepLog += str2
 	
 	Dm = rDm + Dm1
 	if(HitJudge(MyUser.Fight_GreenSts, MyEnemy.Fight_PurpleSts) == true){
 		MyUser.CurrentHp -= Dm
+		if(MyUser.CurrentHp < 0){
+			MyUser.CurrentHp = 0;
+		}
+		str2 = MyUser.name1
+		str2 += "は"
+		str2 += Dm
+		str2 += "のダメージを受けた"
+		str2 += "(残りHp:"
+		str2 += MyUser.CurrentHp
+		str2 += ")<br>"
+		g_AdvanceOneStepLog += str2
+		
+	}else{
+		str2 = MyUser.name1
+		str2 += "は敵の攻撃をかわした<br>"
+		g_AdvanceOneStepLog += str2
 	}
 	
 	StsChange1 = DecideDnMyStsOrUpEmySts()
 	if(StsChange1 == STS_UP){
 		if(StsUpJudge(MyEnemy.Fight_WhiteSts, MyUser.Fight_BlackCopperSts) == true){
 			//ステータス上昇
-			v1 = calsStsUpVol(MyEnemy.Fight_WhiteGoldSts, MyUser.Fight_BlackSilverSts)
+			v1 = calcStsUpVol(MyEnemy.Fight_WhiteGoldSts, MyUser.Fight_BlackSilverSts)
 			colorIdx = decideUpSts(MyEnemy.EStsUpDivValList)
 			AddMyEnemyFightStsVal(colorIdx, v1)
 			
@@ -1998,14 +2182,14 @@ function StepEnemyAttackTurn(){
 			str2 += g_KyotenColorNames[colorIdx]
 			str2 += "の力が"
 			str2 += v1
-			str2 += "だけ上昇した"
+			str2 += "だけ上昇した<br>"
 			g_AdvanceOneStepLog += str2
 		}
 	}else if(StsChange1 == STS_DOWN){
 		if(StsDownJudge(MyEnemy.Fight_BlackSts, MyUser.Fight_WhiteCopperSts) == true){
 			//ステータス低下
 			v1 = calcStsDownVol(MyEnemy.Fight_BlackGoldSts, MyUser.WhiteSilverSts)
-			colorIdx = decideDnSts(MyEnemy.UStsUpDivValList)
+			colorIdx = decideDnSts(MyEnemy.EStsDnDivValList)
 			AddMyUserFightStsVal(colorIdx, -v1)
 			
 			str2 = "敵は"
@@ -2014,7 +2198,7 @@ function StepEnemyAttackTurn(){
 			str2 += g_KyotenColorNames[colorIdx]
 			str2 += "の力を"
 			str2 += v1
-			str2 += "だけ低下させた"
+			str2 += "だけ低下させた<br>"
 			g_AdvanceOneStepLog += str2
 			
 		}
@@ -2025,7 +2209,7 @@ function StepEnemyAttackTurn(){
 
 function StsUpJudge(joushouRitu, joushouTeikouRitu){
 	
-	percent = Math.min(90, max(joushouRitu-joushouTeikouRitu, 5))
+	percent = Math.min(90, Math.max(joushouRitu-joushouTeikouRitu, 5))
 	rNum = getRandom(1, 100);
 	
 	if(rNum <= percent){
@@ -2037,7 +2221,7 @@ function StsUpJudge(joushouRitu, joushouTeikouRitu){
 
 function StsDownJudge(teikaRitu, teikaTeikouRitu){
 	
-	percent = Math.min(90, max(teikaRitu-teikaTeikouRitu, 5))
+	percent = Math.min(90, Math.max(teikaRitu-teikaTeikouRitu, 5))
 	rNum = getRandom(1, 100);
 	
 	if(rNum <= percent){
@@ -2086,7 +2270,7 @@ function DecideDnMyStsOrUpEmySts(){
 
 function HitJudge(kaihiRitu, meityuRitu){
 
-	percent = Math.min(90, max(meityuRitu - kaihiRitu, 10));
+	percent = Math.min(90, Math.max(meityuRitu - kaihiRitu, 10));
 	rNum = getRandom(1, 100);
 	
 	if(rNum <= percent){
@@ -2199,7 +2383,7 @@ function decideDnSts(divValList){
 }
 
 
-function makeDnStsDivValList(StsUpRate){
+function makeUpStsDivValList(StsUpRate){
 
 	let divValList = [];
 	let valCurrent = 0;
@@ -2213,7 +2397,7 @@ function makeDnStsDivValList(StsUpRate){
 	
 }
 
-function makeDownStsDivValList(StsDnRate){
+function makeDnStsDivValList(StsDnRate){
 
 	let divValList = [];
 	let valCurrent = 0;
@@ -2232,9 +2416,13 @@ function makeDownStsDivValList(StsDnRate){
 //g_StsDnRate = [60,60,60,60,60,60,60,60,60,60,60,60]
 function calcUpStsRate(){
 
-	let StsUpRate = [10,10,10,10,10,10,10,10,10,10,10,10]
+	let StsUpRate = [10,10,10,10,
+					 10,10,10,10,
+					 10,10,10,10]
 	let havingYobiSuzuCount = 0;
-	let SuzuIdAndPower = []
+	let SuzuIdAndPower = [[1,10], [1,10], [1,10], [1,10],
+						  [1,10], [1,10], [1,10], [1,10],
+						  [1,10], [1,10], [1,10], [1,10]]
 	for(var i=0; i<MyUser.HavingYobiSuzuColor.length; i++){
 		SuzuIdAndPower[i][0] = i;
 		if(MyUser.HavingYobiSuzuColor == 1 &&
@@ -2249,7 +2437,7 @@ function calcUpStsRate(){
 	
 	//耐久力の降順でソート
 	SuzuIdAndPower.sort(function(a, b){
-		return b[i][1] - a[i][1];
+		return b[1] - a[1];
 	});
 	
 	let j = havingYobiSuzuCount;
@@ -2265,11 +2453,15 @@ function calcUpStsRate(){
 
 
 //色別ステータス低下確率計算
-function calcDownStsRate(){
+function calcDnStsRate(){
 
-	let StsDnRate = [60,60,60,60,60,60,60,60,60,60,60,60]
+	let StsDnRate = [60,60,60,60,
+					 60,60,60,60,
+					 60,60,60,60]
 	let havingOiSuzuCount = 0;
-	let SuzuIdAndPower = []
+	let SuzuIdAndPower = [[1,10], [1,10], [1,10], [1,10],
+						  [1,10], [1,10], [1,10], [1,10],
+						  [1,10], [1,10], [1,10], [1,10]]
 	for(var i=0; i<MyUser.HavingOiSuzuColor.length; i++){
 		SuzuIdAndPower[i][0] = i;
 		if(MyUser.HavingOiSuzuColor == 1&&
@@ -2284,7 +2476,7 @@ function calcDownStsRate(){
 	
 	//耐久力の降順でソート
 	SuzuIdAndPower.sort(function(a, b){
-		return b[i][1] - a[i][1];
+		return b[1] - a[1];
 	});
 	
 	let j = havingOiSuzuCount;
@@ -2359,11 +2551,6 @@ function deg2rad(degrees) {
 function rad2deg(radian){
         return radian * 360/(2*Math.PI);
 }
-
-
-
-
-
 
 
 
