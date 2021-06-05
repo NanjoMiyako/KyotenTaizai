@@ -16,6 +16,9 @@ const KYOTEN_TOKIMODORI = 14;
 const KYOTEN_SAISEI = 15;
 const KYOTEN_OUGON = 16;
 
+const ENEMYTYPE_MIN = 1;
+const ENEMYTYPE_MAX = 12;
+
 //拠点同士の最小間隔(メートル)
 const KYOTEN_MIN_INTERVAL = 200;
 //何コインで1単位の鈴アイテムの強化ができるか
@@ -1748,6 +1751,12 @@ var SEFunc1 = function StepExecute(){
 				
 			}else{
 				CreateEnemy(MyUser.FightEnemyLevel, MyEnemy)
+				
+				str2 = "エネミータイプ:"
+				str2 += MyEnemy.EnemyType
+				str2 += "の敵と遭遇した"
+				g_AdvanceOneStepLog += str2
+				
 				g_StartedFightFlg = true;
 			}
 			
@@ -2122,6 +2131,7 @@ function CreateEnemy(enemyLevel, Enemy1){
 		max2 = MAX_EXP_VOL_LEVEL3
 	}
 	
+	Enemy1.EnemyType = getRandom(ENEMYTYPE_MIN, ENEMYTYPE_MAX)
 	Enemy1.RedSts = getRandom(min1, max1)
 	Enemy1.BlueSts = getRandom(min1, max1)
 	Enemy1.YellowSts = getRandom(min1, max1)
