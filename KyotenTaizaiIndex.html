@@ -44,7 +44,9 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
     <li><a class="Tablink" href="#pageAdvanceOneStep">ステップ実行</a></li>
     <br>
     <li><a class="Tablink" href="#pageSaveAndLoadGameData">ゲームデータセーブ・ロード</a></li>
-    <br> 
+    <br>
+    <li><a class="Tablink" href="#pageEnemyLevelSetting">敵レベル設定</a></li>
+    <br>
         
   </ul>
 <hr>
@@ -352,7 +354,7 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
     <div id="pageTokimodoshiSetting" class="TabPage">
     時戻しの砂漠設定<br>
     現在選択中の低下ステータス:
-    <span id="CurrenDownStsInTokimodoshiDessert"></span>
+    <span id="CurrentDownStsInTokimodoshiDessert"></span>
     <br>
 	低下させるステータス
 	<select id="DownStsInTokimodoshiDessert">
@@ -381,7 +383,7 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
     <div id="pageSaiseiSetting" class="TabPage">
     再生の森設定<br>
     現在選択中の取得経験値:
-    <span id="CurrenUpStsInSaiseiForest"></span>
+    <span id="CurrentUpStsInSaiseiForest"></span>
     <br>
 	取得する経験値
 	<select id="UpStsInSaiseiForest">
@@ -443,16 +445,35 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 	</button>
     </div>
     
+    <!-- ゲームデータセーブロードタブ -->
     <div id="pageSaveAndLoadGameData" class="TabPage">
     ---ゲームデータセーブ・ロード<br>
 	<button type="button" id="pageSaveAndLoadGameData_SaveButton" onclick="SaveGameData()">
 		ゲームデータセーブ
 	</button>
 	<br>
+	<br>
 	<button type="button" id="pageSaveAndLoadGameData_SaveButton" onclick="LoadGameData()">
 		ゲームデータロード
 	</button>
     </div>
+    
+    <!-- 敵レベル設定タブ -->
+    <div id="pageEnemyLevelSetting" class="TabPage">
+    敵レベル設定<br>
+    現在選択中の敵レベル:
+    <span id="CurrentEnemyLevelInEnemyLevelSetting"></span>
+    <br>
+	敵レベル
+	<select id="EnemyLevelInEnemyLevelSetting">
+		<option value="1">1</option>
+		<option value="2">2</option>
+		<option value="3">3</option>
+    </select>
+    <br>
+	<button type="button" id="pageEnemyLevelSetting_TekiyouButton" onclick="ChangeEnemyLevelInEnemyLevelSettingTab()">
+		適用
+	</button>
         
   </div>
 </div>

@@ -64,6 +64,12 @@ const SUZU_POINT_CONSUME = 1
 const YOBI_SUZU = 0
 const OI_SUZU = 1
 
+const KYUSOKU_PERCENTAGE_MIN = 10
+const KYUSOKU_PERCENTAGE_MAX = 90
+
+const ATTACK_TURN = 0
+const KYUSOKU_TURN = 1
+
 g_PrevCountStart = 0;
 
 g_KyotenColorNames = ["赤","青","黄","緑","紫","白","白金","白銀","白銅","黒","黒金","黒銀","黒銅","虹",
@@ -216,6 +222,9 @@ class Enemy {
     
     EnemyType;
     
+    //休息確率
+    KyusokuPercentage = 50;
+    
   constructor() {
     
   }
@@ -350,6 +359,9 @@ class User {
 	Fight_BlackSilverSts;
     //相手の起こすステータス上昇に対する抵抗率
     Fight_BlackCopperSts;
+    
+    //休息確率
+    KyusokuPercentage = 50;
     
   constructor(name1, lat1, lng1) {
     this.name1 = name1;
@@ -940,6 +952,14 @@ function tab_init(link, index){
 			
 			return false;
 		};
+  }else if(id == 'pageEnemyLevelSetting'){
+	  link.onclick = function(){
+		  	changeTab(link);
+
+			ShowEnemyLevelSettingTab();
+						
+			return false;
+		};
   }
 }
 })();
@@ -978,7 +998,7 @@ function ClearLogInAdvanceOneStepTab(){
 	ShowAdvanceOneStepTab();
 }
 function ShowTokimodoshiSettingTab(){
-	span1 = document.getElementById("CurrenDownStsInTokimodoshiDessert");
+	span1 = document.getElementById("CurrentDownStsInTokimodoshiDessert");
 	span1.innerHTML = g_KyotenColorNames[MyUser.TimeSandDownStsType]
 	
 }
@@ -1007,9 +1027,23 @@ function ChangeDownStsColorInTokimodoshiDessert(){
 }
 
 function ShowSaiseiSettingTab(){
-	span1 = document.getElementById("CurrenUpStsInSaiseiForest");
+	span1 = document.getElementById("CurrentUpStsInSaiseiForest");
 	span1.innerHTML = g_KyotenColorNames[MyUser.TimeSandUpStsType]
 	
+}
+
+function ShowEnemyLevelSettingTab(){
+	span1 = document.getElementById("CurrentEnemyLevelInEnemyLevelSetting");
+	span1.innerHTML = MyUser.FightEnemyLevel
+}
+
+function ChangeEnemyLevelInEnemyLevelSettingTab(){
+	selectbox1 = document.getElementById("EnemyLevelInEnemyLevelSetting")
+	enemylevel1 = Number(selectbox1.options[selectbox1.selectedIndex].value)
+	MyUser.FightEnemyLevel = enemylevel1
+	
+	alert("設定を更新しました");
+	ShowEnemyLevelSettingTab();
 }
 
 function ChangeUpStsColorInSaiseiForest(){
@@ -1754,36 +1788,87 @@ var SEFunc1 = function StepExecute(){
 
 			g_PrevCountStart = 0;
 			if(g_StartedFightFlg == true){
-				StepMyUserAttackTurn();
-				if(MyEnemy.CurrentHp >= 1){
-					StepEnemyAttackTurn();
-				}
-				
-				let fightResult = JudgeWinOrLose();
-				
-				if(fightResult == FIGHT_RESULT_CONTINUE){
-				
-				}else if(fightResult == FIGHT_RESULT_WIN){
-					g_StartedFightFlg = false;
-					str2 = "勝利した<br>"
-					g_AdvanceOneStepLog += str2
+				AttackOrKyusoku = decideKyusokuOrAttack(MyUser.KyusokuPercentage)
+				if(AttackOrKyusoku == ATTACK_TURN){
+					StepMyUserAttackTurn();
 					
+					if(MyEnemy.CurrentHp >= 1){
+						AttackOrKyusoku2 = decideKyusokuOrAttack(MyEnemy.KyusokuPercentage)
+						if(AttackOrKyusoku2 == ATTACK_TURN){
+							StepEnemyAttackTurn();
+						}else if(AttackOrKyusoku2 == KYUSOKU_TURN){
+							StepEnemyKyusokuTurn();
+						}
+					}
+					
+					let fightResult = JudgeWinOrLose();
+					
+					if(fightResult == FIGHT_RESULT_CONTINUE){
+					
+					}else if(fightResult == FIGHT_RESULT_WIN){
+						g_StartedFightFlg = false;
+						str2 = "勝利した<br>"
+						g_AdvanceOneStepLog += str2
+						
 
-					MyUser.HavingCoin += MyEnemy.HavingCoin;
-					str2 = "コインを"
-					str2 += MyEnemy.HavingCoin
-					str2 += "だけゲットした<br>"
-					g_AdvanceOneStepLog += str2
-										
-					kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
-					addExpOrCoinOrTimeSand(kyotenIdx1, MyEnemy.HavingExp , 0)
+						MyUser.HavingCoin += MyEnemy.HavingCoin;
+						str2 = "コインを"
+						str2 += MyEnemy.HavingCoin
+						str2 += "だけゲットした<br>"
+						g_AdvanceOneStepLog += str2
+											
+						kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
+						addExpOrCoinOrTimeSand(kyotenIdx1, MyEnemy.HavingExp , 0)
+						
 					
-				
-				}else if(fightResult == FIGHT_RESULT_LOSE){
-					g_StartedFightFlg = false;
-					str2 = "敗北してしまった<br>"
-					g_AdvanceOneStepLog += str2
+					}else if(fightResult == FIGHT_RESULT_LOSE){
+						g_StartedFightFlg = false;
+						str2 = "敗北してしまった<br>"
+						g_AdvanceOneStepLog += str2
+						
 					
+					}
+				}else if(AttackOrKyusoku == KYUSOKU_TURN){
+					StepMyUserKyusokuTurn();
+					
+					if(MyEnemy.CurrentHp >= 1){
+						AttackOrKyusoku2 = decideKyusokuOrAttack(MyEnemy.KyusokuPercentage)
+						if(AttackOrKyusoku2 == ATTACK_TURN){
+							StepEnemyAttackTurn();
+							
+						}else if(AttackOrKyusoku2 == KYUSOKU_TURN){
+							StepEnemyKyusokuTurn();
+							
+						}
+					}
+					
+					let fightResult = JudgeWinOrLose();
+					
+					if(fightResult == FIGHT_RESULT_CONTINUE){
+					
+					}else if(fightResult == FIGHT_RESULT_WIN){
+						g_StartedFightFlg = false;
+						str2 = "勝利した<br>"
+						g_AdvanceOneStepLog += str2
+						
+
+						MyUser.HavingCoin += MyEnemy.HavingCoin;
+						str2 = "コインを"
+						str2 += MyEnemy.HavingCoin
+						str2 += "だけゲットした<br>"
+						g_AdvanceOneStepLog += str2
+											
+						kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
+						addExpOrCoinOrTimeSand(kyotenIdx1, MyEnemy.HavingExp , 0)
+						
+					
+					}else if(fightResult == FIGHT_RESULT_LOSE){
+						g_StartedFightFlg = false;
+						str2 = "敗北してしまった<br>"
+						g_AdvanceOneStepLog += str2
+						
+					
+					}
 				
 				}
 				
@@ -1812,6 +1897,18 @@ var SEFunc1 = function StepExecute(){
 	ShowAdvanceOneStepTab()
 }
 
+function StepMyUserKyusokuTurn(){
+	rNum = getRandom(1, MyUser.Fight_YellowSts);
+	kaifukuRyo = min(MyUser.YellowSts-(MyUser.CurrentHp+1), rNum);
+	MyUser.CurrentHp += kaifukuRyo
+}
+
+function StemMyEnemyKyusokuTurn(){
+	rNum = getRandom(1, MyEnemy.Fight_YellowSts);
+	kaifukuRyo = min(MyEnemy.YellowSts-(MyEnemy.CurrentHp+1), rNum);
+	MyEnemy.CurrentHp += kaifukuRyo
+	
+}
 function StepMyUserAttackTurn(){
 
 	rDm = getRandom(DM_RND_VOL_MIN, DM_RND_VOL_MAX);
@@ -1852,15 +1949,15 @@ function StepMyUserAttackTurn(){
 			//ステータス上昇
 			v1 = calcStsUpVol(MyUser.Fight_WhiteGoldSts, MyEnemy.Fight_BlackSilverSts)
 			colorIdx = decideUpSts(MyUser.UStsUpDivValList)
-			AddMyUserFightStsVal(colorIdx, v1)
-			
-			str2 = MyUser.name1
-			str2 += "の"
-			str2 += g_KyotenColorNames[colorIdx]
-			str2 += "の力が"
-			str2 += v1
-			str2 += "だけ上昇した<br>"
-			g_AdvanceOneStepLog += str2
+				AddMyUserFightStsVal(colorIdx, v1)
+				
+				str2 = MyUser.name1
+				str2 += "の"
+				str2 += g_KyotenColorNames[colorIdx]
+				str2 += "の力が"
+				str2 += v1
+				str2 += "だけ上昇した<br>"
+				g_AdvanceOneStepLog += str2
 		}
 
 	}else if(StsChange1 == STS_DOWN){
@@ -2371,7 +2468,20 @@ function CreateEnemy(enemyLevel, Enemy1){
 	Enemy1.EStsUpDivValList = makeUpStsDivValList(Enemy1.EStsUpRate)
 	Enemy1.EStsDnDivValList = makeDnStsDivValList(Enemy1.EStsDnRate)
     
+    Enemy1.KyusokuPercentage = getRandom(KYUSOKU_PERCENTAGE_MIN, KYUSOKU_PERCENTAGE_MAX)
 }
+
+function decideKyusokuOrAttack(kyusokuPercentage1){
+
+	let rNum = getRandom(1, 100);
+	if(rNum <= kyusokuPercentage1){
+		return ATTACK_TURN
+	}else{
+		return KYUSOKU_TURN
+	}
+
+}
+
 
 //ルーレット値リストより、上昇ステータスカラーを決定する
 function decideUpSts(divValList){
