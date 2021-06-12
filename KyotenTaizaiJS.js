@@ -241,33 +241,33 @@ class User {
 				  60,60,60,60]
 	UStsUpDivValList;
 	UStsDnDivValList;
-	
+
     //攻撃力
-    RedSts = 0
+    RedSts = 1
     //防御力
-    BlueSts = 0
+    BlueSts = 1
     //hp
-    YellowSts = 0
+    YellowSts = 1
     //回避率
-    GreenSts = 0
+    GreenSts = 1
     //命中率
-    PurpleSts = 0
+    PurpleSts = 1
     //自分のステータス上昇発生率
-    WhiteSts = 0
+    WhiteSts = 1
     //自分のステータス上昇時の上昇数値
-    WhiteGoldSts = 0
+    WhiteGoldSts = 1
     //相手がステータス低下を発生したときの防御数値
-    WhiteSilverSts = 0
+    WhiteSilverSts = 1
     //相手の起こすステータス低下発生に対する抵抗率
-    WhiteCopperSts = 0
+    WhiteCopperSts = 1
     //相手のステータス低下発生率
-    BlackSts = 0
+    BlackSts = 1
     //相手のステータス低下発生時の低下数値
-    BlackGoldSts = 0
+    BlackGoldSts = 1
     //相手がステータス上昇を発生させたときの防御数値
-    BlackSilverSts = 0
+    BlackSilverSts = 1
     //相手の起こすステータス上昇に対する抵抗率
-    BlackCopperSts = 0
+    BlackCopperSts = 1
     
     RedStsExp = 0
     BlueStsExp = 0
@@ -375,6 +375,38 @@ class User {
   
 }
 
+//ユーザの位置情報を更新する
+function UpdateMyUserLatLng(){
+	if(navigator.geolocation){
+		navigator.geolocation.getCurrentPosition(
+			function ( position )
+			{
+				// 取得したデータの整理
+				var data1 = position.coords;
+
+				// データの整理
+				MyUser.lat1 = data1.latitude;
+				MyUser.lng1 = data1.longitude;
+				
+				g_Map.setCenter(new google.maps.LatLng(MyUser.lat1, MyUser.lng1));
+				
+				SetCurrentLatLngMarker(MyUser)
+				
+			},
+			function ( error )
+			{
+				alert("現在位置をセットできませんでした");
+			},
+			//オプション
+			{
+				"enableHighAccuracy": false,
+				"timeout": 8000,
+				"maximumAge": 2000
+			}
+		);
+	}
+
+}
 function AddCurrentExpVol(colorIdx, vol){
 	if(colorIdx == KYOTEN_RED){
 		MyUser.RedStsExp += vol;
@@ -520,6 +552,7 @@ function ChangeModeInAdvanceOneStepTab(){
 		kyotenIdx1 = GetNearestKyotenId(MyUser.lat1, MyUser.lng1);
 		MyUser.CurrentKyotenType = MyUser.KyotenTypes[kyotenIdx1];
 	}else if(mode1 == MODE_FIGHT){
+		g_StartedFightFlg = false;
 		InitUserFightSts(MyUser)
 		MyUser.UStsUpRate = calcUpStsRate()
 		MyUser.UStsDnRate = calcDnStsRate()
@@ -542,13 +575,13 @@ function ChangeModeInAdvanceOneStepTab(){
 function TestInitUser(User){
 
     //攻撃力
-    User.RedSts = 100
+    User.RedSts = 10
     //防御力
     User.BlueSts = 20
     //hp
     User.YellowSts = 30
     //回避率
-    User.GreenSts = 40
+    User.GreenSts = 20
     //命中率
     User.PurpleSts = 500
     //自分のステータス上昇発生率
@@ -644,6 +677,8 @@ function InitUserFightSts(User){
 	User.Fight_BlueSts = User.BlueSts
     //hp
 	User.Fight_YellowSts = User.YellowSts
+	User.CurrentHp = User.YellowSts
+	
     //回避率
 	User.Fight_GreenSts = User.GreenSts
     //命中率
@@ -677,6 +712,7 @@ function InitEnemyFightSts(Enemy){
 ;
     //hp
 	Enemy.Fight_YellowSts = Enemy.YellowSts;
+	Enemy.CurrentHp = Enemy.YellowSts;
 ;
     //回避率
 	Enemy.Fight_GreenSts = Enemy.GreenSts;
@@ -710,7 +746,7 @@ function InitEnemyFightSts(Enemy){
 }
 
 let MyUser = new User();
-TestInitUser(MyUser)
+//TestInitUser(MyUser)
 
 let MyEnemy = new Enemy();
 
@@ -960,6 +996,14 @@ function tab_init(link, index){
 						
 			return false;
 		};
+  }else if(id == 'pageKyusokuPercentageSetting'){
+	  link.onclick = function(){
+		  	changeTab(link);
+
+			ShowKyusokuPercentageSettingTab();
+						
+			return false;
+		};
   }
 }
 })();
@@ -1032,9 +1076,22 @@ function ShowSaiseiSettingTab(){
 	
 }
 
+function ShowKyusokuPercentageSettingTab(){
+	span1 = document.getElementById("CurrentKyusokuPercentageInKyusokuPercentageSetting");
+	span1.innerHTML = MyUser.KyusokuPercentage
+}
 function ShowEnemyLevelSettingTab(){
 	span1 = document.getElementById("CurrentEnemyLevelInEnemyLevelSetting");
 	span1.innerHTML = MyUser.FightEnemyLevel
+}
+
+function ChangeKyusokuPercentageInKyusokuPercentageSettingTab(){
+	selectbox1 = document.getElementById("KyusokuPercentageInKyusokuPercentageSetting")
+	kyusokuPercentage1 = Number(selectbox1.options[selectbox1.selectedIndex].value)
+	MyUser.KyusokuPercentage = kyusokuPercentage1
+	
+	alert("設定を更新しました");
+	ShowKyusokuPercentageSettingTab();
 }
 
 function ChangeEnemyLevelInEnemyLevelSettingTab(){
@@ -1753,6 +1810,10 @@ function addExpOrCoinOrTimeSand(kyotenType, vol,decVol){
 
 }
 var SEFunc1 = function StepExecute(){
+	if(MyUser.CurrentMode == MODE_KYOTEN_TAIZAI){
+		UpdateMyUserLatLng()
+	}
+	
 	let str2 = ""
 	if(g_StepExecuteFlg == true){
 		setTimeout(SEFunc1, ONE_STEP_SECOND * 1000)
@@ -1760,6 +1821,16 @@ var SEFunc1 = function StepExecute(){
 	
 	//経験値等の加算処理
 	if(MyUser.CurrentMode == MODE_KYOTEN_TAIZAI){
+		kyotenIdx1 = GetNearestKyotenId(MyUser.lat1, MyUser.lng1);
+		MyUser.CurrentKyotenType = MyUser.KyotenTypes[kyotenIdx1];
+		if(CanTaizai() == false){
+			alert('拠点から離れました')
+			MyUser.CurrentMode = MODE_NOTHING;
+			ShowAdvanceOneStepTab()
+			
+		}
+		
+		
 		g_PrevCountStart++
 		if(g_PrevCountStart >= GET_POINT_STEP_COUNT){
 			if(MyUser.CurrentKyotenType < KYOTEN_NIJI){
@@ -1899,14 +1970,37 @@ var SEFunc1 = function StepExecute(){
 
 function StepMyUserKyusokuTurn(){
 	rNum = getRandom(1, MyUser.Fight_YellowSts);
-	kaifukuRyo = min(MyUser.YellowSts-(MyUser.CurrentHp+1), rNum);
+	kaifukuRyo = Math.min(MyUser.YellowSts-(MyUser.CurrentHp+1), rNum);
+	if(MyUser.CurrentHp == MyUser.YellowSts){
+		kaifukuRyo = 0
+	}
 	MyUser.CurrentHp += kaifukuRyo
+	
+	str2 = MyUser.name1
+	str2 += "は休んだ<br>"
+	str2 += MyUser.name1
+	str2 += "の体力が"
+	str2 += kaifukuRyo
+	str2 += "だけ回復した"
+	str2 += "<br>"
+	g_AdvanceOneStepLog += str2
+	
 }
 
-function StemMyEnemyKyusokuTurn(){
+function StepEnemyKyusokuTurn(){
 	rNum = getRandom(1, MyEnemy.Fight_YellowSts);
-	kaifukuRyo = min(MyEnemy.YellowSts-(MyEnemy.CurrentHp+1), rNum);
+	kaifukuRyo = Math.min(MyEnemy.YellowSts-(MyEnemy.CurrentHp+1), rNum);
+	if(MyEnemy.CurrentHp == MyEnemy.YellowSts){
+		kaifukuRyo = 0
+	}
 	MyEnemy.CurrentHp += kaifukuRyo
+	
+	str2 = "敵は休んだ<br>"
+	str2 += "敵の体力が"
+	str2 += kaifukuRyo
+	str2 += "だけ回復した"
+	str2 += "<br>"
+	g_AdvanceOneStepLog += str2
 	
 }
 function StepMyUserAttackTurn(){
@@ -2563,11 +2657,13 @@ function calcUpStsRate(){
 
 	let StsUpRate = [10,10,10,10,
 					 10,10,10,10,
-					 10,10,10,10]
+					 10,10,10,10,
+					 10]
 	let havingYobiSuzuCount = 0;
 	let SuzuIdAndPower = [[1,10], [1,10], [1,10], [1,10],
 						  [1,10], [1,10], [1,10], [1,10],
-						  [1,10], [1,10], [1,10], [1,10]]
+						  [1,10], [1,10], [1,10], [1,10],
+						  [1,10] ]
 	for(var i=0; i<MyUser.HavingYobiSuzuColor.length; i++){
 		SuzuIdAndPower[i][0] = i;
 		if(MyUser.HavingYobiSuzuColor == 1 &&
@@ -2602,11 +2698,13 @@ function calcDnStsRate(){
 
 	let StsDnRate = [60,60,60,60,
 					 60,60,60,60,
-					 60,60,60,60]
+					 60,60,60,60,
+					 60]
 	let havingOiSuzuCount = 0;
 	let SuzuIdAndPower = [[1,10], [1,10], [1,10], [1,10],
 						  [1,10], [1,10], [1,10], [1,10],
-						  [1,10], [1,10], [1,10], [1,10]]
+						  [1,10], [1,10], [1,10], [1,10],
+						  [1,10]]
 	for(var i=0; i<MyUser.HavingOiSuzuColor.length; i++){
 		SuzuIdAndPower[i][0] = i;
 		if(MyUser.HavingOiSuzuColor == 1&&

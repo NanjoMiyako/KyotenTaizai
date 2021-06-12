@@ -21,9 +21,8 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 <hr>
 *自動セーブは行いません<br>
   <ul id="tab_menu1" class="tab_menu">
-    <li><a class="Tablink" href="#page1-1">タブ1</a></li>
     <br>
-    <li><a class="Tablink" href="#page1-2">タブ2</a></li>
+    <li><a class="Tablink" href="#pageAdvanceOneStep">ステップ実行</a></li>
 	<br>
     <li><a class="Tablink" href="#pageStatusList">ステータス一覧</a></li>
     <br>
@@ -41,25 +40,16 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
     <br>
     <li><a class="Tablink" href="#pageSaiseiSetting">再生の森設定</a></li>
     <br>
-    <li><a class="Tablink" href="#pageAdvanceOneStep">ステップ実行</a></li>
-    <br>
     <li><a class="Tablink" href="#pageSaveAndLoadGameData">ゲームデータセーブ・ロード</a></li>
     <br>
     <li><a class="Tablink" href="#pageEnemyLevelSetting">敵レベル設定</a></li>
+    <br>
+    <li><a class="Tablink" href="#pageKyusokuPercentageSetting">休息確率設定</a></li>
     <br>
         
   </ul>
 <hr>
   <div id="tab_content1" class="tab_content">
-    <!-- tab1 -->
-    <div id="page1-1" class="TabPage">
-	---tab1<br>
-    </div>
-    <!-- tab2タブ -->
-    <div id="page1-2" class="TabPage">
-    ---tab2<br>
-    </div>
-
 	<!-- ステータス一覧タブ -->
 	<div id="pageStatusList" class="TabPage">
 	ステータス一覧<br>
@@ -474,6 +464,30 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 	<button type="button" id="pageEnemyLevelSetting_TekiyouButton" onclick="ChangeEnemyLevelInEnemyLevelSettingTab()">
 		適用
 	</button>
+	</div>
+	
+    <div id="pageKyusokuPercentageSetting" class="TabPage">
+    休息確率設定<br>
+    現在選択中の休息確率:
+    <span id="CurrentKyusokuPercentageInKyusokuPercentageSetting"></span>
+    <br>
+	休息確率
+	<select id="KyusokuPercentageInKyusokuPercentageSetting">
+		<option value="10">10</option>
+		<option value="20">20</option>
+		<option value="30">30</option>
+		<option value="40">40</option>
+		<option value="50">50</option>
+		<option value="60">60</option>
+		<option value="70">70</option>
+		<option value="80">80</option>
+		<option value="90">90</option>		
+    </select>
+    <br>
+	<button type="button" id="pageKyusokuPercentageSetting_TekiyouButton" onclick="ChangeKyusokuPercentageInKyusokuPercentageSettingTab()">
+		適用
+	</button>
+	</div>
         
   </div>
 </div>
