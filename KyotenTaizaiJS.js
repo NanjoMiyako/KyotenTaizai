@@ -283,19 +283,23 @@ class User {
     
     HavingYobiSuzuColor = [0,0,0,0,
                            0,0,0,0,
-                           0,0,0,0]
+                           0,0,0,0,
+                           0]
                            
     HavingYobiSuzuPower = [0,0,0,0,
     					   0,0,0,0,
-    					   0,0,0,0]
+    					   0,0,0,0,
+    					   0]
     					   
     HavingOiSuzuColor = [0,0,0,0,
     					 0,0,0,0,
-    					 0,0,0,0]
+    					 0,0,0,0,
+    					 0]
     					 
     HavingOiSuzuPower = [0,0,0,0,
     					 0,0,0,0,
-    					 0,0,0,0]
+    					 0,0,0,0,
+    					 0]
     
     HavingCoin = 0
     
@@ -574,19 +578,23 @@ function TestInitUser(User){
     
     User.HavingYobiSuzuColor = [1, 0, 1, 0,
     							1, 0, 0, 0,
-    							0, 0, 0, 0]
+    							0, 0, 0, 0,
+    							0]
 
     User.HavingYobiSuzuPower = [10, 0,30, 0,
     							90, 0, 0, 0,
-    							0,  0, 0, 0]
+    							0,  0, 0, 0,
+    							0]
 
     User.HavingOiSuzuColor = [0, 0, 0, 1,
 						      0, 1, 0, 1,
-						      0, 0, 0, 0]
+						      0, 0, 0, 0,
+						      0]
 						      
     User.HavingOiSuzuPower = [0, 0, 0,20,
     						  0,10, 0,90,
-    						  0, 0, 0, 0]
+    						  0, 0, 0, 0,
+    						  0]
     
     User.HavingCoin = 270
     
@@ -923,6 +931,12 @@ function tab_init(link, index){
 		  	changeTab(link);
 			
 			ShowAdvanceOneStepTab();
+			
+			return false;
+		};
+  }else if(id == 'pageSaveAndLoadGameData'){
+	  link.onclick = function(){
+		  	changeTab(link);
 			
 			return false;
 		};
@@ -1903,6 +1917,27 @@ function AddOiSuzuColorPower(colorIdx, val1){
 	if(MyUser.HavingOiSuzuPower[colorIdx] + val1 >= 0){
 		MyUser.HavingOiSuzuPower[colorIdx] += val1
 	}
+}
+
+function SaveGameData(){
+	SaveLocalStrage();
+}
+
+function LoadGameData(){
+	LoadLocalStorage();
+}
+//ゲームデータの保存
+function SaveLocalStrage(){
+
+	localStorage['MyUser20210612'] = JSON.stringify(MyUser);
+	
+	alert('ゲームデータをセーブしました')
+	
+}
+
+function LoadLocalStorage(){
+	MyUser = JSON.parse(localStorage['MyUser20210612'])
+	alert('ゲームデータをロードしました')
 }
 
 

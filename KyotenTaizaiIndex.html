@@ -42,7 +42,9 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
     <li><a class="Tablink" href="#pageSaiseiSetting">再生の森設定</a></li>
     <br>
     <li><a class="Tablink" href="#pageAdvanceOneStep">ステップ実行</a></li>
-    <br>    
+    <br>
+    <li><a class="Tablink" href="#pageSaveAndLoadGameData">ゲームデータセーブ・ロード</a></li>
+    <br> 
         
   </ul>
 <hr>
@@ -438,6 +440,17 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 	<hr>
 	<button type="button" id="pageAdvanceOneStep_ClearLogButton" onclick="ClearLogInAdvanceOneStepTab()">
 		ログクリア
+	</button>
+    </div>
+    
+    <div id="pageSaveAndLoadGameData" class="TabPage">
+    ---ゲームデータセーブ・ロード<br>
+	<button type="button" id="pageSaveAndLoadGameData_SaveButton" onclick="SaveGameData()">
+		ゲームデータセーブ
+	</button>
+	<br>
+	<button type="button" id="pageSaveAndLoadGameData_SaveButton" onclick="LoadGameData()">
+		ゲームデータロード
 	</button>
     </div>
         
