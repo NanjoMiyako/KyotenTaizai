@@ -24,9 +24,9 @@ const KYOTEN_MIN_INTERVAL = 200;
 //何コインで1単位の鈴アイテムの強化ができるか
 const KYOKA_COIN_UNIT = 10;
 //一ステップにかかる秒数
-const ONE_STEP_SECOND = 3;
+const ONE_STEP_SECOND = 5;
 //何ステップで経験値がもらえるか
-const GET_POINT_STEP_COUNT = 3;
+const GET_POINT_STEP_COUNT = 12;
 //敵レベルごとのステータス最小・最大値
 const MIN_STS_VOL_LEVEL1 = 1
 const MAX_STS_VOL_LEVEL1 = 100
