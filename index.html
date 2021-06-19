@@ -2598,7 +2598,8 @@ var SEFunc1 = function StepExecute(){
 		
 		let addVol
 		g_PrevCountStart++
-		if(g_PrevCountStart >= GET_POINT_STEP_COUNT){
+		if(g_PrevCountStart >= GET_POINT_STEP_COUNT &&
+		   g_PassedStep >= 1){
 			if(MyUser.CurrentKyotenType < KYOTEN_NIJI){
 				addVol = 6 * g_PassedStep
 				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, addVol,0)
