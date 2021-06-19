@@ -19,6 +19,14 @@ const KYOTEN_OUGON = 16;
 const ENEMYTYPE_MIN = 1;
 const ENEMYTYPE_MAX = 12;
 
+const CONSTRUCT_COST_OF_ONE_COLOR_KYOTEN = 200;
+const CONSTRUCT_COST_OF_NIJI_KYOTEN = 500;
+const CONSTRUCT_COST_OF_TOKIMODORI = 300;
+const CONSTRUCT_COST_OF_SAISEI = 300;
+const CONSTRUCT_COST_OF_OUGON = 300;
+
+const MIRI_SECONDS_OF_ONE_DAY = 8640000
+ 
 //拠点同士の最小間隔(メートル)
 const KYOTEN_MIN_INTERVAL = 200;
 //何コインで1単位の鈴アイテムの強化ができるか
@@ -310,7 +318,7 @@ class User {
     					 0,0,0,0,
     					 0]
     
-    HavingCoin = 0
+    HavingCoin = 1000
     
     HavingTimeSand = 0    
     TimeSandDownStsType = 0
@@ -330,7 +338,7 @@ class User {
 	lng1;
 	KyotenMarkerList=[];
 	KyotenMarkerMassages=[];
-	PrevStepTime = new Date();
+	LastPlayedDate = new Date();
 	
     //戦闘用一時ステータス    
     //攻撃力
@@ -373,6 +381,21 @@ class User {
   }
   
   
+}
+
+
+function GetConstructCostCoinOfKyoten(colorIdx){
+	if(colorIdx >= KYOTEN_RED && colorIdx < KYOTEN_NIJI){
+		return CONSTRUCT_COST_OF_ONE_COLOR_KYOTEN
+	}else if(colorIdx == KYOTEN_NIJI){
+		return CONSTRUCT_COST_OF_NIJI_KYOTEN
+	}else if(colorIdx == KYOTEN_TOKIMODORI){
+		return CONSTRUCT_COST_OF_TOKIMODORI
+	}else if(colorIdx == KYOTEN_SAISEI){
+		return CONSTRCONSTRUCT_COST_OF_OUGONUCT_COST_OF_SAISEI
+	}else if(colorIdx == KYOTEN_OUGON){
+		return CONSTRUCT_COST_OF_OUGON
+	}
 }
 
 //ユーザの位置情報を更新する
@@ -655,7 +678,7 @@ function TestInitUser(User){
     User.CurrentMode = MODE_NOTHING
     User.CurrentKyotenType = KYOTEN_RED
     
-    User.PrevStepTime = new Date();
+    User.LastPlayedDate = new Date();
     
 
 	User.name1 = "DebugUser";
@@ -1526,7 +1549,8 @@ function AddKyoten_MyLatLng(){
 	let str1 = selectbox1.options[selectbox1.selectedIndex].value;
 	let kyotenType1 = Number(str1);
 	
-	if(CanAddKyotenMyLatLng(MyUser) == true){
+	if(CanAddKyotenMyLatLng(MyUser) == true &&
+	   CanAddKyotenOfKyotenType(kyotenType1) ){
 		MyUser.KyotenCount++;
 		let name1 = "k"+MyUser.KyotenCount;
 	    MyUser.KyotenNames.push(name1);
@@ -1534,10 +1558,25 @@ function AddKyoten_MyLatLng(){
 	    MyUser.KyotenTypes.push(kyotenType1);
 	    MyUser.KyotenLats.push(MyUser.lat1)
 	    MyUser.KyotenLngs.push(MyUser.lng1)
+	    coin1 =  GetConstructCostCoinOfKyoten(kyotenType1)
+	    MyUser.HavingCoin -= coin1
 	    
 	    validateMarker(MyUser)
 	    
 	    alert("拠点を追加しました")
+	}
+}
+function CanAddKyotenOfKyotenType(colorIdx){
+	coin1 =  GetConstructCostCoinOfKyoten(colorIdx)
+	if(coin1 <= MyUser.HavingCoin){
+		return true
+	}else{
+		alert('拠点作成のためのコインが足りません')
+		str1 = 'このタイプの拠点作成には'
+		str1 += coin1
+		str1 += 'のコインが必要です'
+		alert(str1)
+		return false;
 	}
 }
 function CanAddKyotenMyLatLng(User){
@@ -2119,7 +2158,7 @@ function LoadGameData(){
 }
 //ゲームデータの保存
 function SaveLocalStrage(){
-
+	
 	localStorage['MyUser20210612'] = JSON.stringify(MyUser);
 	
 	alert('ゲームデータをセーブしました')
@@ -2127,7 +2166,15 @@ function SaveLocalStrage(){
 }
 
 function LoadLocalStorage(){
+
 	MyUser = JSON.parse(localStorage['MyUser20210612'])
+	CurrentDate = new Date();
+	termDay = (CurrentDate - MyUser.LastPlayedDate) / MIRI_SECONDS_OF_ONE_DAY;
+	if(termDate >= 1){
+		MyUser.HavingCoin += 10;
+		alert('デイリーボーナスとして10コインゲットした')
+		MyUser.LastPlayedDate = CurrentDate;
+	}
 	alert('ゲームデータをロードしました')
 }
 
