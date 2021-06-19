@@ -661,6 +661,8 @@ const ATTACK_TURN = 0
 const KYUSOKU_TURN = 1
 
 g_PrevCountStart = 0;
+g_PrevStepTime = new Date();
+g_PassedStep = 0;
 
 g_KyotenColorNames = ["赤","青","黄","緑","紫","白","白金","白銀","白銅","黒","黒金","黒銀","黒銅","虹",
 "時戻りの砂漠","再生の森","黄金の泉"]
@@ -2566,6 +2568,9 @@ var SEFunc1 = function StepExecute(){
 	
 	let str2 = ""
 	if(g_StepExecuteFlg == true){
+		currentTime = new Date()
+		minDiff = (currentTime - g_PrevStepTime) / 60000;
+		g_PassedStep = minDiff
 		setTimeout(SEFunc1, ONE_STEP_SECOND * 1000)
 	}
 	
@@ -2581,160 +2586,180 @@ var SEFunc1 = function StepExecute(){
 		}
 		
 		
+		let addVol
 		g_PrevCountStart++
 		if(g_PrevCountStart >= GET_POINT_STEP_COUNT){
 			if(MyUser.CurrentKyotenType < KYOTEN_NIJI){
-				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, 6,0)
+				addVol = 6 * g_PassedStep
+				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, addVol,0)
 			}else if(MyUser.CurrentKyotenType == KYOTEN_NIJI){
+				addVol = 3 * g_PassedStep
 			
 				kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
-				addExpOrCoinOrTimeSand(kyotenIdx1, 3,0)
+				addExpOrCoinOrTimeSand(kyotenIdx1, addVol,0)
 				
 				kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
-				addExpOrCoinOrTimeSand(kyotenIdx1, 3,0)
+				addExpOrCoinOrTimeSand(kyotenIdx1, addVol,0)
 				
 			}else if(MyUser.CurrentKyotenType == KYOTEN_TOKIMODORI){
-				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, 1,1)
+				addVol = 1 * g_PassedStep
+				decVol = 1 * g_PassedStep
+				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, addVol, decVol)
+				
 			}else if(MyUser.CurrentKyotenType == KYOTEN_SAISEI){
-				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, 10,1)
+				addVol = 10 * g_PassedStep;
+				decVol = 1 * g_PassedStep
+				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, addVol, decVol)
 			}else if(MyUser.CurrentKyotenType == KYOTEN_OUGON){
+				addVol = 10 * g_PassedStep;
+				
 				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, 10, 0);
 			}
 			g_PrevCountStart = 0;
-			
+			g_PassedStep = 0;
+			g_PrevStepTime = currentTime
 		}
 	}else if(MyUser.CurrentMode == MODE_FIGHT){
-		g_PrevCountStart++
-		if(g_PrevCountStart >= GET_POINT_STEP_COUNT){
+	
+		for(var i=0; i<g_PrevStepTime;  i++){
+			g_PrevCountStart++
+			if(g_PrevCountStart >= GET_POINT_STEP_COUNT){
 
-			g_PrevCountStart = 0;
-			if(g_StartedFightFlg == true){
-				AttackOrKyusoku = decideKyusokuOrAttack(MyUser.KyusokuPercentage)
-				if(AttackOrKyusoku == ATTACK_TURN){
-					StepMyUserAttackTurn();
-					
-					if(MyEnemy.CurrentHp >= 1){
-						AttackOrKyusoku2 = decideKyusokuOrAttack(MyEnemy.KyusokuPercentage)
-						if(AttackOrKyusoku2 == ATTACK_TURN){
-							StepEnemyAttackTurn();
-						}else if(AttackOrKyusoku2 == KYUSOKU_TURN){
-							StepEnemyKyusokuTurn();
+				g_PrevCountStart = 0;
+				if(g_StartedFightFlg == true){
+					AttackOrKyusoku = decideKyusokuOrAttack(MyUser.KyusokuPercentage)
+					if(AttackOrKyusoku == ATTACK_TURN){
+						StepMyUserAttackTurn();
+						
+						if(MyEnemy.CurrentHp >= 1){
+							AttackOrKyusoku2 = decideKyusokuOrAttack(MyEnemy.KyusokuPercentage)
+							if(AttackOrKyusoku2 == ATTACK_TURN){
+								StepEnemyAttackTurn();
+							}else if(AttackOrKyusoku2 == KYUSOKU_TURN){
+								StepEnemyKyusokuTurn();
+							}
 						}
-					}
-					
-					let fightResult = JudgeWinOrLose();
-					
-					if(fightResult == FIGHT_RESULT_CONTINUE){
-					
-					}else if(fightResult == FIGHT_RESULT_WIN){
-						g_StartedFightFlg = false;
-						str2 = "勝利した<br>"
-						g_AdvanceOneStepLog += str2
 						
-
-						MyUser.HavingCoin += MyEnemy.HavingCoin;
-						str2 = "コインを"
-						str2 += MyEnemy.HavingCoin
-						str2 += "だけゲットした<br>"
-						g_AdvanceOneStepLog += str2
+						let fightResult = JudgeWinOrLose();
 						
-						if(MyUser.FightEnemyLevel == 1){
-							let idx2 = MyEnemy.EnemyType;
-							MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
-						}else if(MyUser.FightEnemyLevel == 2){
-							let idx2 = MyEnemy.EnemyType;
-							MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
-						}else if(MyUser.FightEnemyLevel == 3){
-							let idx2 = MyEnemy.EnemyType;
-							MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
-						}
-											
-						kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
-						addExpOrCoinOrTimeSand(kyotenIdx1, MyEnemy.HavingExp , 0)
+						if(fightResult == FIGHT_RESULT_CONTINUE){
 						
-					
-					}else if(fightResult == FIGHT_RESULT_LOSE){
-						g_StartedFightFlg = false;
-						str2 = "敗北してしまった<br>"
-						g_AdvanceOneStepLog += str2
-						
-					
-					}
-				}else if(AttackOrKyusoku == KYUSOKU_TURN){
-					StepMyUserKyusokuTurn();
-					
-					if(MyEnemy.CurrentHp >= 1){
-						AttackOrKyusoku2 = decideKyusokuOrAttack(MyEnemy.KyusokuPercentage)
-						if(AttackOrKyusoku2 == ATTACK_TURN){
-							StepEnemyAttackTurn();
+						}else if(fightResult == FIGHT_RESULT_WIN){
+							g_StartedFightFlg = false;
+							str2 = "勝利した<br>"
+							g_AdvanceOneStepLog += str2
 							
-						}else if(AttackOrKyusoku2 == KYUSOKU_TURN){
-							StepEnemyKyusokuTurn();
-							
-						}
-					}
-					
-					let fightResult = JudgeWinOrLose();
-					
-					if(fightResult == FIGHT_RESULT_CONTINUE){
-					
-					}else if(fightResult == FIGHT_RESULT_WIN){
-						g_StartedFightFlg = false;
-						str2 = "勝利した<br>"
-						g_AdvanceOneStepLog += str2
-						
 
-						MyUser.HavingCoin += MyEnemy.HavingCoin;
-						str2 = "コインを"
-						str2 += MyEnemy.HavingCoin
-						str2 += "だけゲットした<br>"
-						g_AdvanceOneStepLog += str2
+							MyUser.HavingCoin += MyEnemy.HavingCoin;
+							str2 = "コインを"
+							str2 += MyEnemy.HavingCoin
+							str2 += "だけゲットした<br>"
+							g_AdvanceOneStepLog += str2
+							
+							if(MyUser.FightEnemyLevel == 1){
+								let idx2 = MyEnemy.EnemyType;
+								MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
+							}else if(MyUser.FightEnemyLevel == 2){
+								let idx2 = MyEnemy.EnemyType;
+								MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
+							}else if(MyUser.FightEnemyLevel == 3){
+								let idx2 = MyEnemy.EnemyType;
+								MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
+							}
+												
+							kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
+							addExpOrCoinOrTimeSand(kyotenIdx1, MyEnemy.HavingExp , 0)
+							
 						
-						if(MyUser.FightEnemyLevel == 1){
-							let idx2 = MyEnemy.EnemyType;
-							MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
-						}else if(MyUser.FightEnemyLevel == 2){
-							let idx2 = MyEnemy.EnemyType;
-							MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
-						}else if(MyUser.FightEnemyLevel == 3){
-							let idx2 = MyEnemy.EnemyType;
-							MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
+						}else if(fightResult == FIGHT_RESULT_LOSE){
+							g_StartedFightFlg = false;
+							str2 = "敗北してしまった<br>"
+							g_AdvanceOneStepLog += str2
+							
+						
 						}
-											
-						kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
-						addExpOrCoinOrTimeSand(kyotenIdx1, MyEnemy.HavingExp , 0)
+					}else if(AttackOrKyusoku == KYUSOKU_TURN){
+						StepMyUserKyusokuTurn();
 						
-					
-					}else if(fightResult == FIGHT_RESULT_LOSE){
-						g_StartedFightFlg = false;
-						str2 = "敗北してしまった<br>"
-						g_AdvanceOneStepLog += str2
+						if(MyEnemy.CurrentHp >= 1){
+							AttackOrKyusoku2 = decideKyusokuOrAttack(MyEnemy.KyusokuPercentage)
+							if(AttackOrKyusoku2 == ATTACK_TURN){
+								StepEnemyAttackTurn();
+								
+							}else if(AttackOrKyusoku2 == KYUSOKU_TURN){
+								StepEnemyKyusokuTurn();
+								
+							}
+						}
 						
+						let fightResult = JudgeWinOrLose();
+						
+						if(fightResult == FIGHT_RESULT_CONTINUE){
+						
+						}else if(fightResult == FIGHT_RESULT_WIN){
+							g_StartedFightFlg = false;
+							str2 = "勝利した<br>"
+							g_AdvanceOneStepLog += str2
+							
+
+							MyUser.HavingCoin += MyEnemy.HavingCoin;
+							str2 = "コインを"
+							str2 += MyEnemy.HavingCoin
+							str2 += "だけゲットした<br>"
+							g_AdvanceOneStepLog += str2
+							
+							if(MyUser.FightEnemyLevel == 1){
+								let idx2 = MyEnemy.EnemyType;
+								MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
+							}else if(MyUser.FightEnemyLevel == 2){
+								let idx2 = MyEnemy.EnemyType;
+								MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
+							}else if(MyUser.FightEnemyLevel == 3){
+								let idx2 = MyEnemy.EnemyType;
+								MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
+							}
+												
+							kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
+							addExpOrCoinOrTimeSand(kyotenIdx1, MyEnemy.HavingExp , 0)
+							
+						
+						}else if(fightResult == FIGHT_RESULT_LOSE){
+							g_StartedFightFlg = false;
+							str2 = "敗北してしまった<br>"
+							g_AdvanceOneStepLog += str2
+							
+						
+						}
 					
 					}
-				
+					
+				}else{
+					CreateEnemy(MyUser.FightEnemyLevel, MyEnemy)
+					InitEnemyFightSts(MyEnemy)
+					DrawEnemyImg(MyEnemy.EnemyType);
+					
+					str2 = "エネミータイプ:"
+					str2 += MyEnemy.EnemyType
+					str2 += "の敵と遭遇した<br>"
+					g_AdvanceOneStepLog += str2
+					
+					g_StartedFightFlg = true;
+
+					InitUserFightSts(MyUser)				
+					MyUser.UStsUpRate = calcUpStsRate()
+					MyUser.UStsDnRate = calcDnStsRate()
+					MyUser.UStsUpDivValList = makeUpStsDivValList(MyUser.UStsUpRate)
+					MyUser.UStsDnDivValList = makeDnStsDivValList(MyUser.UStsDnRate)
 				}
 				
-			}else{
-				CreateEnemy(MyUser.FightEnemyLevel, MyEnemy)
-				InitEnemyFightSts(MyEnemy)
-				DrawEnemyImg(MyEnemy.EnemyType);
-				
-				str2 = "エネミータイプ:"
-				str2 += MyEnemy.EnemyType
-				str2 += "の敵と遭遇した<br>"
-				g_AdvanceOneStepLog += str2
-				
-				g_StartedFightFlg = true;
-
-				InitUserFightSts(MyUser)				
-				MyUser.UStsUpRate = calcUpStsRate()
-				MyUser.UStsDnRate = calcDnStsRate()
-				MyUser.UStsUpDivValList = makeUpStsDivValList(MyUser.UStsUpRate)
-				MyUser.UStsDnDivValList = makeDnStsDivValList(MyUser.UStsDnRate)
 			}
-			
+		ShowAdvanceOneStepTab()
+		
 		}
+		
+		g_PrevCountStart = 0;
+		g_PassedStep = 0;
+		g_PrevStepTime = currentTime
 	}
 	
 	//alert("test")
@@ -3607,6 +3632,7 @@ function deg2rad(degrees) {
 function rad2deg(radian){
         return radian * 360/(2*Math.PI);
 }
+
 
 
 
