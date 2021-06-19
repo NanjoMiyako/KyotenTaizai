@@ -2040,7 +2040,7 @@ var SEFunc1 = function StepExecute(){
 			}else if(MyUser.CurrentKyotenType == KYOTEN_OUGON){
 				addVol = 5 * g_PassedStep;
 				
-				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, 10, 0);
+				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, addVol, 0);
 			}
 			g_PrevCountStart = 0;
 			g_PassedStep = 0;
