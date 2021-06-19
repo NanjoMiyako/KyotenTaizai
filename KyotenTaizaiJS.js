@@ -342,7 +342,7 @@ class User {
 	lat1;
 	lng1;
 	KyotenMarkerList=[];
-	KyotenMarkerMassages=[];
+	KyotenMarkerMessages=[];
 	LastPlayedDate = new Date();
 	
     //戦闘用一時ステータス    
@@ -1452,26 +1452,26 @@ function ClearAllKyotenMarkerInMap(User){
 
 function SetKyotenMaker(User){
 
-	let message1 = "";
+	var message1 = "";
 	
 	ClearAllInfoWindow();
 	ClearAllKyotenMarkerInMap(User);
+	User.KyotenMarkerMessages = []
 	
 	for(i=0; i<User.KyotenNames.length; i++){
 		latlng = new google.maps.LatLng(User.KyotenLats[i], User.KyotenLngs[i]);
 		title1 = User.KyotenNames[i];
-		message1 = "拠点ID:" +  title1 + "<br>"
-		message1 += "拠点タイプ: "
+		title1 += "-";
+		message1 = "拠点タイプ:"
 		if(User.KyotenTypes[i] < KYOTEN_TOKIMODORI){
 			message1 += g_KyotenColorNames[User.KyotenTypes[i]];
 			message1 += "の拠点" 
-			message1 += "<br>"
 		}else{
 			message1 += g_KyotenColorNames[User.KyotenTypes[i]];
-			message1 += "<br>"
+
 		}
-		User.KyotenMarkerMassages.push(message1);
-		
+		title1 += message1;
+
 	 	let mopts = {
 			position: latlng,
 			map: g_Map,
@@ -1488,47 +1488,9 @@ function SetKyotenMaker(User){
 		
 		let marker1 = new google.maps.Marker(mopts);
 		g_KyotenMarkerList.push(marker1);
+
+  	}
   	
-	 	marker1.addListener('click', function(){ // マーカーをクリックしたとき
-	 			SetKyotenMaker(MyUser);
-	 	
-	 			g_CurrentMarker = marker1;
-	 			for(i=0; i<User.KyotenNames.length; i++){
-	 				if(marker1.title == User.KyotenNames[i]){
-	 					msg2 = User.KyotenMarkerMassages[i]
-	 					
-	 					//前のマーカを削除して色を変えたマーカをセットする
-	 					prevMarker = g_CurrentMarker;
-	 					let mopts2 = {
-							position: prevMarker.position,
-							map: g_Map,
-							title: prevMarker.title,
-							icon: {
-							fillColor: "#3cb371",                //塗り潰し色
-							fillOpacity: 0.8,                    //塗り潰し透過率
-							path: google.maps.SymbolPath.CIRCLE, //円を指定
-							scale: 8,                           //円のサイズ
-							strokeColor: "#3cb371",              //枠の色
-							}
-						
-						};
-						
-						let marker2 = new google.maps.Marker(mopts2);
-						User.KyotenMarkerList[i] = marker2
-						prevMarker.setMap(null);
-	 					
-	 				}
-	 			}
-	 	
-			 	let infoWindow = new google.maps.InfoWindow({ // 吹き出しの追加
-			        content: msg2 // 吹き出しに表示する内容
-			  	});
-			  	
-	     	    infoWindow.open(g_Map, this); // 吹き出しの表示
-	     	    g_InfoWindowList.push(infoWindow);
-	    });
-	    
-	}
 
 }
 function changeTab(link){
@@ -1747,7 +1709,7 @@ function DeleteKyoten(){
     	MyUser.KyotenLats.splice(delIndex, 1)
     	MyUser.KyotenLngs.splice(delIndex, 1)
     	g_KyotenMarkerList.splice(delIndex, 1)
-    	MyUser.KyotenMarkerMassages.splice(delIndex, 1)
+    	MyUser.KyotenMarkerMessages.splice(delIndex, 1)
 	    
 	    delMarker.setMap(null)
 	    g_CurrentMarker=null
