@@ -726,7 +726,6 @@ g_StartedFightFlg = false;
 var GoogleAPIKey = ''
 var g_Map;
 var deviceType;
-var g_MakerList = []
 var g_KyotenTuikaFlg = false;
 var g_KyotenSakujoFlg = false;
 var g_CurrentMarker = null;
@@ -734,6 +733,7 @@ var g_CurrentPositionMarker = null;
 var g_InfoWindowList = [];
 var g_AdvanceOneStepLog = "";
 var g_KyotenMarkerList = [];
+var g_CurrentDelCandidateMarker = null;
 
 //グーグルマップのMarkerオブジェクトのマップ
 var MarkerMap = new Array();
@@ -1480,11 +1480,23 @@ function initMap() {
 			let marker1 = new google.maps.Marker(mopts);
 			g_CurrentMarker = marker1;
 			
+			
 		}else if(g_KyotenSakujoFlg == true){
+			
 		}
 	});
 	
   
+}
+
+function GetGoogleMarkerByLatLng(lat, lng){
+	for(i=0; i<g_KyotenMarkerList.length; i++){
+		marker1 = g_KyotenMarkerList[i];
+		dist1 = distance(lat, lng, marker1.position.lat(), marker1.position.lng());
+		if(dist <= KYOTEN_MIN_INTERVAL){
+			return marker1
+		}
+	}
 }
 
 var current; // 現在のタブの状態を保持する変数
@@ -2000,12 +2012,13 @@ function SetCurrentLatLngMarker(User){
 		map: g_Map,
 		title: "現在地",
 		icon: {
-		fillColor: "#888888",                //塗り潰し色
-		fillOpacity: 0.8,                    //塗り潰し透過率
+		fillColor: "#000000",                //塗り潰し色
+		fillOpacity: 1.0,                    //塗り潰し透過率
 		path: google.maps.SymbolPath.CIRCLE, //円を指定
-		scale: 8,                           //円のサイズ
-		strokeColor: "#888888",              //枠の色
-		}
+		scale: 4,                           //円のサイズ
+		strokeColor: "#000000",              //枠の色
+		},
+		zIndex: 3
 	
 		};
 	
@@ -2019,20 +2032,26 @@ function SetCurrentLatLngMarker(User){
 //GoogleMap中のUserの拠点マーカをすべてクリアする
 function ClearAllKyotenMarkerInMap(User){
 
-	len1 = User.KyotenMarkerList.length;
+	len1 = g_KyotenMarkerList.length;
 	for(i=0; i<len1; i++){
-		User.KyotenMarkerList[i].setMap(null);
+		g_KyotenMarkerList[i].setMap(null);
 	}
 }
 
 function SetKyotenMaker(User){
 
 	var message1 = "";
+	var g_Marker = "";
 	
 	ClearAllInfoWindow();
 	ClearAllKyotenMarkerInMap(User);
 	User.KyotenMarkerMessages = []
 	
+	if(User.KyotenNames.length == 0){
+		return;
+	}
+	
+	g_KyotenMarkerList =[]
 	for(i=0; i<User.KyotenNames.length; i++){
 		latlng = new google.maps.LatLng(User.KyotenLats[i], User.KyotenLngs[i]);
 		title1 = User.KyotenNames[i];
@@ -2056,17 +2075,92 @@ function SetKyotenMaker(User){
 			fillOpacity: 0.8,                    //塗り潰し透過率
 			path: google.maps.SymbolPath.CIRCLE, //円を指定
 			scale: 8,                           //円のサイズ
-			strokeColor: "#FF0000",              //枠の色
-			}
+			strokeColor: "#FF0000"              //枠の色
+			},
+			zIndex:1
 		
 			};
 		
-		let marker1 = new google.maps.Marker(mopts);
-		g_KyotenMarkerList.push(marker1);
+		//マーカレイヤを更新
+		g_Marker = new google.maps.Marker(mopts);
+		g_KyotenMarkerList.push(g_Marker);
+		
+
 
   	}
   	
+		
+  	for(i=0; i<g_KyotenMarkerList.length; i++){
+  		maker1 = g_KyotenMarkerList[i];
+ 		maker1.addListener( "click", function ( e ) {
 
+	 		kyotenType1 = getKyotenTypeByLatLng(e.latLng.lat(), e.latLng.lng()); 	
+ 			if(g_KyotenSakujoFlg == true){
+	 			
+	 			if(g_CurrentDelCandidateMarker != null){
+	 				g_CurrentDelCandidateMarker.setMap(null);
+	 			}
+	 			
+	 			let marker3 = GetGoogleMarkerByLatLng(e.latLng.lat(), e.latLng.lng())
+				
+			 	let mopts = {
+					position: marker3.position,
+					map: g_Map,
+					title: marker3.title,
+					icon: {
+					fillColor: "#00ff00",                //塗り潰し色
+					fillOpacity: 0.8,                    //塗り潰し透過率
+					path: google.maps.SymbolPath.CIRCLE, //円を指定
+					scale: 8,                           //円のサイズ
+					strokeColor: "#00ff00"              //枠の色
+					},
+					zIndex:2
+				
+					};
+				
+				g_CurrentDelCandidateMarker = new google.maps.Marker(mopts);
+
+			}
+ 			
+
+ 			
+	 		message1 = "クリックした拠点のタイプ:"
+			if(kyotenType1 < KYOTEN_TOKIMODORI){
+				message1 += g_KyotenColorNames[kyotenType1];
+				message1 += "の拠点" 
+			}else{
+				message1 += g_KyotenColorNames[kyotenType1];
+
+			}
+			
+			
+			alert(message1);
+			
+		} ) ;
+		
+		}
+  	
+
+}
+
+function getKyotenIdxByLatLng(lat, lng){
+	for(i=0; i<MyUser.KyotenTypes.length; i++){
+		marker1 = g_KyotenMarkerList[i];
+		dist1 = distance(lat, lng, marker1.position.lat(), marker1.position.lng());
+		if(dist <= KYOTEN_MIN_INTERVAL){
+			return i
+		}
+	}
+	return -1;
+}
+function getKyotenTypeByLatLng(lat, lng){
+	for(i=0; i<MyUser.KyotenTypes.length; i++){
+		if(MyUser.KyotenLats[i] == lat &&
+		   MyUser.KyotenLngs[i] == lng ){
+		   	return MyUser.KyotenTypes[i];
+		   }
+	}
+	return -1;
 }
 function changeTab(link){
   var id = link.hash.slice(1);
@@ -2084,6 +2178,13 @@ function changeTab(link){
   g_KyotenTuikaFlg = false;
   g_KyotenSakujoFlg = false;
   
+  Clearg_CurrentDelCandidateMarker();
+}
+
+function Clearg_CurrentDelCandidateMarker(){
+	if(g_CurrentDelCandidateMarker != null){
+		g_CurrentDelCandidateMarker.setMap(null)
+	}
 }
 function SetHavingYobiSuzuCount(){
 
@@ -2258,7 +2359,7 @@ function AddKyoten(){
 }
 
 function CanDeleteKyoten(){
-	if(g_CurrentMarker == null){
+	if(g_CurrentDelCandidateMarker == null){
 		alert("クリックで削除する拠点位置を選択してください")
 		return false;
 	}
@@ -2267,18 +2368,9 @@ function CanDeleteKyoten(){
 
 function DeleteKyoten(){
 	if(CanDeleteKyoten(MyUser) == true){
-		let delKyotenName = g_CurrentMarker.title;
-		let delIndex;
-		let delMarker;
+		let delIndex = getKyotenIdxByLatLng(g_CurrentDelCandidateMarker.position.lat(), g_CurrentDelCandidateMarker.position.lng());
+		delMarker = g_KyotenMarkerList[delIndex];
 		
-	    for(i=0; i<MyUser.KyotenNames.length; i++){
-	    	if(MyUser.KyotenNames[i] == delKyotenName){
-	    		delIndex = i
-	    		delMarker = g_KyotenMarkerList[i];
-	    		break
-	    	}
-	    }
-
     	MyUser.KyotenNames.splice(delIndex, 1)
     	MyUser.KyotenTypes.splice(delIndex, 1)
     	MyUser.KyotenLats.splice(delIndex, 1)
@@ -2287,7 +2379,8 @@ function DeleteKyoten(){
     	MyUser.KyotenMarkerMessages.splice(delIndex, 1)
 	    
 	    delMarker.setMap(null)
-	    g_CurrentMarker=null
+	    g_CurrentDelCandidateMarker.setMap(null)
+	    g_CurrentDelCandidateMarker=null
 	    
 	    SetKyotenMaker(MyUser)
 	    alert("拠点を削除しました")
