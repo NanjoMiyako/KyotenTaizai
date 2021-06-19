@@ -32,7 +32,7 @@ const KYOTEN_MIN_INTERVAL = 200;
 //何コインで1単位の鈴アイテムの強化ができるか
 const KYOKA_COIN_UNIT = 10;
 //一ステップにかかる秒数
-const ONE_STEP_SECOND = 5;
+const ONE_STEP_SECOND = 60;
 //何ステップで経験値がもらえるか
 const GET_POINT_STEP_COUNT = 1;
 //敵レベルごとのステータス最小・最大値
@@ -158,6 +158,7 @@ var g_CurrentMarker = null;
 var g_CurrentPositionMarker = null;
 var g_InfoWindowList = [];
 var g_AdvanceOneStepLog = "";
+var g_KyotenMarkerList = [];
 
 //グーグルマップのMarkerオブジェクトのマップ
 var MarkerMap = new Array();
@@ -240,9 +241,6 @@ class Enemy {
     //休息確率
     KyusokuPercentage = 50;
     
-  constructor() {
-    
-  }
   
 }
 class User {
@@ -767,9 +765,35 @@ function InitEnemyFightSts(Enemy){
     Enemy.Fight_BlackCopperSts = Enemy.BlackCopperSts;
 }
 
-let MyUser = new User();
+var MyUser = new User();
 MyUser.name1 = 'USER1';
-TestInitUser(MyUser)
+//TestInitUser(MyUser)
+
+if(navigator.geolocation){
+	navigator.geolocation.getCurrentPosition(
+		function ( position )
+		{
+			// 取得したデータの整理
+			var data1 = position.coords;
+
+			// データの整理
+			MyUser.lat1 = data1.latitude;
+			MyUser.lng1 = data1.longitude;
+			
+			
+		},
+		function ( error )
+		{
+			alert("現在位置をセットできませんでした");
+		},
+		//オプション
+		{
+			"enableHighAccuracy": false,
+			"timeout": 8000,
+			"maximumAge": 2000
+		}
+	);
+}
 
 let MyEnemy = new Enemy();
 
@@ -1359,20 +1383,11 @@ function ShowStsListTab(){
 
 //Userクラスの末尾に追加したマーカ情報を有効化する
 function validateMarker(User){
-		newId1=User.KyotenNames.length-1;
-		latlng = new google.maps.LatLng(User.KyotenLats[newId1], User.KyotenLngs[newId1]);
-		title1 = User.KyotenNames[newId1];
-		message1 = "拠点ID:" +  title1 + "<br>"
-		message1 += "拠点タイプ: "
-		if(User.KyotenTypes[i] < KYOTEN_TOKIMODORI){
-			message1 += g_KyotenColorNames[User.KyotenTypes[newId1]];
-			message1 += "の拠点" 
-			message1 += "<br>"
-		}else{
-			message1 += g_KyotenColorNames[User.KyotenTypes[newId1]];
-			message1 += "<br>"
-		}
-		User.KyotenMarkerMassages.push(message1);
+		newId1=new Number(User.KyotenNames.length-1);
+		latlng = new google.maps.LatLng(new Number(User.KyotenLats[newId1]), new Number(User.KyotenLngs[newId1]));
+		let title1 = "";
+		title1 = User.KyotenNames[i];
+		
 		
 	 	let mopts = {
 			position: latlng,
@@ -1389,22 +1404,8 @@ function validateMarker(User){
 			};
 		
 		let marker1 = new google.maps.Marker(mopts);
-		User.KyotenMarkerList.push(marker1);
+		g_KyotenMarkerList.push(marker1);
   	
-	 	marker1.addListener('click', function(){ // マーカーをクリックしたとき
-	 			for(j=0; j<User.KyotenNames.length; j++){
-	 				if(marker1.title == User.KyotenNames[j]){
-	 					msg2 = User.KyotenMarkerMassages[j]
-	 				}
-	 			}
-	 	
-			 	let infoWindow = new google.maps.InfoWindow({ // 吹き出しの追加
-			        content: msg2 // 吹き出しに表示する内容
-			  	});
-			  	
-	     	    infoWindow.open(g_Map, this); // 吹き出しの表示
-	    });
-	    
 
 
 }
@@ -1486,7 +1487,7 @@ function SetKyotenMaker(User){
 			};
 		
 		let marker1 = new google.maps.Marker(mopts);
-		User.KyotenMarkerList.push(marker1);
+		g_KyotenMarkerList.push(marker1);
   	
 	 	marker1.addListener('click', function(){ // マーカーをクリックしたとき
 	 			SetKyotenMaker(MyUser);
@@ -1599,7 +1600,7 @@ function AddKyoten_MyLatLng(){
 	    MyUser.HavingCoin -= coin1
 	    
 	    validateMarker(MyUser)
-	    
+	    	    
 	    alert("拠点を追加しました")
 	}
 }
@@ -1710,6 +1711,9 @@ function AddKyoten(){
 	    
 	    g_CurrentMarker.setMap(null)
 	    g_CurrentMarker=null
+	    
+	    SetKyotenMaker(MyUser)
+	    
 	    alert("拠点を追加しました")
 	}
 	
@@ -1733,7 +1737,7 @@ function DeleteKyoten(){
 	    for(i=0; i<MyUser.KyotenNames.length; i++){
 	    	if(MyUser.KyotenNames[i] == delKyotenName){
 	    		delIndex = i
-	    		delMarker = MyUser.KyotenMarkerList[i];
+	    		delMarker = g_KyotenMarkerList[i];
 	    		break
 	    	}
 	    }
@@ -1742,7 +1746,7 @@ function DeleteKyoten(){
     	MyUser.KyotenTypes.splice(delIndex, 1)
     	MyUser.KyotenLats.splice(delIndex, 1)
     	MyUser.KyotenLngs.splice(delIndex, 1)
-    	MyUser.KyotenMarkerList.splice(delIndex, 1)
+    	g_KyotenMarkerList.splice(delIndex, 1)
     	MyUser.KyotenMarkerMassages.splice(delIndex, 1)
 	    
 	    delMarker.setMap(null)
@@ -2260,12 +2264,12 @@ function SaveGameData(){
 
 function LoadGameData(){
 	LoadLocalStorage();
+	SetKyotenMaker(MyUser)
 }
 //ゲームデータの保存
 function SaveLocalStrage(){
 	
 	localStorage['MyUser20210612'] = JSON.stringify(MyUser);
-	
 	alert('ゲームデータをセーブしました')
 	
 }
@@ -2275,7 +2279,7 @@ function LoadLocalStorage(){
 	MyUser = JSON.parse(localStorage['MyUser20210612'])
 	CurrentDate = new Date();
 	termDay = (CurrentDate - MyUser.LastPlayedDate) / MIRI_SECONDS_OF_ONE_DAY;
-	if(termDate >= 1){
+	if(termDay >= 1){
 		MyUser.HavingCoin += 10;
 		alert('デイリーボーナスとして10コインゲットした')
 		MyUser.LastPlayedDate = CurrentDate;
