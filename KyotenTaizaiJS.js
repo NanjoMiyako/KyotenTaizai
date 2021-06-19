@@ -1995,7 +1995,7 @@ var SEFunc1 = function StepExecute(){
 	if(g_StepExecuteFlg == true){
 		currentTime = new Date()
 		minDiff = (currentTime - g_PrevStepTime) / 60000;
-		g_PassedStep = minDiff
+		g_PassedStep = parseInt(minDiff)
 		setTimeout(SEFunc1, ONE_STEP_SECOND * 1000)
 	}
 	
