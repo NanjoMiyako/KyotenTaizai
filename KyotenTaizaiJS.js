@@ -34,7 +34,7 @@ const KYOKA_COIN_UNIT = 10;
 //一ステップにかかる秒数
 const ONE_STEP_SECOND = 5;
 //何ステップで経験値がもらえるか
-const GET_POINT_STEP_COUNT = 12;
+const GET_POINT_STEP_COUNT = 1;
 //敵レベルごとのステータス最小・最大値
 const MIN_STS_VOL_LEVEL1 = 1
 const MAX_STS_VOL_LEVEL1 = 100
@@ -49,6 +49,13 @@ const MIN_EXP_VOL_LEVEL2 = 10
 const MAX_EXP_VOL_LEVEL2 = 50
 const MIN_EXP_VOL_LEVEL3 = 50
 const MAX_EXP_VOL_LEVEL3 = 100
+
+const MIN_COIN_VOL_LEVEL1 = 1
+const MAX_COIN_VOL_LEVEL1 = 10
+const MIN_COIN_VOL_LEVEL2 = 10
+const MAX_COIN_VOL_LEVEL2 = 20
+const MIN_COIN_VOL_LEVEL3 = 20
+const MAX_COIN_VOL_LEVEL3 = 30
 
 //勝負の状態、継続中、勝ち、負け
 const FIGHT_RESULT_CONTINUE = 0
@@ -332,7 +339,7 @@ class User {
     CurrentMode = MODE_NOTHING
 	CurrentKyotenType = ""
 	
-	name1;
+	name1 = 'USER1';
 	CurrentHp;
 	lat1;
 	lng1;
@@ -371,15 +378,6 @@ class User {
     //休息確率
     KyusokuPercentage = 50;
     
-  constructor(name1, lat1, lng1) {
-    this.name1 = name1;
-    this.lat1 = lat1
-    this.lng1 = lng1
-    
-
-    
-  }
-  
   
 }
 
@@ -392,7 +390,7 @@ function GetConstructCostCoinOfKyoten(colorIdx){
 	}else if(colorIdx == KYOTEN_TOKIMODORI){
 		return CONSTRUCT_COST_OF_TOKIMODORI
 	}else if(colorIdx == KYOTEN_SAISEI){
-		return CONSTRCONSTRUCT_COST_OF_OUGONUCT_COST_OF_SAISEI
+		return CONSTRUCT_COST_OF_SAISEI
 	}else if(colorIdx == KYOTEN_OUGON){
 		return CONSTRUCT_COST_OF_OUGON
 	}
@@ -571,6 +569,7 @@ function ChangeModeInAdvanceOneStepTab(){
 	}
 	
 	MyUser.CurrentMode = mode1;
+	ClearEnemyImg()
 	if(mode1 == MODE_KYOTEN_TAIZAI){
 		kyotenIdx1 = GetNearestKyotenId(MyUser.lat1, MyUser.lng1);
 		MyUser.CurrentKyotenType = MyUser.KyotenTypes[kyotenIdx1];
@@ -769,7 +768,8 @@ function InitEnemyFightSts(Enemy){
 }
 
 let MyUser = new User();
-//TestInitUser(MyUser)
+MyUser.name1 = 'USER1';
+TestInitUser(MyUser)
 
 let MyEnemy = new Enemy();
 
@@ -1027,9 +1027,46 @@ function tab_init(link, index){
 						
 			return false;
 		};
+  }else if(id == 'pageWinEnemyCount'){
+	  link.onclick = function(){
+		  	changeTab(link);
+
+			ShowWinEnemyCountTab();
+						
+			return false;
+		};
   }
+  
 }
 })();
+
+function ShowWinEnemyCountTab(){
+
+	let ElemIdName  = ""
+	for(var i=ENEMYTYPE_MIN-1; i<ENEMYTYPE_MAX; i++){
+		ElemIdName = "WinEnemyType"
+		ElemIdName += (i+1)
+		ElemIdName += "CountLevel1Span";
+		
+		elem1 = document.getElementById(ElemIdName);
+		elem1.innerHTML = MyUser.WinEnemyCount1[i]
+		
+		ElemIdName = "WinEnemyType"
+		ElemIdName += (i+1)
+		ElemIdName += "CountLevel2Span";
+		
+		elem1 = document.getElementById(ElemIdName);
+		elem1.innerHTML = MyUser.WinEnemyCount2[i]
+		
+		ElemIdName = "WinEnemyType"
+		ElemIdName += (i+1)
+		ElemIdName += "CountLevel3Span";
+		
+		elem1 = document.getElementById(ElemIdName);
+		elem1.innerHTML = MyUser.WinEnemyCount3[i]
+		
+	}
+}
 
 function ShowAdvanceOneStepTab(){
 	span1 = document.getElementById("pageAdvanceOneStep_CurrentMode");
@@ -1550,7 +1587,7 @@ function AddKyoten_MyLatLng(){
 	let kyotenType1 = Number(str1);
 	
 	if(CanAddKyotenMyLatLng(MyUser) == true &&
-	   CanAddKyotenOfKyotenType(kyotenType1) ){
+	   CanAddKyotenOfKyotenType(kyotenType1) == true ){
 		MyUser.KyotenCount++;
 		let name1 = "k"+MyUser.KyotenCount;
 	    MyUser.KyotenNames.push(name1);
@@ -1565,6 +1602,46 @@ function AddKyoten_MyLatLng(){
 	    
 	    alert("拠点を追加しました")
 	}
+}
+function DrawEnemyImg(enemyType){
+	divElem = document.getElementById("EnemyTypeImgDiv");
+	divElem.innerHTML = '';
+	ImgElem = document.createElement('img');
+	
+	if(enemyType == 1){
+		ImgElem.src = "https://raw.githubusercontent.com/NanjoMiyako/KyotenTaizai/main/enemyImg/e1.jpg"
+	}else if(enemyType == 2){
+		ImgElem.src = "https://raw.githubusercontent.com/NanjoMiyako/KyotenTaizai/main/enemyImg/e2.jpg"
+	}else if(enemyType == 3){
+		ImgElem.src = "https://raw.githubusercontent.com/NanjoMiyako/KyotenTaizai/main/enemyImg/e3.jpg"
+	}else if(enemyType == 4){
+		ImgElem.src = "https://raw.githubusercontent.com/NanjoMiyako/KyotenTaizai/main/enemyImg/e4.jpg"
+	}else if(enemyType == 5){
+		ImgElem.src = "https://raw.githubusercontent.com/NanjoMiyako/KyotenTaizai/main/enemyImg/e5.jpg"
+	}else if(enemyType == 6){
+		ImgElem.src = "https://raw.githubusercontent.com/NanjoMiyako/KyotenTaizai/main/enemyImg/e6.jpg"
+	}else if(enemyType == 7){
+		ImgElem.src = "https://raw.githubusercontent.com/NanjoMiyako/KyotenTaizai/main/enemyImg/e7.jpg"
+	}else if(enemyType == 8){
+		ImgElem.src = "https://raw.githubusercontent.com/NanjoMiyako/KyotenTaizai/main/enemyImg/e8.jpg"
+	}else if(enemyType == 9){
+		ImgElem.src = "https://raw.githubusercontent.com/NanjoMiyako/KyotenTaizai/main/enemyImg/e9.jpg"
+	}else if(enemyType == 10){
+		ImgElem.src = "https://raw.githubusercontent.com/NanjoMiyako/KyotenTaizai/main/enemyImg/e10.jpg"
+	}else if(enemyType == 11){
+		ImgElem.src = "https://raw.githubusercontent.com/NanjoMiyako/KyotenTaizai/main/enemyImg/e11.jpg"
+	}else if(enemyType == 12){
+		ImgElem.src = "https://raw.githubusercontent.com/NanjoMiyako/KyotenTaizai/main/enemyImg/e12.jpg"
+	}
+	
+	divElem.appendChild(ImgElem);
+	
+}
+
+function ClearEnemyImg(){
+	divElem = document.getElementById("EnemyTypeImgDiv");
+	divElem.innerHTML = '';
+	ImgElem = document.createElement('img');
 }
 function CanAddKyotenOfKyotenType(colorIdx){
 	coin1 =  GetConstructCostCoinOfKyoten(colorIdx)
@@ -1617,7 +1694,8 @@ function AddKyoten(){
 	let str1 = selectbox1.options[selectbox1.selectedIndex].value;
 	let kyotenType1 = Number(str1);
 	
-	if(CanAddKyotenCurrentMarker(MyUser) == true){
+	if(CanAddKyotenCurrentMarker(MyUser) == true &&
+	   CanAddKyotenOfKyotenType(kyotenType1) == true){
 		MyUser.KyotenCount++;
 		let name1 = "k"+MyUser.KyotenCount;
 	    MyUser.KyotenNames.push(name1);
@@ -1625,7 +1703,9 @@ function AddKyoten(){
 	    MyUser.KyotenTypes.push(kyotenType1);
 	    MyUser.KyotenLats.push(g_CurrentMarker.position.lat())
 	    MyUser.KyotenLngs.push(g_CurrentMarker.position.lng())
-	    
+	    coin1 =  GetConstructCostCoinOfKyoten(kyotenType1)
+	    MyUser.HavingCoin -= coin1
+	    	    
 	    validateMarker(MyUser)
 	    
 	    g_CurrentMarker.setMap(null)
@@ -1926,6 +2006,17 @@ var SEFunc1 = function StepExecute(){
 						str2 += MyEnemy.HavingCoin
 						str2 += "だけゲットした<br>"
 						g_AdvanceOneStepLog += str2
+						
+						if(MyUser.FightEnemyLevel == 1){
+							let idx2 = MyEnemy.EnemyType;
+							MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
+						}else if(MyUser.FightEnemyLevel == 2){
+							let idx2 = MyEnemy.EnemyType;
+							MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
+						}else if(MyUser.FightEnemyLevel == 3){
+							let idx2 = MyEnemy.EnemyType;
+							MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
+						}
 											
 						kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
 						addExpOrCoinOrTimeSand(kyotenIdx1, MyEnemy.HavingExp , 0)
@@ -1967,6 +2058,17 @@ var SEFunc1 = function StepExecute(){
 						str2 += MyEnemy.HavingCoin
 						str2 += "だけゲットした<br>"
 						g_AdvanceOneStepLog += str2
+						
+						if(MyUser.FightEnemyLevel == 1){
+							let idx2 = MyEnemy.EnemyType;
+							MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
+						}else if(MyUser.FightEnemyLevel == 2){
+							let idx2 = MyEnemy.EnemyType;
+							MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
+						}else if(MyUser.FightEnemyLevel == 3){
+							let idx2 = MyEnemy.EnemyType;
+							MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
+						}
 											
 						kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
 						addExpOrCoinOrTimeSand(kyotenIdx1, MyEnemy.HavingExp , 0)
@@ -1985,6 +2087,7 @@ var SEFunc1 = function StepExecute(){
 			}else{
 				CreateEnemy(MyUser.FightEnemyLevel, MyEnemy)
 				InitEnemyFightSts(MyEnemy)
+				DrawEnemyImg(MyEnemy.EnemyType);
 				
 				str2 = "エネミータイプ:"
 				str2 += MyEnemy.EnemyType
@@ -2116,14 +2219,16 @@ function StepMyUserAttackTurn(){
 	if(SuzuConsume1 == SUZU_POINT_CONSUME){
 		colorIdx = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
 		ConsumeSuzuType = DecideYobiOrOiSuzu();
-		if(ConsumeSuzuType == YOBI_SUZU){
+		if(ConsumeSuzuType == YOBI_SUZU &&
+		   MyUser.HavingYobiSuzuPower[colorIdx] >= 1){
 			AddYobiSuzuColorPower(colorIdx, -1)
 			
 			str2 = g_KyotenColorNames[colorIdx]
 			str2 += "呼鈴の耐久力が1下がった<br>"
 			g_AdvanceOneStepLog += str2
 			
-		}else if(ConsumeSuzuType == OI_SUZU){
+		}else if(ConsumeSuzuType == OI_SUZU &&
+				 MyUser.HavingOiSuzuPower[colorIdx] >= 1){
 			AddOiSuzuColorPower(colorIdx, -1)
 			
 			str2 = g_KyotenColorNames[colorIdx]
@@ -2573,6 +2678,10 @@ function CreateEnemy(enemyLevel, Enemy1){
 		
 		min2 = MIN_EXP_VOL_LEVEL1
 		max2 = MAX_EXP_VOL_LEVEL1
+		
+		min3 = MIN_COIN_VOL_LEVEL1
+		max3 = MAX_COIN_VOL_LEVEL1
+		
 	}else if(enemyLevel == 2){
 		min1 = MIN_STS_VOL_LEVEL2
 		max1 = MAX_STS_VOL_LEVEL2
@@ -2580,12 +2689,18 @@ function CreateEnemy(enemyLevel, Enemy1){
 		min2 = MIN_EXP_VOL_LEVEL2
 		max2 = MAX_EXP_VOL_LEVEL2
 		
+		min3 = MIN_COIN_VOL_LEVEL2
+		max3 = MAX_COIN_VOL_LEVEL2
+		
 	}else if(enemyLevel == 3){
 		min1 = MIN_STS_VOL_LEVEL3
 		max1 = MAX_STS_VOL_LEVEL3
 		
 		min2 = MIN_EXP_VOL_LEVEL3
 		max2 = MAX_EXP_VOL_LEVEL3
+
+		min3 = MIN_COIN_VOL_LEVEL3
+		max3 = MAX_COIN_VOL_LEVEL3
 	}
 	
 	Enemy1.EnemyType = getRandom(ENEMYTYPE_MIN, ENEMYTYPE_MAX)
@@ -2603,7 +2718,7 @@ function CreateEnemy(enemyLevel, Enemy1){
 	Enemy1.BlackGoldSts = getRandom(min1, max1)
 	Enemy1.BlackSilverSts = getRandom(min1, max1)
 	Enemy1.BlackCopperSts = getRandom(min1, max1)
-	Enemy1.HavingCoin = getRandom(min1, max1)
+	Enemy1.HavingCoin = getRandom(min3, max3)
     Enemy1.HavingExp = getRandom(min2, max2)
     
 	Enemy1.EStsUpDivValList = makeUpStsDivValList(Enemy1.EStsUpRate)
@@ -2777,6 +2892,26 @@ function calcDnStsRate(){
 	
 	return StsDnRate;
 
+}
+
+function DrawScnShotOfStsList(){
+  html2canvas(document.getElementById("pageStatusList"),{
+    onrendered: function(canvas){
+      //imgタグのsrcの中に、html2canvasがレンダリングした画像を指定する。
+      var imgData = canvas.toDataURL();
+      document.getElementById("result1").src = imgData;
+    }
+  });
+}
+
+function DrawScnShotOfWinEnemyCount(){
+  html2canvas(document.getElementById("pageWinEnemyCount"),{
+    onrendered: function(canvas){
+      //imgタグのsrcの中に、html2canvasがレンダリングした画像を指定する。
+      var imgData = canvas.toDataURL();
+      document.getElementById("result1").src = imgData;
+    }
+  });
 }
 
 //最大値・最小値を引数に持つ関数

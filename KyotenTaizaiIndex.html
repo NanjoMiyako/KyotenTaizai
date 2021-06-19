@@ -8,6 +8,7 @@
 <body>
 <div class="adbox1">
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
 <div class="box1">
 GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1">
 <button type="button" name="SetGoogleApiKey" value="SetGoogleApiKey" onclick="SetGoogleApiKey()" style="margin-left:10px; margin-top:10px;">GoogleAPIキーセット</button>
@@ -46,12 +47,17 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
     <br>
     <li><a class="Tablink" href="#pageKyusokuPercentageSetting">休息確率設定</a></li>
     <br>
-        
+    <li><a class="Tablink" href="#pageWinEnemyCount">倒した敵の数</a></li>
+    <br>        
   </ul>
 <hr>
   <div id="tab_content1" class="tab_content">
 	<!-- ステータス一覧タブ -->
 	<div id="pageStatusList" class="TabPage">
+	<button type="button" id="pageStatusListTabOutputScnShotButton" onclick="DrawScnShotOfStsList()">
+		ステータスリストのスクリーンショットを出力
+	</button>
+	<br>
 	ステータス一覧<br>
 	<hr>
 	赤の力:<span id="StsListRedSts"></span><br>
@@ -395,7 +401,6 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 	<button type="button" id="pageSaiseiSetting_TekiyouButton" onclick="ChangeUpStsColorInSaiseiForest()">
 		適用
 	</button>
-	
     </div>
     
     <!-- ステップ実行タブ -->
@@ -426,6 +431,13 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 		ステップ実行終了
 	</button>
 	<br>
+	<hr>
+	敵画像:
+	<br>
+	<div id="EnemyTypeImgDiv">
+	</div>
+	<br>
+	<hr>
 	ログ
 	<hr>
 	<span id="pageAdvanceOneStep_LogSpan"></span>
@@ -488,10 +500,69 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 		適用
 	</button>
 	</div>
-        
+	
+    <!-- 敵レベル設定タブ -->
+    <div id="pageWinEnemyCount" class="TabPage">
+	<button type="button" id="pageWinEnemyCountTabOutputScnShotButton" onclick="DrawScnShotOfWinEnemyCount()">
+		倒した敵リストのスクリーンショットを出力
+	</button>
+	<br>
+    倒した敵の数<br>
+    <hr>
+    敵レベル:1
+    <br>
+    エネミータイプ:1:<span id=WinEnemyType1CountLevel1Span></span>個<br>
+    エネミータイプ:2:<span id=WinEnemyType2CountLevel1Span></span>個<br>
+    エネミータイプ:3:<span id=WinEnemyType3CountLevel1Span></span>個<br>
+    エネミータイプ:4:<span id=WinEnemyType4CountLevel1Span></span>個<br>
+    エネミータイプ:5:<span id=WinEnemyType5CountLevel1Span></span>個<br>
+    エネミータイプ:6:<span id=WinEnemyType6CountLevel1Span></span>個<br>
+    エネミータイプ:7:<span id=WinEnemyType7CountLevel1Span></span>個<br>
+    エネミータイプ:8:<span id=WinEnemyType8CountLevel1Span></span>個<br>
+    エネミータイプ:9:<span id=WinEnemyType9CountLevel1Span></span>個<br>
+    エネミータイプ:10:<span id=WinEnemyType10CountLevel1Span></span>個<br>
+    エネミータイプ:11:<span id=WinEnemyType11CountLevel1Span></span>個<br>
+    エネミータイプ:12:<span id=WinEnemyType12CountLevel1Span></span>個<br>
+    <hr>
+    敵レベル:2
+    <br>
+    エネミータイプ:1:<span id=WinEnemyType1CountLevel2Span></span>個<br>
+    エネミータイプ:2:<span id=WinEnemyType2CountLevel2Span></span>個<br>
+    エネミータイプ:3:<span id=WinEnemyType3CountLevel2Span></span>個<br>
+    エネミータイプ:4:<span id=WinEnemyType4CountLevel2Span></span>個<br>
+    エネミータイプ:5:<span id=WinEnemyType5CountLevel2Span></span>個<br>
+    エネミータイプ:6:<span id=WinEnemyType6CountLevel2Span></span>個<br>
+    エネミータイプ:7:<span id=WinEnemyType7CountLevel2Span></span>個<br>
+    エネミータイプ:8:<span id=WinEnemyType8CountLevel2Span></span>個<br>
+    エネミータイプ:9:<span id=WinEnemyType9CountLevel2Span></span>個<br>
+    エネミータイプ:10:<span id=WinEnemyType10CountLevel2Span></span>個<br>
+    エネミータイプ:11:<span id=WinEnemyType11CountLevel2Span></span>個<br>
+    エネミータイプ:12:<span id=WinEnemyType12CountLevel2Span></span>個<br>
+    <hr>
+    敵レベル:3
+    <br>
+    エネミータイプ:1:<span id=WinEnemyType1CountLevel3Span></span>個<br>
+    エネミータイプ:2:<span id=WinEnemyType2CountLevel3Span></span>個<br>
+    エネミータイプ:3:<span id=WinEnemyType3CountLevel3Span></span>個<br>
+    エネミータイプ:4:<span id=WinEnemyType4CountLevel3Span></span>個<br>
+    エネミータイプ:5:<span id=WinEnemyType5CountLevel3Span></span>個<br>
+    エネミータイプ:6:<span id=WinEnemyType6CountLevel3Span></span>個<br>
+    エネミータイプ:7:<span id=WinEnemyType7CountLevel3Span></span>個<br>
+    エネミータイプ:8:<span id=WinEnemyType8CountLevel3Span></span>個<br>
+    エネミータイプ:9:<span id=WinEnemyType9CountLevel3Span></span>個<br>
+    エネミータイプ:10:<span id=WinEnemyType10CountLevel3Span></span>個<br>
+    エネミータイプ:11:<span id=WinEnemyType11CountLevel3Span></span>個<br>
+    エネミータイプ:12:<span id=WinEnemyType12CountLevel3Span></span>個<br>
+    </div>
   </div>
 </div>
 
+<hr>
+<hr>
+スクリーンショット画像<br>
+<div id="ScnShotImgDiv">
+<img src="" id="result1" />
+</div>
 
 <div id="InitScriptTag"></div>
 <script type="text/javascript" src="KyotenTaizaiJS.js" async defer>
