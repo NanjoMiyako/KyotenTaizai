@@ -32,9 +32,9 @@ const KYOTEN_MIN_INTERVAL = 200;
 //何コインで1単位の鈴アイテムの強化ができるか
 const KYOKA_COIN_UNIT = 10;
 //一ステップにかかる秒数
-const ONE_STEP_SECOND = 5;
+const ONE_STEP_SECOND = 60;
 //何ミリ秒を一分としてカウントするか
-const ONE_MINITE_SECOND = 30000;
+const ONE_MINITE_SECOND = 60000;
 //何ステップで経験値がもらえるか
 const GET_POINT_STEP_COUNT = 1;
 //敵レベルごとのステータス最小・最大値
@@ -2038,7 +2038,7 @@ var SEFunc1 = function StepExecute(){
 				decVol = 1 * g_PassedStep
 				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, addVol, decVol)
 			}else if(MyUser.CurrentKyotenType == KYOTEN_OUGON){
-				addVol = 10 * g_PassedStep;
+				addVol = 5 * g_PassedStep;
 				
 				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, 10, 0);
 			}
