@@ -2008,7 +2008,7 @@ function SetCurrentLatLngMarker(User){
 	
 	if(g_CurrentPositionMarker != null){
 		g_CurrentPositionMarker.setMap(null)
-		g_CurrentPositionMarker = null;
+		g_CurrentPositionMarker = null
 	}
 	
  	let mopts = {
@@ -2016,10 +2016,10 @@ function SetCurrentLatLngMarker(User){
 		map: g_Map,
 		title: "現在地",
 		icon: {
-		fillColor: "#000000",                //塗り潰し色
-		fillOpacity: 1.0,                    //塗り潰し透過率
+		fillColor: "#888888",                //塗り潰し色
+		fillOpacity: 0.5,                    //塗り潰し透過率
 		path: google.maps.SymbolPath.CIRCLE, //円を指定
-		scale: 4,                           //円のサイズ
+		scale: 2,                           //円のサイズ
 		strokeColor: "#000000",              //枠の色
 		},
 		zIndex: 3
@@ -2070,6 +2070,9 @@ function SetKyotenMaker(User){
 		}
 		title1 += message1;
 
+		str2 = "("
+		str2 += new String(User.KyotenTypes[i])
+		str2 += ")"
 	 	let mopts = {
 			position: latlng,
 			map: g_Map,
@@ -2081,7 +2084,12 @@ function SetKyotenMaker(User){
 			scale: 8,                           //円のサイズ
 			strokeColor: "#FF0000"              //枠の色
 			},
-			zIndex:1
+			zIndex:1,
+			label:{
+				text: str2,
+				color:'#000000',
+				fontSize: '20px'
+			}
 		
 			};
 		
