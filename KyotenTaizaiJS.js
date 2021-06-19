@@ -32,7 +32,9 @@ const KYOTEN_MIN_INTERVAL = 200;
 //何コインで1単位の鈴アイテムの強化ができるか
 const KYOKA_COIN_UNIT = 10;
 //一ステップにかかる秒数
-const ONE_STEP_SECOND = 60;
+const ONE_STEP_SECOND = 5;
+//何ミリ秒を一分としてカウントするか
+const ONE_MINITE_SECOND = 30000;
 //何ステップで経験値がもらえるか
 const GET_POINT_STEP_COUNT = 1;
 //敵レベルごとのステータス最小・最大値
@@ -1994,7 +1996,7 @@ var SEFunc1 = function StepExecute(){
 	let str2 = ""
 	if(g_StepExecuteFlg == true){
 		currentTime = new Date()
-		minDiff = (currentTime - g_PrevStepTime) / 60000;
+		minDiff = (currentTime - g_PrevStepTime) / ONE_MINITE_SECOND;
 		g_PassedStep = parseInt(minDiff)
 		setTimeout(SEFunc1, ONE_STEP_SECOND * 1000)
 	}
@@ -2046,7 +2048,7 @@ var SEFunc1 = function StepExecute(){
 		}
 	}else if(MyUser.CurrentMode == MODE_FIGHT){
 	
-		for(var i=0; i<g_PrevStepTime;  i++){
+		for(var i=0; i<g_PassedStep;  i++){
 			g_PrevCountStart++
 			if(g_PrevCountStart >= GET_POINT_STEP_COUNT){
 
@@ -2182,9 +2184,11 @@ var SEFunc1 = function StepExecute(){
 		
 		}
 		
-		g_PrevCountStart = 0;
-		g_PassedStep = 0;
-		g_PrevStepTime = currentTime
+		if(g_PassedStep >= 1){
+			g_PrevCountStart = 0;
+			g_PassedStep = 0;
+			g_PrevStepTime = currentTime
+		}
 	}
 	
 	//alert("test")
