@@ -1557,9 +1557,7 @@ function SetKyotenMaker(User){
 				message1 += g_KyotenColorNames[kyotenType1];
 
 			}
-			
-			
-			alert(message1);
+
 			
 		} ) ;
 		
@@ -1815,7 +1813,6 @@ function DeleteKyoten(){
 function CanTaizai(){
 	kyotenIdx1 = GetNearestKyotenId(MyUser.lat1, MyUser.lng1);
 	dist1 = distance(MyUser.lat1, MyUser.lng1, MyUser.KyotenLats[kyotenIdx1], MyUser.KyotenLngs[kyotenIdx1]);
-	alert(dist1)
 	if(dist1 <= KYOTEN_MIN_INTERVAL){
 		return true;
 	}else{
