@@ -594,11 +594,11 @@ const KYOTEN_OUGON = 16;
 const ENEMYTYPE_MIN = 1;
 const ENEMYTYPE_MAX = 12;
 
-const CONSTRUCT_COST_OF_ONE_COLOR_KYOTEN = 200;
-const CONSTRUCT_COST_OF_NIJI_KYOTEN = 500;
-const CONSTRUCT_COST_OF_TOKIMODORI = 300;
-const CONSTRUCT_COST_OF_SAISEI = 300;
-const CONSTRUCT_COST_OF_OUGON = 300;
+const CONSTRUCT_COST_OF_ONE_COLOR_KYOTEN = 5000;
+const CONSTRUCT_COST_OF_NIJI_KYOTEN = 8000;
+const CONSTRUCT_COST_OF_TOKIMODORI = 7000;
+const CONSTRUCT_COST_OF_SAISEI = 7000;
+const CONSTRUCT_COST_OF_OUGON = 7000;
 
 const MIRI_SECONDS_OF_ONE_DAY = 8640000
  
@@ -2622,7 +2622,7 @@ var SEFunc1 = function StepExecute(){
 				decVol = 1 * g_PassedStep
 				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, addVol, decVol)
 			}else if(MyUser.CurrentKyotenType == KYOTEN_OUGON){
-				addVol = 5 * g_PassedStep;
+				addVol = 1 * g_PassedStep;
 				
 				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, addVol, 0);
 			}
