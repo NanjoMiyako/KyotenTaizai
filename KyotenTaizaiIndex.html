@@ -24,6 +24,8 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
   <ul id="tab_menu1" class="tab_menu">
     <br>
     <li><a class="Tablink" href="#pageAdvanceOneStep">ステップ実行</a></li>
+    <br>
+    <li><a class="Tablink" href="#pageKyokaWithCoins">修練所</a></li>
 	<br>
     <li><a class="Tablink" href="#pageStatusList">ステータス一覧</a></li>
     <br>
@@ -445,6 +447,16 @@ GoogleAPIキー <input type="text" name="GoogleApiKeyTextBox" id="GoogleApiKey1"
 	<button type="button" id="pageAdvanceOneStep_ClearLogButton" onclick="ClearLogInAdvanceOneStepTab()">
 		ログクリア
 	</button>
+    </div>
+    
+    <!-- 修練所タブ -->
+    <div id="pageKyokaWithCoins" class="TabPage">
+    修練所<br>
+    修練に消費するコイン: <input type="text" id="CoinsWithKyoka" value="10">
+    <br>
+	<button type="button" id="pageKyokaWithCoins_KyokaButton" onclick="KyokaWithCoins()">
+		コインを使って強化する
+	</button><br>
     </div>
     
     <!-- ゲームデータセーブロードタブ -->

@@ -1075,6 +1075,14 @@ function tab_init(link, index){
 						
 			return false;
 		};
+  }else if(id == 'pageKyokaWithCoins'){
+	  link.onclick = function(){
+		  	changeTab(link);
+
+			ShowKyokaWithCoinsTab();
+						
+			return false;
+		};
   }
   
 }
@@ -1106,6 +1114,9 @@ function ShowWinEnemyCountTab(){
 		elem1.innerHTML = MyUser.WinEnemyCount3[i]
 		
 	}
+}
+
+function ShowKyokaWithCoinsTab(){
 }
 
 function ShowAdvanceOneStepTab(){
@@ -1934,6 +1945,28 @@ function YobiSuzuKyoka(){
 		alert(str1);
 		
 	}
+}
+
+function KyokaWithCoins(){
+	let element = document.getElementById('CoinsWithKyoka');
+	coins = element.value;
+	if(MyUser.HavingCoin < coins || coins < 10){
+		alert("強化に必要なコインが足りません")
+		return		
+	}
+	UpPt = Math.floor(coins / 10)
+	MyUser.HavingCoin -= Math.floor(UpPt * 10);
+
+	addVol = 1
+	for(var i=0; i<UpPt; i++){
+	
+		kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
+		addExpOrCoinOrTimeSand(kyotenIdx1, addVol,0)
+		
+	}
+	
+	alert("コインを消費して経験値を取得しました")
+	
 }
 
 function StartStepExecuteInAdvanceOneStepTab(){
