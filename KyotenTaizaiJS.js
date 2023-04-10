@@ -44,6 +44,8 @@ const MIN_STS_VOL_LEVEL2 = 100
 const MAX_STS_VOL_LEVEL2 = 1000
 const MIN_STS_VOL_LEVEL3 = 1000
 const MAX_STS_VOL_LEVEL3 = 10000
+const MIN_STS_VOL_LEVEL4 = 10000
+const MAX_STS_VOL_LEVEL4 = 100000
 
 const MIN_EXP_VOL_LEVEL1 = 1
 const MAX_EXP_VOL_LEVEL1 = 10
@@ -51,6 +53,8 @@ const MIN_EXP_VOL_LEVEL2 = 10
 const MAX_EXP_VOL_LEVEL2 = 50
 const MIN_EXP_VOL_LEVEL3 = 50
 const MAX_EXP_VOL_LEVEL3 = 100
+const MIN_EXP_VOL_LEVEL4 = 100
+const MAX_EXP_VOL_LEVEL4 = 200
 
 const MIN_COIN_VOL_LEVEL1 = 1
 const MAX_COIN_VOL_LEVEL1 = 10
@@ -58,6 +62,9 @@ const MIN_COIN_VOL_LEVEL2 = 10
 const MAX_COIN_VOL_LEVEL2 = 20
 const MIN_COIN_VOL_LEVEL3 = 20
 const MAX_COIN_VOL_LEVEL3 = 30
+const MIN_COIN_VOL_LEVEL4 = 30
+const MAX_COIN_VOL_LEVEL4 = 40
+
 
 //勝負の状態、継続中、勝ち、負け
 const FIGHT_RESULT_CONTINUE = 0
@@ -337,6 +344,7 @@ class User {
     WinEnemyCount1 = [0,0,0,0,0,0,0,0,0,0,0,0]
     WinEnemyCount2 = [0,0,0,0,0,0,0,0,0,0,0,0]
     WinEnemyCount3 = [0,0,0,0,0,0,0,0,0,0,0,0]
+    WinEnemyCount4 = [0,0,0,0,0,0,0,0,0,0,0,0]
     
     CurrentMode = MODE_NOTHING
 	CurrentKyotenType = ""
@@ -1112,6 +1120,13 @@ function ShowWinEnemyCountTab(){
 		
 		elem1 = document.getElementById(ElemIdName);
 		elem1.innerHTML = MyUser.WinEnemyCount3[i]
+		
+		ElemIdName = "WinEnemyType"
+		ElemIdName += (i+1)
+		ElemIdName += "CountLevel4Span";
+		
+		elem1 = document.getElementById(ElemIdName);
+		elem1.innerHTML = MyUser.WinEnemyCount4[i]
 		
 	}
 }
@@ -2194,14 +2209,13 @@ var SEFunc1 = function StepExecute(){
 							g_AdvanceOneStepLog += str2
 							
 							if(MyUser.FightEnemyLevel == 1){
-								let idx2 = MyEnemy.EnemyType;
 								MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
 							}else if(MyUser.FightEnemyLevel == 2){
-								let idx2 = MyEnemy.EnemyType;
-								MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
+								MyUser.WinEnemyCount2[MyEnemy.EnemyType] += 1
 							}else if(MyUser.FightEnemyLevel == 3){
-								let idx2 = MyEnemy.EnemyType;
-								MyUser.WinEnemyCount1[MyEnemy.EnemyType] += 1
+								MyUser.WinEnemyCount3[MyEnemy.EnemyType] += 1
+							}else if(MyUser.FightEnemyLevel == 4){
+								MyUser.WinEnemyCount4[MyEnemy.EnemyType] += 1
 							}
 												
 							kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
@@ -2844,6 +2858,15 @@ function CreateEnemy(enemyLevel, Enemy1){
 
 		min3 = MIN_COIN_VOL_LEVEL3
 		max3 = MAX_COIN_VOL_LEVEL3
+	}else if(enemyLevel == 4){
+		min1 = MIN_STS_VOL_LEVEL4
+		max1 = MAX_STS_VOL_LEVEL4
+		
+		min2 = MIN_EXP_VOL_LEVEL4
+		max2 = MAX_EXP_VOL_LEVEL4
+
+		min3 = MIN_COIN_VOL_LEVEL4
+		max3 = MAX_COIN_VOL_LEVEL4
 	}
 	
 	Enemy1.EnemyType = getRandom(ENEMYTYPE_MIN, ENEMYTYPE_MAX)
