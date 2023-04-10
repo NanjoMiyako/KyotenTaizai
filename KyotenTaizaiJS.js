@@ -19,11 +19,11 @@ const KYOTEN_OUGON = 16;
 const ENEMYTYPE_MIN = 1;
 const ENEMYTYPE_MAX = 12;
 
-const CONSTRUCT_COST_OF_ONE_COLOR_KYOTEN = 200;
-const CONSTRUCT_COST_OF_NIJI_KYOTEN = 500;
-const CONSTRUCT_COST_OF_TOKIMODORI = 300;
-const CONSTRUCT_COST_OF_SAISEI = 300;
-const CONSTRUCT_COST_OF_OUGON = 300;
+const CONSTRUCT_COST_OF_ONE_COLOR_KYOTEN = 5000;
+const CONSTRUCT_COST_OF_NIJI_KYOTEN = 8000;
+const CONSTRUCT_COST_OF_TOKIMODORI = 7000;
+const CONSTRUCT_COST_OF_SAISEI = 7000;
+const CONSTRUCT_COST_OF_OUGON = 7000;
 
 const MIRI_SECONDS_OF_ONE_DAY = 8640000
  
@@ -2029,13 +2029,17 @@ var SEFunc1 = function StepExecute(){
 				addVol = 6 * g_PassedStep
 				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, addVol,0)
 			}else if(MyUser.CurrentKyotenType == KYOTEN_NIJI){
-				addVol = 3 * g_PassedStep
 			
-				kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
-				addExpOrCoinOrTimeSand(kyotenIdx1, addVol,0)
+				for(var i=0; i<g_PassedStep; i++){
+					addVol = 2 * 1
 				
-				kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
-				addExpOrCoinOrTimeSand(kyotenIdx1, addVol,0)
+					kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
+					addExpOrCoinOrTimeSand(kyotenIdx1, addVol,0)
+					
+					kyotenIdx1 = getRandom(KYOTEN_RED, KYOTEN_BLACKCOPPER);
+					addExpOrCoinOrTimeSand(kyotenIdx1, addVol,0)
+				
+				}
 				
 			}else if(MyUser.CurrentKyotenType == KYOTEN_TOKIMODORI){
 				addVol = 1 * g_PassedStep
