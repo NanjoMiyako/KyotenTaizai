@@ -2292,9 +2292,22 @@ function ClearEnemyImg(){
 	divElem.innerHTML = '';
 	ImgElem = document.createElement('img');
 }
+
+function HaveKyotenOfKyotenType(colorIdx){
+	for(var i=0; i<MyUser.KyotenType.length; i++){
+		if(MyUser.KyotenType[i] == colorIdx){
+			return true;
+		}
+	}
+	return false;
+	
+}
+
 function CanAddKyotenOfKyotenType(colorIdx){
 	coin1 =  GetConstructCostCoinOfKyoten(colorIdx)
-	if(coin1 <= MyUser.HavingCoin){
+	if(coin1 <= MyUser.HavingCoin ||
+	 g_KyotenMarkerList.length == 0 ||
+	 HaveKyotenOfKyotenType(colorIdx) ){
 		return true
 	}else{
 		alert('拠点作成のためのコインが足りません')
