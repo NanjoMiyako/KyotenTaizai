@@ -98,6 +98,9 @@ g_PrevCountStart = 0;
 g_PrevStepTime = new Date();
 g_PassedStep = 0;
 
+var g_CurrentYMDDate = new Date();
+
+
 g_KyotenColorNames = ["赤","青","黄","緑","紫","白","白金","白銀","白銅","黒","黒金","黒銀","黒銅","虹",
 "時戻りの砂漠","再生の森","黄金の泉"]
 
@@ -356,6 +359,10 @@ class User {
 	KyotenMarkerList=[];
 	KyotenMarkerMessages=[];
 	LastPlayedDate = new Date();
+
+	//コイン0で拠点を作成した最後の日
+	LastCreateDate = 0;
+	LastCreateMonth = 0;
 	
     //戦闘用一時ステータス    
     //攻撃力
@@ -1745,8 +1752,8 @@ function ClearEnemyImg(){
 }
 
 function HaveKyotenOfKyotenType(colorIdx){
-	for(var i=0; i<MyUser.KyotenType.length; i++){
-		if(MyUser.KyotenType[i] == colorIdx){
+	for(var i=0; i<MyUser.KyotenTypes.length; i++){
+		if(MyUser.KyotenTypes[i] == colorIdx){
 			return true;
 		}
 	}
@@ -1755,9 +1762,19 @@ function HaveKyotenOfKyotenType(colorIdx){
 }
 function CanAddKyotenOfKyotenType(colorIdx){
 	coin1 =  GetConstructCostCoinOfKyoten(colorIdx)
-	if(coin1 <= MyUser.HavingCoin ||
+	if(coin1 > MyUser.HavingCoin &&
 	 g_KyotenMarkerList.length == 0 ||
-	 HaveKyotenOfKyotenType(colorIdx) ){
+	 !HaveKyotenOfKyotenType(colorIdx) ){
+	 
+	 	CrDate = g_CurrentYMDDate.getDate();
+	 	CrMonth = g_CurrentYMDDate.getMonth();
+	 	
+	 	if(MyUser.LastCreateDate == CrDate &&
+	 	   MyUser.LastCreateMonth == CrMonth ){
+	 	   	alert('作成コスト以下で作成できる拠点一種は一日に一個までです')
+	 	   	return false;
+	 	}
+	 	
 		return true
 	}else{
 		alert('拠点作成のためのコインが足りません')
@@ -1824,6 +1841,9 @@ function AddKyoten(){
 	    g_CurrentMarker=null
 	    
 	    SetKyotenMaker(MyUser)
+	    
+	    MyUser.LastCreateDate = g_CurrentYMDDate.getDate();
+	    MyUser.LastCreateMonth = g_CurrentYMDDate.getMonth();
 	    
 	    alert("拠点を追加しました")
 	}
