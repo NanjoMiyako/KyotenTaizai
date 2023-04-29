@@ -358,7 +358,15 @@ class User {
 	lng1;
 	KyotenMarkerList=[];
 	KyotenMarkerMessages=[];
+
+	//最後にゲームをプレイした日	
 	LastPlayedDate = new Date();
+	TodayEarnedTotalExp = 0;
+	TodayEarnedTotalCoin = 0;
+	TodayTotalKyotenTaizaiMinite = 0;
+	TodayEarnedTotalTimeSand = 0;
+	
+	
 
 	//コイン0で拠点を作成した最後の日
 	LastCreateDate = 0;
@@ -1098,10 +1106,33 @@ function tab_init(link, index){
 						
 			return false;
 		};
+  }else if(id == 'pageTodaySuccess'){
+  	  link.onclick = function(){
+		  	changeTab(link);
+
+			ShowTodaySuccessTab();
+						
+			return false;
+		};
   }
   
 }
 })();
+
+function ShowTodaySuccessTab(){
+
+	elem1 = document.getElementById("TotalKyotenTaizaiMiniteSpan");
+	elem1.innerHTML = MyUser.TodayTotalKyotenTaizaiMinite;
+	
+	elem2 = document.getElementById("EarnedTotalExpSpan");
+	elem2.innerHTML = MyUser.TodayEarnedTotalExp;
+	
+	elem3 = document.getElementById("EarnedTotalCoinSpan");
+	elem3.innerHTML = MyUser.TodayEarnedTotalCoin;
+	
+	elem4 = document.getElementById("EarnedTotalTimeSandSpan");
+	elem4.innerHTML = MyUser.TodayEarnedTotalTimeSand;
+}
 
 function ShowWinEnemyCountTab(){
 
@@ -2028,6 +2059,8 @@ function addExpOrCoinOrTimeSand(kyotenType, vol,decVol){
 		str2 += "だけゲットした<br>"
 		g_AdvanceOneStepLog += str2
 		
+		MyUser.TodayEarnedTotalExp += vol
+		
 		
 	}else if(kyotenType == KYOTEN_NIJI){
 		//特に処理なし(前処理で経験値の加算処理を行う)
@@ -2048,6 +2081,8 @@ function addExpOrCoinOrTimeSand(kyotenType, vol,decVol){
 			str2 += decVol
 			str2 += "だけ下がった<br>"
 			g_AdvanceOneStepLog += str2
+			
+			MyUser.TodayEarnedTotalTimeSand += vol
 		}
 		
 	}else if(kyotenType == KYOTEN_SAISEI){
@@ -2065,6 +2100,8 @@ function addExpOrCoinOrTimeSand(kyotenType, vol,decVol){
 			str2 += decVol
 			str2 += "だけ消費した<br>"
 			g_AdvanceOneStepLog += str2
+			
+			MyUser.TodayEarnedTotalExp += vol
 		}
 	}else if(kyotenType == KYOTEN_OUGON){
 		MyUser.HavingCoin += vol
@@ -2073,6 +2110,8 @@ function addExpOrCoinOrTimeSand(kyotenType, vol,decVol){
 		str2 += vol
 		str2 += "だけゲットした<br>"
 		g_AdvanceOneStepLog += str2
+		
+		MyUser.TodayEarnedTotalCoin += vol
 	}
 
 }
@@ -2105,6 +2144,9 @@ var SEFunc1 = function StepExecute(){
 		g_PrevCountStart++
 		if(g_PrevCountStart >= GET_POINT_STEP_COUNT &&
 		   g_PassedStep >= 1){
+		   
+		   MyUser.TodayTotalKyotenTaizaiMinite += g_PassedStep;
+		   
 			if(MyUser.CurrentKyotenType < KYOTEN_NIJI){
 				addVol = 6 * g_PassedStep
 				addExpOrCoinOrTimeSand(MyUser.CurrentKyotenType, addVol,0)
@@ -2442,6 +2484,21 @@ function LoadGameData(){
 //ゲームデータの保存
 function SaveLocalStrage(){
 	
+	MyUser.LastPlayedDate = g_CurrentYMDDate.getFullYear() + "-" ;
+
+	if((g_CurrentYMDDate.getMonth()+1) < 10){
+		MyUser.LastPlayedDate += "0";
+	}
+	MyUser.LastPlayedDate += (g_CurrentYMDDate.getMonth()+1);
+	MyUser.LastPlayedDate += "-";
+	
+	
+	if(g_CurrentYMDDate.getDate()< 10){
+		MyUser.LastPlayedDate += "0";
+	}
+	MyUser.LastPlayedDate += (g_CurrentYMDDate.getDate());
+	
+	
 	localStorage['MyUser20210612'] = JSON.stringify(MyUser);
 	alert('ゲームデータをセーブしました')
 	
@@ -2457,6 +2514,24 @@ function LoadLocalStorage(){
 		alert('デイリーボーナスとして10コインゲットした')
 		MyUser.LastPlayedDate = CurrentDate;
 	}
+
+	CrMonth = g_CurrentYMDDate.getMonth();
+	CrDate = g_CurrentYMDDate.getDate();
+	
+	LPMonth = Number(MyUser.LastPlayedDate.substr( 5, 2 ));
+	LPDate = Number(MyUser.LastPlayedDate.substr( 8, 2 ));
+	
+	if(LPMonth != (CrMonth+1) ||
+	   LPDate != CrDate){
+			MyUser.TodayEarnedTotalExp = 0;
+			MyUser.TodayEarnedTotalCoin = 0;
+			MyUser.TodayTotalKyotenTaizaiMinite = 0;
+			MyUser.TodayEarnedTotalTimeSand = 0;
+			
+
+	   }
+
+	
 	alert('ゲームデータをロードしました')
 }
 
