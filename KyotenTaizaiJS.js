@@ -1873,8 +1873,8 @@ function AddKyoten(){
 	    
 	    SetKyotenMaker(MyUser)
 	    
-	    MyUser.LastCreateDate = g_CurrentYMDDate.getDate();
-	    MyUser.LastCreateMonth = g_CurrentYMDDate.getMonth();
+	    MyUser.LastCreateDate = Number(g_CurrentYMDDate.getDate());
+	    MyUser.LastCreateMonth = Number(g_CurrentYMDDate.getMonth());
 	    
 	    alert("拠点を追加しました")
 	}
@@ -2489,14 +2489,14 @@ function SaveLocalStrage(){
 	if((g_CurrentYMDDate.getMonth()+1) < 10){
 		MyUser.LastPlayedDate += "0";
 	}
-	MyUser.LastPlayedDate += (g_CurrentYMDDate.getMonth()+1);
+	MyUser.LastPlayedDate += String(Number(g_CurrentYMDDate.getMonth()+1));
 	MyUser.LastPlayedDate += "-";
 	
 	
 	if(g_CurrentYMDDate.getDate()< 10){
 		MyUser.LastPlayedDate += "0";
 	}
-	MyUser.LastPlayedDate += (g_CurrentYMDDate.getDate());
+	MyUser.LastPlayedDate += String(g_CurrentYMDDate.getDate());
 	
 	
 	localStorage['MyUser20210612'] = JSON.stringify(MyUser);
